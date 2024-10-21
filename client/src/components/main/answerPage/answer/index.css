@@ -1,0 +1,18 @@
+/* All the CSS related to answers Page*/
+.answer {
+  display: flex;
+  flex-direction: row;
+  border-bottom: #000000 1px dashed;
+}
+
+.answerText {
+  width: 75%;
+}
+
+.answerAuthor {
+  margin-left: 5%;
+}
+
+.answer_author {
+  color: green;
+}

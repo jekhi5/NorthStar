@@ -1,0 +1,18 @@
+{
+ "$schema": "../node_modules/@stryker-mutator/core/schema/stryker-schema.json", 
+  "packageManager": "npm",
+  "reporters": [
+    "html",
+    "clear-text"
+  ],
+  "testRunner": "jest",
+  "testRunner_comment": "Take a look at https://stryker-mutator.io/docs/stryker-js/jest-runner for information about the jest plugin.",
+  "coverageAnalysis": "perTest",
+  "mutate": [
+    "./**/*.ts",
+    "!./**/*.test.ts",
+    "!./**/*.spec.ts"
+  ],
+  "ignoreStatic": true
+  
+}

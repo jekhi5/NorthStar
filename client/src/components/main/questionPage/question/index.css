@@ -1,0 +1,50 @@
+.question {
+  display: flex;
+  flex-direction: row;
+  border-top: #000000 1px dashed;
+}
+
+.postStats {
+  color: #bbbbbb;
+  text-align: center;
+  width: 10%;
+}
+
+.question_mid {
+  width: 60%;
+}
+
+.postTitle {
+  color: cornflowerblue;
+}
+
+.question_tags {
+  margin-top: 1%;
+}
+
+.question_tag_button {
+  color: #ffffff;
+  background: gray;
+  border-width: 0;
+  border-radius: 8px;
+  margin-left: 2%;
+  padding: 1% 3% 1% 3%;
+}
+
+.question_tag_button:first-child {
+  margin-left: 0;
+}
+
+.lastActivity {
+  width: 30%;
+  display: flex;
+  flex-direction: row;
+}
+
+.question_author {
+  color: red;
+}
+
+.question_meta {
+  color: #bbbbbb;
+}

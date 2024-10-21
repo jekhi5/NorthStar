@@ -1,0 +1,13 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 10%;
+  width: 100%;
+  background: #dddddd;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 800;
+}

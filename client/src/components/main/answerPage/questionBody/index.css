@@ -1,0 +1,21 @@
+.questionBody {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between;  */
+  margin-top: 5%;
+  border-bottom: #000000 1px dashed;
+}
+
+.answer_question_view {
+  width: 15%;
+}
+
+.answer_question_text {
+  width: 60%;
+}
+
+.answer_question_right {
+  display: flex;
+  flex-direction: column;
+  margin-left: 5%;
+}

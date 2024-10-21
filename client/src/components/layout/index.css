@@ -1,0 +1,60 @@
+.main {
+  display: flex;
+  flex-direction: row;
+  height: 90%;
+}
+
+.right_main {
+  width: 85%;
+  overflow: auto;
+}
+
+.space_between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.right_padding {
+  padding: 2% 0 2% 2%;
+}
+
+.bold_title {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 40px;
+}
+
+.bluebtn {
+  background: #3090e2;
+  color: #ffffff;
+  border: #000000 1px solid;
+  font-size: 20px;
+  padding: 10px 10px 10px 10px;
+  margin-right: 5%;
+}
+
+.bluebtn:hover {
+  background: #0056b3;
+}
+
+.btn_indicator_container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* This will push child elements to the extremes of the container */
+  width: 100%;
+}
+
+.form_postBtn {
+  background: #3090e2;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.mandatory_indicator {
+  font-size: 0.8rem;
+  color: red;
+  margin-top: 10px;
+}

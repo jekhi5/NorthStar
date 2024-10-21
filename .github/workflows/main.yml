@@ -1,0 +1,63 @@
+name: FakeStackOverflow CI
+on: # Controls when the action will run.
+  # Triggers the workflow on push or pull request events but only for the master branch. If you want to trigger the action on other branches, add here
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-and-test: #
+    # The type of runner that the job will run on
+    runs-on: ubuntu-20.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Launch MongoDB Server
+        uses: supercharge/mongodb-github-action@1.11.0
+        with:
+          mongodb-version: "7.0"
+
+      - name: Build and lint frontend
+        if: ${{ always() }}
+        env:
+          REACT_APP_SERVER_URL: http://localhost:8000
+        run: cd client; npm i && npm run build && npm run lint
+
+      - name: Build backend service
+        if: ${{ always() }}
+        run: cd server; npm i
+
+      - name: Test backend server
+        if: ${{ always() }}
+        env:
+          # Pass the environmental variables for the backend tests to use
+          MONGODB_URI: mongodb://localhost:27017
+        run: |
+          cd server
+
+          npm run start & sleep 10
+
+          echo "Checking if the server is running..."
+          curl --fail 'http://localhost:8000/question/getQuestion?order=newest&search=' || (echo "Server failed to start" && killall node && exit 1)
+
+          echo "Server started successfully. Now stopping..."
+          killall node
+
+          npm run test
+
+      - name: Lint backend
+        if: ${{ always() }}
+        run: cd server; npm run lint
