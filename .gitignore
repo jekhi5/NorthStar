@@ -108,3 +108,6 @@ server/package-lock.json
 .stryker-tmp/
 server/reports
 
+.DS_Store
+.AppleDouble
+.LSOverride
