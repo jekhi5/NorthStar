@@ -180,7 +180,7 @@ const useAnswerPage = () => {
       } else if (voteData.type === 'Comment') {
         setQuestion(prevQuestion =>
           prevQuestion
-            ? // Updates answers with a matching object ID, and creates a new Question object
+            ? // Updates answer with a comment with the matching object ID, and creates a new Question object
               {
                 ...prevQuestion,
                 answers: prevQuestion.answers.map(a =>
@@ -198,6 +198,15 @@ const useAnswerPage = () => {
                         ),
                       }
                     : a,
+                ),
+                comments: prevQuestion.comments.map(c =>
+                  c._id === voteData.id
+                    ? {
+                        ...c,
+                        upVotes: [...voteData.upVotes],
+                        downVotes: [...voteData.downVotes],
+                      }
+                    : c,
                 ),
               }
             : prevQuestion,
