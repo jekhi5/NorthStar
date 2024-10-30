@@ -35,6 +35,8 @@ describe('POST /addComment', () => {
       text: 'This is a test comment',
       commentBy: 'dummyUserId',
       commentDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
     ***REMOVED***
 
     saveCommentSpy.mockResolvedValueOnce(mockComment);
@@ -75,6 +77,8 @@ describe('POST /addComment', () => {
       text: 'This is a test comment',
       commentBy: 'dummyUserId',
       commentDateTime: mockComment.commentDateTime.toISOString(),
+      upVotes: [],
+      downVotes: [],
     });
   });
 
@@ -96,6 +100,8 @@ describe('POST /addComment', () => {
       text: 'This is a test comment',
       commentBy: 'dummyUserId',
       commentDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
     ***REMOVED***
 
     saveCommentSpy.mockResolvedValueOnce(mockComment);
@@ -105,6 +111,8 @@ describe('POST /addComment', () => {
       text: 'This is a test answer',
       ansBy: 'dummyUserId',
       ansDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
       comments: [mockComment._id],
     });
 
@@ -113,6 +121,8 @@ describe('POST /addComment', () => {
       text: 'This is a test answer',
       ansBy: 'dummyUserId',
       ansDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
       comments: [mockComment],
     });
 
@@ -124,6 +134,8 @@ describe('POST /addComment', () => {
       text: 'This is a test comment',
       commentBy: 'dummyUserId',
       commentDateTime: mockComment.commentDateTime.toISOString(),
+      upVotes: [],
+      downVotes: [],
     });
   });
 
@@ -305,6 +317,8 @@ describe('POST /addComment', () => {
       text: 'This is a test comment',
       commentBy: 'dummyUserId',
       commentDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
     ***REMOVED***
 
     saveCommentSpy.mockResolvedValueOnce(mockComment);
@@ -336,6 +350,8 @@ describe('POST /addComment', () => {
       text: 'This is a test comment',
       commentBy: 'dummyUserId',
       commentDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
     ***REMOVED***
 
     const mockQuestion = {

@@ -22,6 +22,8 @@ export interface Answer {
   text: string;
   ansBy: string;
   ansDateTime: Date;
+  upVotes: string[];
+  downVotes: string[];
   comments: Comment[] | ObjectId[];
 }
 
@@ -129,7 +131,7 @@ export interface AddQuestionRequest extends Request {
  */
 export interface VoteRequest extends Request {
   body: {
-    qid: string;
+    id: string;
     username: string;
   ***REMOVED***
 }
@@ -147,6 +149,8 @@ export interface Comment {
   text: string;
   commentBy: string;
   commentDateTime: Date;
+  upVotes: string[];
+  downVotes: string[];
 }
 
 /**
@@ -185,7 +189,7 @@ export interface CommentUpdatePayload {
  * - downVotes - An array of usernames who downvoted the question.
  */
 export interface VoteUpdatePayload {
-  qid: string;
+  id: string;
   upVotes: string[];
   downVotes: string[];
 }

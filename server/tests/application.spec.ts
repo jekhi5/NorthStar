@@ -46,6 +46,8 @@ const com1: Comment = {
   text: 'com1',
   commentBy: 'com_by1',
   commentDateTime: new Date('2023-11-18T09:25:00'),
+  upVotes: [],
+  downVotes: [],
 ***REMOVED***
 
 const ans1: Answer = {
@@ -53,6 +55,8 @@ const ans1: Answer = {
   text: 'ans1',
   ansBy: 'ansBy1',
   ansDateTime: new Date('2023-11-18T09:24:00'),
+  upVotes: [],
+  downVotes: [],
   comments: [],
 ***REMOVED***
 
@@ -61,6 +65,8 @@ const ans2: Answer = {
   text: 'ans2',
   ansBy: 'ansBy2',
   ansDateTime: new Date('2023-11-20T09:24:00'),
+  upVotes: [],
+  downVotes: [],
   comments: [],
 ***REMOVED***
 
@@ -69,6 +75,8 @@ const ans3: Answer = {
   text: 'ans3',
   ansBy: 'ansBy3',
   ansDateTime: new Date('2023-11-19T09:24:00'),
+  upVotes: [],
+  downVotes: [],
   comments: [],
 ***REMOVED***
 
@@ -77,6 +85,8 @@ const ans4: Answer = {
   text: 'ans4',
   ansBy: 'ansBy4',
   ansDateTime: new Date('2023-11-19T09:24:00'),
+  upVotes: [],
+  downVotes: [],
   comments: [],
 ***REMOVED***
 
@@ -597,6 +607,8 @@ describe('application module', () => {
           text: 'This is a test answer',
           ansBy: 'dummyUserId',
           ansDateTime: new Date('2024-06-06'),
+          upVotes: [],
+          downVotes: [],
           comments: [],
         ***REMOVED***
 

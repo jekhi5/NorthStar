@@ -72,8 +72,8 @@ export interface TagData {
  * - upVotes - An array of user IDs who upvoted the question
  * - downVotes - An array of user IDs who downvoted the question
  */
-export interface VoteData {
-  qid: string;
+export interface QuestionVoteData {
+  id: string;
   upVotes: string[];
   downVotes: string[];
 }
@@ -131,7 +131,7 @@ export interface Question {
  * Interface representing the payload for a vote update socket event.
  */
 export interface VoteUpdatePayload {
-  qid: string;
+  id: string;
   upVotes: string[];
   downVotes: string[];
 }
