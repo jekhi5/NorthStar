@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Comment, Answer, Question, QuestionVoteData } from '../types';
 import useUserContext from './useUserContext';
-import addComment from '../services/commentService';
+import { addComment } from '../services/commentService';
 import { getQuestionById } from '../services/questionService';
 
 /**

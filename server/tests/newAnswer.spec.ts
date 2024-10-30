@@ -300,7 +300,7 @@ describe('POST /upvoteAnswer', () => {
       username: 'new-user',
     ***REMOVED***
 
-    // First upvote the question
+    // First upvote the answer
     let mockResponseWithBothVotes: MockResponse = {
       msg: 'Answer upvoted successfully',
       upVotes: ['new-user'],
@@ -314,7 +314,7 @@ describe('POST /upvoteAnswer', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockResponseWithBothVotes);
 
-    // Now downvote the question
+    // Now downvote the answer
     mockResponseWithBothVotes = {
       msg: 'Answer downvoted successfully',
       downVotes: ['new-user'],
@@ -366,7 +366,7 @@ describe('POST /downvoteAnswer', () => {
     ***REMOVED***
 
     const mockResponse = {
-      msg: 'Answer upvoted successfully',
+      msg: 'Answer downvoted successfully',
       downVotes: ['new-user'],
       upVotes: [],
     ***REMOVED***
@@ -421,7 +421,7 @@ describe('POST /downvoteAnswer', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockResponse);
 
-    // Then upvote the question
+    // Then upvote the answer
     mockResponse = {
       msg: 'Answer upvoted successfully',
       downVotes: [],
