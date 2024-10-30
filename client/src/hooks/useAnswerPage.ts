@@ -211,6 +211,8 @@ const useAnswerPage = () => {
               }
             : prevQuestion,
         );
+      } else {
+        throw new Error('Invalid type provided');
       }
     };
 
