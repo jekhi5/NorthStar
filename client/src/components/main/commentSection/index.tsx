@@ -40,6 +40,8 @@ const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => 
       text,
       commentBy: user.username,
       commentDateTime: new Date(),
+      upVotes: [],
+      downVotes: [],
     ***REMOVED***
 
     handleAddComment(newComment);
