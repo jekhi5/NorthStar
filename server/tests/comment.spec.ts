@@ -6,7 +6,14 @@ import { Question } from '../types';
 
 const saveCommentSpy = jest.spyOn(util, 'saveComment');
 const addCommentSpy = jest.spyOn(util, 'addComment');
+const addVoteToCommentSpy = jest.spyOn(util, 'addVoteToComment');
 const popDocSpy = jest.spyOn(util, 'populateDocument');
+
+interface MockResponse {
+  msg: string;
+  upVotes: string[];
+  downVotes: string[];
+}
 
 describe('POST /addComment', () => {
   afterEach(async () => {
@@ -376,5 +383,219 @@ describe('POST /addComment', () => {
 
     expect(response.status).toBe(500);
     expect(response.text).toBe('Error when adding comment: Error when populating document');
+  });
+});
+
+describe('POST /upvoteComment', () => {
+  afterEach(async () => {
+    await mongoose.connection.close(); // Ensure the connection is properly closed
+  });
+
+  afterAll(async () => {
+    await mongoose.disconnect(); // Ensure mongoose is disconnected after all tests
+  });
+
+  it('should upvote a comment successfully', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'new-user',
+    };
+
+    const mockResponse = {
+      msg: 'Comment upvoted successfully',
+      upVotes: ['new-user'],
+      downVotes: [],
+    };
+
+    addVoteToCommentSpy.mockResolvedValueOnce(mockResponse);
+
+    const response = await supertest(app).post('/comment/upvoteComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponse);
+  });
+
+  it('should cancel the upvote successfully', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'some-user',
+    };
+
+    const mockSecondResponse = {
+      msg: 'Upvote cancelled successfully',
+      upVotes: [],
+      downVotes: [],
+    };
+
+    await supertest(app).post('/comment/upvoteComment').send(mockReqBody);
+
+    addVoteToCommentSpy.mockResolvedValueOnce(mockSecondResponse);
+
+    const response = await supertest(app).post('/comment/upvoteComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockSecondResponse);
+  });
+
+  it('should handle upvote and then downvote by the same user', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'new-user',
+    };
+
+    // First upvote the comment
+    let mockResponseWithBothVotes: MockResponse = {
+      msg: 'Comment upvoted successfully',
+      upVotes: ['new-user'],
+      downVotes: [],
+    };
+
+    addVoteToCommentSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
+
+    let response = await supertest(app).post('/comment/upvoteComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponseWithBothVotes);
+
+    // Now downvote the question
+    mockResponseWithBothVotes = {
+      msg: 'Comment downvoted successfully',
+      downVotes: ['new-user'],
+      upVotes: [],
+    };
+
+    addVoteToCommentSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
+
+    response = await supertest(app).post('/Comment/downvoteComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponseWithBothVotes);
+  });
+
+  it('should return bad request error if the request had id missing', async () => {
+    const mockReqBody = {
+      username: 'some-user',
+    };
+
+    const response = await supertest(app).post(`/comment/upvoteComment`).send(mockReqBody);
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should return bad request error if the request had username missing', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+    };
+
+    const response = await supertest(app).post(`/comment/upvoteComment`).send(mockReqBody);
+
+    expect(response.status).toBe(400);
+  });
+});
+
+describe('POST /downvoteComment', () => {
+  afterEach(async () => {
+    await mongoose.connection.close(); // Ensure the connection is properly closed
+  });
+
+  afterAll(async () => {
+    await mongoose.disconnect(); // Ensure mongoose is disconnected after all tests
+  });
+
+  it('should downvote a comment successfully', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'new-user',
+    };
+
+    const mockResponse = {
+      msg: 'Comment downvoted successfully',
+      downVotes: ['new-user'],
+      upVotes: [],
+    };
+
+    addVoteToCommentSpy.mockResolvedValueOnce(mockResponse);
+
+    const response = await supertest(app).post('/comment/downvoteComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponse);
+  });
+
+  it('should cancel the downvote successfully', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'some-user',
+    };
+
+    const mockSecondResponse = {
+      msg: 'Downvote cancelled successfully',
+      downVotes: [],
+      upVotes: [],
+    };
+
+    await supertest(app).post('/comment/downvoteComment').send(mockReqBody);
+
+    addVoteToCommentSpy.mockResolvedValueOnce(mockSecondResponse);
+
+    const response = await supertest(app).post('/comment/downvoteComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockSecondResponse);
+  });
+
+  it('should handle downvote and then upvote by the same user', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'new-user',
+    };
+
+    // First downvote the comment
+    let mockResponse: MockResponse = {
+      msg: 'Comment downvoted successfully',
+      downVotes: ['new-user'],
+      upVotes: [],
+    };
+
+    addVoteToCommentSpy.mockResolvedValueOnce(mockResponse);
+
+    let response = await supertest(app).post('/comment/downvoteComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponse);
+
+    // Then upvote the question
+    mockResponse = {
+      msg: 'Comment upvoted successfully',
+      downVotes: [],
+      upVotes: ['new-user'],
+    };
+
+    addVoteToCommentSpy.mockResolvedValueOnce(mockResponse);
+
+    response = await supertest(app).post('/comment/upvoteComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponse);
+  });
+
+  it('should return bad request error if the request had id missing', async () => {
+    const mockReqBody = {
+      username: 'some-user',
+    };
+
+    const response = await supertest(app).post(`/comment/downvoteComment`).send(mockReqBody);
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should return bad request error if the request had username missing', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+    };
+
+    const response = await supertest(app).post(`/comment/downvoteComment`).send(mockReqBody);
+
+    expect(response.status).toBe(400);
   });
 });

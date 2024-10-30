@@ -21,7 +21,7 @@ const addAnswer = async (qid: string, ans: Answer): Promise<Answer> => {
 };
 
 /**
- * Function to upvote a answer.
+ * Function to upvote an answer.
  *
  * @param id - The ID of the answer to upvote.
  * @param username - The username of the person upvoting the answer.
@@ -37,11 +37,11 @@ const upvoteAnswer = async (id: string, username: string) => {
 };
 
 /**
- * Function to downvote a question.
+ * Function to downvote an answer.
  *
- * @param qid - The ID of the question to downvote.
- * @param username - The username of the person downvoting the question.
- * @throws Error if there is an issue downvoting the question.
+ * @param qid - The ID of the answer to downvote.
+ * @param username - The username of the person downvoting the answer.
+ * @throws Error if there is an issue downvoting the answer.
  */
 const downvoteAnswer = async (id: string, username: string) => {
   const data = { id, username };

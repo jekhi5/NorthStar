@@ -1,7 +1,7 @@
 import express, { Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Comment, AddCommentRequest, FakeSOSocket } from '../types';
-import { addComment, populateDocument, saveComment } from '../models/application';
+import { Comment, AddCommentRequest, FakeSOSocket, VoteRequest } from '../types';
+import { addComment, addVoteToComment, populateDocument, saveComment } from '../models/application';
 
 const commentController = (socket: FakeSOSocket) => {
   const router = express.Router();
@@ -98,7 +98,80 @@ const commentController = (socket: FakeSOSocket) => {
     }
   };
 
+  /**
+   * Helper function to handle upvoting or downvoting a comment.
+   *
+   * @param req The VoteRequest object containing the comment ID and the username.
+   * @param res The HTTP response object used to send back the result of the operation.
+   * @param type The type of vote to perform (upvote or downvote).
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const voteComment = async (
+    req: VoteRequest,
+    res: Response,
+    type: 'upvote' | 'downvote',
+  ): Promise<void> => {
+    if (!req.body.id || !req.body.username) {
+      res.status(400).send('Invalid request');
+      return;
+    }
+
+    const { id, username } = req.body;
+
+    try {
+      let status;
+      if (type === 'upvote') {
+        status = await addVoteToComment(new ObjectId(id), username, type);
+      } else {
+        status = await addVoteToComment(new ObjectId(id), username, type);
+      }
+
+      if (status && 'error' in status) {
+        throw new Error(status.error as string);
+      }
+
+      // Emit the updated vote counts to all connected clients
+      socket.emit('voteUpdate', {
+        id,
+        upVotes: status.upVotes,
+        downVotes: status.downVotes,
+      });
+      res.json({ msg: status.msg, upVotes: status.upVotes, downVotes: status.downVotes });
+    } catch (err) {
+      res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
+    }
+  };
+
+  /**
+   * Handles upvoting a comment. The request must contain the comment ID and the username.
+   * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
+   *
+   * @param req The VoteRequest object containing the comment ID and the username.
+   * @param res The HTTP response object used to send back the result of the operation.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const upvoteComment = async (req: VoteRequest, res: Response): Promise<void> => {
+    voteComment(req, res, 'upvote');
+  };
+
+  /**
+   * Handles downvoting a comment. The request must contain the comment ID and the username.
+   * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
+   *
+   * @param req The VoteRequest object containing the comment ID and the username.
+   * @param res The HTTP response object used to send back the result of the operation.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const downvoteComment = async (req: VoteRequest, res: Response): Promise<void> => {
+    voteComment(req, res, 'downvote');
+  };
+
   router.post('/addComment', addCommentRoute);
+  router.post('/upvoteComment', upvoteComment);
+  router.post('/downvoteComment', downvoteComment);
 
   return router;
 };

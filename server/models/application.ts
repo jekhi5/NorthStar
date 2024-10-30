@@ -569,9 +569,9 @@ export const addAnswerToQuestion = async (qid: string, ans: Answer): Promise<Que
 };
 
 /**
- * Adds a vote to a question.
+ * Adds a vote to an answer.
  *
- * @param id The ID of the question to add a vote to.
+ * @param id The ID of the answer to add a vote to.
  * @param username The username of the user who voted.
  * @param type The type of vote to add, either 'upvote' or 'downvote'.
  *
@@ -659,8 +659,8 @@ export const addVoteToAnswer = async (
     return {
       error:
         type === 'upvote'
-          ? 'Error when adding upvote to question'
-          : 'Error when adding downvote to question',
+          ? 'Error when adding upvote to answer'
+          : 'Error when adding downvote to answer',
     };
   }
 };
@@ -703,6 +703,103 @@ export const addComment = async (
     return result;
   } catch (error) {
     return { error: `Error when adding comment: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Adds a vote to a comment.
+ *
+ * @param id The ID of the comment to add a vote to.
+ * @param username The username of the user who voted.
+ * @param type The type of vote to add, either 'upvote' or 'downvote'.
+ *
+ * @returns A Promise that resolves to an object containing either a success message or an error message,
+ *          along with the updated upVotes and downVotes arrays.
+ */
+export const addVoteToComment = async (
+  id: ObjectId,
+  username: string,
+  type: 'upvote' | 'downvote',
+): Promise<{ msg: string; upVotes: string[]; downVotes: string[] } | { error: string }> => {
+  let updateOperation: QueryOptions;
+
+  if (type === 'upvote') {
+    updateOperation = [
+      {
+        $set: {
+          upVotes: {
+            $cond: [
+              { $in: [username, '$upVotes'] },
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
+              { $concatArrays: ['$upVotes', [username]] },
+            ],
+          },
+          downVotes: {
+            $cond: [
+              { $in: [username, '$upVotes'] },
+              '$downVotes',
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
+            ],
+          },
+        },
+      },
+    ];
+  } else {
+    updateOperation = [
+      {
+        $set: {
+          downVotes: {
+            $cond: [
+              { $in: [username, '$downVotes'] },
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
+              { $concatArrays: ['$downVotes', [username]] },
+            ],
+          },
+          upVotes: {
+            $cond: [
+              { $in: [username, '$downVotes'] },
+              '$upVotes',
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
+            ],
+          },
+        },
+      },
+    ];
+  }
+
+  try {
+    const result = await CommentModel.findOneAndUpdate({ _id: id }, updateOperation, {
+      new: true,
+    });
+
+    if (!result) {
+      return { error: 'Answer not found!' };
+    }
+
+    let msg = '';
+
+    if (type === 'upvote') {
+      msg = result.upVotes.includes(username)
+        ? 'Comment upvoted successfully'
+        : 'Upvote cancelled successfully';
+    } else {
+      msg = result.downVotes.includes(username)
+        ? 'Comment downvoted successfully'
+        : 'Downvote cancelled successfully';
+    }
+
+    return {
+      msg,
+      upVotes: result.upVotes || [],
+      downVotes: result.downVotes || [],
+    };
+  } catch (err) {
+    return {
+      error:
+        type === 'upvote'
+          ? 'Error when adding upvote to comment'
+          : 'Error when adding downvote to comment',
+    };
   }
 };
 
