@@ -20,4 +20,36 @@ const addAnswer = async (qid: string, ans: Answer): Promise<Answer> => {
   return res.data;
 };
 
-export default addAnswer;
+/**
+ * Function to upvote a answer.
+ *
+ * @param id - The ID of the answer to upvote.
+ * @param username - The username of the person upvoting the answer.
+ * @throws Error if there is an issue upvoting the answer.
+ */
+const upvoteAnswer = async (id: string, username: string) => {
+  const data = { id, username };
+  const res = await api.post(`${ANSWER_API_URL}/upvoteAnswer`, data);
+  if (res.status !== 200) {
+    throw new Error('Error while upvoting the answer');
+  }
+  return res.data;
+};
+
+/**
+ * Function to downvote a question.
+ *
+ * @param qid - The ID of the question to downvote.
+ * @param username - The username of the person downvoting the question.
+ * @throws Error if there is an issue downvoting the question.
+ */
+const downvoteAnswer = async (id: string, username: string) => {
+  const data = { id, username };
+  const res = await api.post(`${ANSWER_API_URL}/downvoteAnswer`, data);
+  if (res.status !== 200) {
+    throw new Error('Error while downvoting the answer');
+  }
+  return res.data;
+};
+
+export { addAnswer, upvoteAnswer, downvoteAnswer };

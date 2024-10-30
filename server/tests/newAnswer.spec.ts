@@ -6,7 +6,14 @@ import * as util from '../models/application';
 
 const saveAnswerSpy = jest.spyOn(util, 'saveAnswer');
 const addAnswerToQuestionSpy = jest.spyOn(util, 'addAnswerToQuestion');
+const addVoteToAnswerSpy = jest.spyOn(util, 'addVoteToAnswer');
 const popDocSpy = jest.spyOn(util, 'populateDocument');
+
+interface MockResponse {
+  msg: string;
+  upVotes: string[];
+  downVotes: string[];
+}
 
 describe('POST /addAnswer', () => {
   afterEach(async () => {
@@ -34,6 +41,8 @@ describe('POST /addAnswer', () => {
       text: 'This is a test answer',
       ansBy: 'dummyUserId',
       ansDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
       comments: [],
     };
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
@@ -74,6 +83,8 @@ describe('POST /addAnswer', () => {
       text: 'This is a test answer',
       ansBy: 'dummyUserId',
       ansDateTime: mockAnswer.ansDateTime.toISOString(),
+      upVotes: [],
+      downVotes: [],
       comments: [],
     });
   });
@@ -174,6 +185,8 @@ describe('POST /addAnswer', () => {
       text: 'This is a test answer',
       ansBy: 'dummyUserId',
       ansDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
       comments: [],
     };
 
@@ -201,6 +214,8 @@ describe('POST /addAnswer', () => {
       text: 'This is a test answer',
       ansBy: 'dummyUserId',
       ansDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
       comments: [],
     };
 
@@ -225,5 +240,219 @@ describe('POST /addAnswer', () => {
     const response = await supertest(app).post('/answer/addAnswer').send(mockReqBody);
 
     expect(response.status).toBe(500);
+  });
+});
+
+describe('POST /upvoteAnswer', () => {
+  afterEach(async () => {
+    await mongoose.connection.close(); // Ensure the connection is properly closed
+  });
+
+  afterAll(async () => {
+    await mongoose.disconnect(); // Ensure mongoose is disconnected after all tests
+  });
+
+  it('should upvote a answer successfully', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'new-user',
+    };
+
+    const mockResponse = {
+      msg: 'Answer upvoted successfully',
+      upVotes: ['new-user'],
+      downVotes: [],
+    };
+
+    addVoteToAnswerSpy.mockResolvedValueOnce(mockResponse);
+
+    const response = await supertest(app).post('/answer/upvoteAnswer').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponse);
+  });
+
+  it('should cancel the upvote successfully', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'some-user',
+    };
+
+    const mockSecondResponse = {
+      msg: 'Upvote cancelled successfully',
+      upVotes: [],
+      downVotes: [],
+    };
+
+    await supertest(app).post('/answer/upvoteAnswer').send(mockReqBody);
+
+    addVoteToAnswerSpy.mockResolvedValueOnce(mockSecondResponse);
+
+    const response = await supertest(app).post('/answer/upvoteAnswer').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockSecondResponse);
+  });
+
+  it('should handle upvote and then downvote by the same user', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'new-user',
+    };
+
+    // First upvote the question
+    let mockResponseWithBothVotes: MockResponse = {
+      msg: 'Answer upvoted successfully',
+      upVotes: ['new-user'],
+      downVotes: [],
+    };
+
+    addVoteToAnswerSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
+
+    let response = await supertest(app).post('/answer/upvoteAnswer').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponseWithBothVotes);
+
+    // Now downvote the question
+    mockResponseWithBothVotes = {
+      msg: 'Answer downvoted successfully',
+      downVotes: ['new-user'],
+      upVotes: [],
+    };
+
+    addVoteToAnswerSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
+
+    response = await supertest(app).post('/answer/downvoteAnswer').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponseWithBothVotes);
+  });
+
+  it('should return bad request error if the request had id missing', async () => {
+    const mockReqBody = {
+      username: 'some-user',
+    };
+
+    const response = await supertest(app).post(`/answer/upvoteAnswer`).send(mockReqBody);
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should return bad request error if the request had username missing', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+    };
+
+    const response = await supertest(app).post(`/answer/upvoteAnswer`).send(mockReqBody);
+
+    expect(response.status).toBe(400);
+  });
+});
+
+describe('POST /downvoteAnswer', () => {
+  afterEach(async () => {
+    await mongoose.connection.close(); // Ensure the connection is properly closed
+  });
+
+  afterAll(async () => {
+    await mongoose.disconnect(); // Ensure mongoose is disconnected after all tests
+  });
+
+  it('should downvote a answer successfully', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'new-user',
+    };
+
+    const mockResponse = {
+      msg: 'Answer upvoted successfully',
+      downVotes: ['new-user'],
+      upVotes: [],
+    };
+
+    addVoteToAnswerSpy.mockResolvedValueOnce(mockResponse);
+
+    const response = await supertest(app).post('/answer/downvoteAnswer').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponse);
+  });
+
+  it('should cancel the downvote successfully', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'some-user',
+    };
+
+    const mockSecondResponse = {
+      msg: 'Downvote cancelled successfully',
+      downVotes: [],
+      upVotes: [],
+    };
+
+    await supertest(app).post('/answer/downvoteAnswer').send(mockReqBody);
+
+    addVoteToAnswerSpy.mockResolvedValueOnce(mockSecondResponse);
+
+    const response = await supertest(app).post('/answer/downvoteAnswer').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockSecondResponse);
+  });
+
+  it('should handle downvote and then upvote by the same user', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+      username: 'new-user',
+    };
+
+    // First downvote the answer
+    let mockResponse: MockResponse = {
+      msg: 'Answer downvoted successfully',
+      downVotes: ['new-user'],
+      upVotes: [],
+    };
+
+    addVoteToAnswerSpy.mockResolvedValueOnce(mockResponse);
+
+    let response = await supertest(app).post('/answer/downvoteAnswer').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponse);
+
+    // Then upvote the question
+    mockResponse = {
+      msg: 'Answer upvoted successfully',
+      downVotes: [],
+      upVotes: ['new-user'],
+    };
+
+    addVoteToAnswerSpy.mockResolvedValueOnce(mockResponse);
+
+    response = await supertest(app).post('/answer/upvoteAnswer').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockResponse);
+  });
+
+  it('should return bad request error if the request had id missing', async () => {
+    const mockReqBody = {
+      username: 'some-user',
+    };
+
+    const response = await supertest(app).post(`/answer/downvoteAnswer`).send(mockReqBody);
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should return bad request error if the request had username missing', async () => {
+    const mockReqBody = {
+      id: '65e9b5a995b6c7045a30d823',
+    };
+
+    const response = await supertest(app).post(`/answer/downvoteAnswer`).send(mockReqBody);
+
+    expect(response.status).toBe(400);
   });
 });

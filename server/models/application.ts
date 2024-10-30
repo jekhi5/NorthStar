@@ -569,6 +569,103 @@ export const addAnswerToQuestion = async (qid: string, ans: Answer): Promise<Que
 };
 
 /**
+ * Adds a vote to a question.
+ *
+ * @param id The ID of the question to add a vote to.
+ * @param username The username of the user who voted.
+ * @param type The type of vote to add, either 'upvote' or 'downvote'.
+ *
+ * @returns A Promise that resolves to an object containing either a success message or an error message,
+ *          along with the updated upVotes and downVotes arrays.
+ */
+export const addVoteToAnswer = async (
+  id: ObjectId,
+  username: string,
+  type: 'upvote' | 'downvote',
+): Promise<{ msg: string; upVotes: string[]; downVotes: string[] } | { error: string }> => {
+  let updateOperation: QueryOptions;
+
+  if (type === 'upvote') {
+    updateOperation = [
+      {
+        $set: {
+          upVotes: {
+            $cond: [
+              { $in: [username, '$upVotes'] },
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
+              { $concatArrays: ['$upVotes', [username]] },
+            ],
+          },
+          downVotes: {
+            $cond: [
+              { $in: [username, '$upVotes'] },
+              '$downVotes',
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
+            ],
+          },
+        },
+      },
+    ];
+  } else {
+    updateOperation = [
+      {
+        $set: {
+          downVotes: {
+            $cond: [
+              { $in: [username, '$downVotes'] },
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
+              { $concatArrays: ['$downVotes', [username]] },
+            ],
+          },
+          upVotes: {
+            $cond: [
+              { $in: [username, '$downVotes'] },
+              '$upVotes',
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
+            ],
+          },
+        },
+      },
+    ];
+  }
+
+  try {
+    const result = await AnswerModel.findOneAndUpdate({ _id: id }, updateOperation, {
+      new: true,
+    });
+
+    if (!result) {
+      return { error: 'Answer not found!' };
+    }
+
+    let msg = '';
+
+    if (type === 'upvote') {
+      msg = result.upVotes.includes(username)
+        ? 'Answer upvoted successfully'
+        : 'Upvote cancelled successfully';
+    } else {
+      msg = result.downVotes.includes(username)
+        ? 'Answer downvoted successfully'
+        : 'Downvote cancelled successfully';
+    }
+
+    return {
+      msg,
+      upVotes: result.upVotes || [],
+      downVotes: result.downVotes || [],
+    };
+  } catch (err) {
+    return {
+      error:
+        type === 'upvote'
+          ? 'Error when adding upvote to question'
+          : 'Error when adding downvote to question',
+    };
+  }
+};
+
+/**
  * Adds a comment to a question or answer.
  *
  * @param id The ID of the question or answer to add a comment to

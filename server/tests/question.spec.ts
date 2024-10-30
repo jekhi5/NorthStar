@@ -26,6 +26,8 @@ const ans1 = {
   text: 'Answer 1 Text',
   ansBy: 'answer1_user',
   ansDateTime: '2024-06-09',
+  upVotes: [],
+  downVotes: [],
   comments: [],
 };
 
@@ -34,6 +36,8 @@ const ans2 = {
   text: 'Answer 2 Text',
   ansBy: 'answer2_user',
   ansDateTime: '2024-06-10',
+  upVotes: [],
+  downVotes: [],
   comments: [],
 };
 
@@ -42,6 +46,8 @@ const ans3 = {
   text: 'Answer 3 Text',
   ansBy: 'answer3_user',
   ansDateTime: '2024-06-11',
+  upVotes: [],
+  downVotes: [],
   comments: [],
 };
 
@@ -50,6 +56,8 @@ const ans4 = {
   text: 'Answer 4 Text',
   ansBy: 'answer4_user',
   ansDateTime: '2024-06-14',
+  upVotes: [],
+  downVotes: [],
   comments: [],
 };
 
@@ -106,7 +114,7 @@ describe('POST /upvoteQuestion', () => {
 
   it('should upvote a question successfully', async () => {
     const mockReqBody = {
-      qid: '65e9b5a995b6c7045a30d823',
+      id: '65e9b5a995b6c7045a30d823',
       username: 'new-user',
     };
 
@@ -126,7 +134,7 @@ describe('POST /upvoteQuestion', () => {
 
   it('should cancel the upvote successfully', async () => {
     const mockReqBody = {
-      qid: '65e9b5a995b6c7045a30d823',
+      id: '65e9b5a995b6c7045a30d823',
       username: 'some-user',
     };
 
@@ -148,7 +156,7 @@ describe('POST /upvoteQuestion', () => {
 
   it('should handle upvote and then downvote by the same user', async () => {
     const mockReqBody = {
-      qid: '65e9b5a995b6c7045a30d823',
+      id: '65e9b5a995b6c7045a30d823',
       username: 'new-user',
     };
 
@@ -213,7 +221,7 @@ describe('POST /downvoteQuestion', () => {
 
   it('should downvote a question successfully', async () => {
     const mockReqBody = {
-      qid: '65e9b5a995b6c7045a30d823',
+      id: '65e9b5a995b6c7045a30d823',
       username: 'new-user',
     };
 
@@ -233,7 +241,7 @@ describe('POST /downvoteQuestion', () => {
 
   it('should cancel the downvote successfully', async () => {
     const mockReqBody = {
-      qid: '65e9b5a995b6c7045a30d823',
+      id: '65e9b5a995b6c7045a30d823',
       username: 'some-user',
     };
 
@@ -255,7 +263,7 @@ describe('POST /downvoteQuestion', () => {
 
   it('should handle downvote and then upvote by the same user', async () => {
     const mockReqBody = {
-      qid: '65e9b5a995b6c7045a30d823',
+      id: '65e9b5a995b6c7045a30d823',
       username: 'new-user',
     };
 
@@ -300,7 +308,7 @@ describe('POST /downvoteQuestion', () => {
 
   it('should return bad request error if the request had username missing', async () => {
     const mockReqBody = {
-      qid: '65e9b5a995b6c7045a30d823',
+      id: '65e9b5a995b6c7045a30d823',
     };
 
     const response = await supertest(app).post(`/question/downvoteQuestion`).send(mockReqBody);

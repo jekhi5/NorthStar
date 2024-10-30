@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Comment, Answer, Question, VoteData } from '../types';
+import { Comment, Answer, Question, QuestionVoteData } from '../types';
 import useUserContext from './useUserContext';
 import addComment from '../services/commentService';
 import { getQuestionById } from '../services/questionService';
@@ -144,16 +144,16 @@ const useAnswerPage = () => {
     /**
      * Function to handle vote updates for a question.
      *
-     * @param voteData - The updated vote data for a question
+     * @param QuestionVoteData - The updated vote data for a question
      */
-    const handleVoteUpdate = (voteData: VoteData) => {
-      if (voteData.qid === questionID) {
+    const handleVoteUpdate = (questionVoteData: QuestionVoteData) => {
+      if (questionVoteData.id === questionID) {
         setQuestion(prevQuestion =>
           prevQuestion
             ? {
                 ...prevQuestion,
-                upVotes: [...voteData.upVotes],
-                downVotes: [...voteData.downVotes],
+                upVotes: [...questionVoteData.upVotes],
+                downVotes: [...questionVoteData.downVotes],
               }
             : prevQuestion,
         );

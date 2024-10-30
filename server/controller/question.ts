@@ -174,19 +174,19 @@ const questionController = (socket: FakeSOSocket) => {
     res: Response,
     type: 'upvote' | 'downvote',
   ): Promise<void> => {
-    if (!req.body.qid || !req.body.username) {
+    if (!req.body.id || !req.body.username) {
       res.status(400).send('Invalid request');
       return;
     }
 
-    const { qid, username } = req.body;
+    const { id, username } = req.body;
 
     try {
       let status;
       if (type === 'upvote') {
-        status = await addVoteToQuestion(qid, username, type);
+        status = await addVoteToQuestion(id, username, type);
       } else {
-        status = await addVoteToQuestion(qid, username, type);
+        status = await addVoteToQuestion(id, username, type);
       }
 
       if (status && 'error' in status) {
@@ -194,7 +194,11 @@ const questionController = (socket: FakeSOSocket) => {
       }
 
       // Emit the updated vote counts to all connected clients
-      socket.emit('voteUpdate', { qid, upVotes: status.upVotes, downVotes: status.downVotes });
+      socket.emit('voteUpdate', {
+        id,
+        upVotes: status.upVotes,
+        downVotes: status.downVotes,
+      });
       res.json({ msg: status.msg, upVotes: status.upVotes, downVotes: status.downVotes });
     } catch (err) {
       res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
