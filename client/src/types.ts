@@ -36,6 +36,7 @@ export type OrderType = keyof typeof orderTypeDisplayName;
  * downVotes - An array of usernames who downvoted the comment.
  */
 export interface Comment {
+  _id?: string;
   text: string;
   commentBy: string;
   commentDateTime: Date;
@@ -72,10 +73,11 @@ export interface TagData {
  * - upVotes - An array of user IDs who upvoted the question
  * - downVotes - An array of user IDs who downvoted the question
  */
-export interface QuestionVoteData {
+export interface VoteData {
   id: string;
   upVotes: string[];
   downVotes: string[];
+  type: 'Question' | 'Answer' | 'Comment';
 }
 
 /**
@@ -134,6 +136,7 @@ export interface VoteUpdatePayload {
   id: string;
   upVotes: string[];
   downVotes: string[];
+  type: 'Question' | 'Answer' | 'Comment';
 }
 
 export interface AnswerUpdatePayload {
