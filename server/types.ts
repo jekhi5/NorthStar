@@ -192,6 +192,7 @@ export interface VoteUpdatePayload {
   id: string;
   upVotes: string[];
   downVotes: string[];
+  type: 'Question' | 'Answer' | 'Comment';
 }
 
 /**
