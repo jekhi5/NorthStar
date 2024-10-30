@@ -198,6 +198,7 @@ const questionController = (socket: FakeSOSocket) => {
         id,
         upVotes: status.upVotes,
         downVotes: status.downVotes,
+        type: 'Question',
       });
       res.json({ msg: status.msg, upVotes: status.upVotes, downVotes: status.downVotes });
     } catch (err) {

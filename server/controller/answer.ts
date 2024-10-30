@@ -87,9 +87,9 @@ const answerController = (socket: FakeSOSocket) => {
   ***REMOVED***
 
   /**
-   * Helper function to handle upvoting or downvoting a question.
+   * Helper function to handle upvoting or downvoting an answer.
    *
-   * @param req The VoteRequest object containing the question ID and the username.
+   * @param req The VoteRequest object containing the answer ID and the username.
    * @param res The HTTP response object used to send back the result of the operation.
    * @param type The type of vote to perform (upvote or downvote).
    *
@@ -124,6 +124,7 @@ const answerController = (socket: FakeSOSocket) => {
         id,
         upVotes: status.upVotes,
         downVotes: status.downVotes,
+        type: 'Answer',
       });
       res.json({ msg: status.msg, upVotes: status.upVotes, downVotes: status.downVotes });
     } catch (err) {
@@ -132,7 +133,7 @@ const answerController = (socket: FakeSOSocket) => {
   ***REMOVED***
 
   /**
-   * Handles upvoting a question. The request must contain the answer ID and the username.
+   * Handles upvoting an answer. The request must contain the answer ID and the username.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
    * @param req The VoteRequest object containing the answer ID and the username.
@@ -145,7 +146,7 @@ const answerController = (socket: FakeSOSocket) => {
   ***REMOVED***
 
   /**
-   * Handles downvoting a question. The request must contain the question ID (qid) and the username.
+   * Handles downvoting an answer. The request must contain the answer ID and the username.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
    * @param req The VoteRequest object containing the answer ID and the username.

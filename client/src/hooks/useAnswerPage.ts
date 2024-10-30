@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Comment, Answer, Question, QuestionVoteData } from '../types';
+import { Comment, Answer, Question, VoteData } from '../types';
 import useUserContext from './useUserContext';
 import { addComment } from '../services/commentService';
 import { getQuestionById } from '../services/questionService';
@@ -144,16 +144,61 @@ const useAnswerPage = () => {
     /**
      * Function to handle vote updates for a question.
      *
-     * @param QuestionVoteData - The updated vote data for a question
+     * @param voteData - The updated vote data for a question
      */
-    const handleVoteUpdate = (questionVoteData: QuestionVoteData) => {
-      if (questionVoteData.id === questionID) {
+    const handleVoteUpdate = (voteData: VoteData) => {
+      if (voteData.type === 'Question') {
+        if (voteData.id === questionID) {
+          setQuestion(prevQuestion =>
+            prevQuestion
+              ? {
+                  ...prevQuestion,
+                  upVotes: [...voteData.upVotes],
+                  downVotes: [...voteData.downVotes],
+                }
+              : prevQuestion,
+          );
+        }
+      } else if (voteData.type === 'Answer') {
         setQuestion(prevQuestion =>
           prevQuestion
-            ? {
+            ? // Updates answers with a matching object ID, and creates a new Question object
+              {
                 ...prevQuestion,
-                upVotes: [...questionVoteData.upVotes],
-                downVotes: [...questionVoteData.downVotes],
+                answers: prevQuestion.answers.map(a =>
+                  a._id === voteData.id
+                    ? {
+                        ...a,
+                        upVotes: [...voteData.upVotes],
+                        downVotes: [...voteData.downVotes],
+                      }
+                    : a,
+                ),
+              }
+            : prevQuestion,
+        );
+      } else if (voteData.type === 'Comment') {
+        setQuestion(prevQuestion =>
+          prevQuestion
+            ? // Updates answers with a matching object ID, and creates a new Question object
+              {
+                ...prevQuestion,
+                answers: prevQuestion.answers.map(a =>
+                  a
+                    ? {
+                        ...a,
+                        comments: a.comments.map(c =>
+                          c._id === voteData.id
+                            ? {
+                                ...c,
+                                upVotes: [...voteData.upVotes],
+                                downVotes: [...voteData.downVotes],
+                              }
+                            : c,
+                        ),
+                      }
+                    : a,
+                ),
               }
             : prevQuestion,
         );
