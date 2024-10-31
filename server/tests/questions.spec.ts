@@ -23,6 +23,8 @@ const ans1: Answer = {
   text: 'Answer 1 Text',
   ansBy: 'answer1_user',
   ansDateTime: new Date('2024-06-09'), // The mock date is string type but in the actual implementation it is a Date type
+  upVotes: [],
+  downVotes: [],
   comments: [],
 };
 
@@ -31,6 +33,8 @@ const ans2: Answer = {
   text: 'Answer 2 Text',
   ansBy: 'answer2_user',
   ansDateTime: new Date('2024-06-10'),
+  upVotes: [],
+  downVotes: [],
   comments: [],
 };
 
@@ -39,6 +43,8 @@ const ans3: Answer = {
   text: 'Answer 3 Text',
   ansBy: 'answer3_user',
   ansDateTime: new Date('2024-06-11'),
+  upVotes: [],
+  downVotes: [],
   comments: [],
 };
 
@@ -47,6 +53,8 @@ const ans4: Answer = {
   text: 'Answer 4 Text',
   ansBy: 'answer4_user',
   ansDateTime: new Date('2024-06-14'),
+  upVotes: [],
+  downVotes: [],
   comments: [],
 };
 

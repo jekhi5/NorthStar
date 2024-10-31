@@ -32,11 +32,16 @@ export type OrderType = keyof typeof orderTypeDisplayName;
  * text - The text of the comment.
  * commentBy - Username of the author of the comment.
  * commentDateTime - Time at which the comment was created.
+ * upVotes - An array of usernames who upvoted the comment.
+ * downVotes - An array of usernames who downvoted the comment.
  */
 export interface Comment {
+  _id?: string;
   text: string;
   commentBy: string;
   commentDateTime: Date;
+  upVotes: string[];
+  downVotes: string[];
 }
 
 /**
@@ -69,9 +74,10 @@ export interface TagData {
  * - downVotes - An array of user IDs who downvoted the question
  */
 export interface VoteData {
-  qid: string;
+  id: string;
   upVotes: string[];
   downVotes: string[];
+  type: 'Question' | 'Answer' | 'Comment';
 }
 
 /**
@@ -80,6 +86,8 @@ export interface VoteData {
  * - text - The content of the answer
  * - ansBy - The username of the user who wrote the answer
  * - ansDateTime - The date and time when the answer was created
+ * - upVotes - An array of usernames who upvoted the answer.
+ * - downVotes - An array of usernames who downvoted the answer.
  * - comments - Comments associated with the answer.
  */
 export interface Answer {
@@ -87,6 +95,8 @@ export interface Answer {
   text: string;
   ansBy: string;
   ansDateTime: Date;
+  upVotes: string[];
+  downVotes: string[];
   comments: Comment[];
 }
 
@@ -123,9 +133,10 @@ export interface Question {
  * Interface representing the payload for a vote update socket event.
  */
 export interface VoteUpdatePayload {
-  qid: string;
+  id: string;
   upVotes: string[];
   downVotes: string[];
+  type: 'Question' | 'Answer' | 'Comment';
 }
 
 export interface AnswerUpdatePayload {
