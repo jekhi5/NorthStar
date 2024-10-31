@@ -1,6 +1,11 @@
 import express, { Response } from 'express';
-import { Answer, AnswerRequest, AnswerResponse, FakeSOSocket } from '../types';
-import { addAnswerToQuestion, populateDocument, saveAnswer } from '../models/application';
+import { Answer, AnswerRequest, AnswerResponse, FakeSOSocket, VoteRequest } from '../types';
+import {
+  addAnswerToQuestion,
+  addVoteToAnswer,
+  populateDocument,
+  saveAnswer,
+} from '../models/application';
 
 const answerController = (socket: FakeSOSocket) => {
   const router = express.Router();
@@ -80,8 +85,82 @@ const answerController = (socket: FakeSOSocket) => {
     }
   ***REMOVED***
 
+  /**
+   * Helper function to handle upvoting or downvoting an answer.
+   *
+   * @param req The VoteRequest object containing the answer ID and the username.
+   * @param res The HTTP response object used to send back the result of the operation.
+   * @param type The type of vote to perform (upvote or downvote).
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const voteAnswer = async (
+    req: VoteRequest,
+    res: Response,
+    type: 'upvote' | 'downvote',
+  ): Promise<void> => {
+    if (!req.body.id || !req.body.username) {
+      res.status(400).send('Invalid request');
+      return;
+    }
+
+    const { id, username } = req.body;
+
+    try {
+      let status;
+      if (type === 'upvote') {
+        status = await addVoteToAnswer(id, username, type);
+      } else {
+        status = await addVoteToAnswer(id, username, type);
+      }
+
+      if (status && 'error' in status) {
+        throw new Error(status.error as string);
+      }
+
+      // Emit the updated vote counts to all connected clients
+      socket.emit('voteUpdate', {
+        id,
+        upVotes: status.upVotes,
+        downVotes: status.downVotes,
+        type: 'Answer',
+      });
+      res.json({ msg: status.msg, upVotes: status.upVotes, downVotes: status.downVotes });
+    } catch (err) {
+      res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
+    }
+  ***REMOVED***
+
+  /**
+   * Handles upvoting an answer. The request must contain the answer ID and the username.
+   * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
+   *
+   * @param req The VoteRequest object containing the answer ID and the username.
+   * @param res The HTTP response object used to send back the result of the operation.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const upvoteAnswer = async (req: VoteRequest, res: Response): Promise<void> => {
+    voteAnswer(req, res, 'upvote');
+  ***REMOVED***
+
+  /**
+   * Handles downvoting an answer. The request must contain the answer ID and the username.
+   * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
+   *
+   * @param req The VoteRequest object containing the answer ID and the username.
+   * @param res The HTTP response object used to send back the result of the operation.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const downvoteAnswer = async (req: VoteRequest, res: Response): Promise<void> => {
+    voteAnswer(req, res, 'downvote');
+  ***REMOVED***
+
   // add appropriate HTTP verbs and their endpoints to the router.
   router.post('/addAnswer', addAnswer);
+  router.post('/upvoteAnswer', upvoteAnswer);
+  router.post('/downvoteAnswer', downvoteAnswer);
 
   return router;
 ***REMOVED***
