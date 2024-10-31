@@ -1,5 +1,4 @@
 import express, { Response } from 'express';
-import { ObjectId } from 'mongodb';
 import { Answer, AnswerRequest, AnswerResponse, FakeSOSocket, VoteRequest } from '../types';
 import {
   addAnswerToQuestion,
@@ -110,9 +109,9 @@ const answerController = (socket: FakeSOSocket) => {
     try {
       let status;
       if (type === 'upvote') {
-        status = await addVoteToAnswer(new ObjectId(id), username, type);
+        status = await addVoteToAnswer(id, username, type);
       } else {
-        status = await addVoteToAnswer(new ObjectId(id), username, type);
+        status = await addVoteToAnswer(id, username, type);
       }
 
       if (status && 'error' in status) {

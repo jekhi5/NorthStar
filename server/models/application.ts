@@ -579,7 +579,7 @@ export const addAnswerToQuestion = async (qid: string, ans: Answer): Promise<Que
  *          along with the updated upVotes and downVotes arrays.
  */
 export const addVoteToAnswer = async (
-  id: ObjectId,
+  id: string,
   username: string,
   type: 'upvote' | 'downvote',
 ): Promise<{ msg: string; upVotes: string[]; downVotes: string[] } | { error: string }> => {
@@ -717,7 +717,7 @@ export const addComment = async (
  *          along with the updated upVotes and downVotes arrays.
  */
 export const addVoteToComment = async (
-  id: ObjectId,
+  id: string,
   username: string,
   type: 'upvote' | 'downvote',
 ): Promise<{ msg: string; upVotes: string[]; downVotes: string[] } | { error: string }> => {
@@ -773,7 +773,7 @@ export const addVoteToComment = async (
     });
 
     if (!result) {
-      return { error: 'Answer not found!' };
+      return { error: 'Comment not found!' };
     }
 
     let msg = '';

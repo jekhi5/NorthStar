@@ -122,9 +122,9 @@ const commentController = (socket: FakeSOSocket) => {
     try {
       let status;
       if (type === 'upvote') {
-        status = await addVoteToComment(new ObjectId(id), username, type);
+        status = await addVoteToComment(id, username, type);
       } else {
-        status = await addVoteToComment(new ObjectId(id), username, type);
+        status = await addVoteToComment(id, username, type);
       }
 
       if (status && 'error' in status) {
