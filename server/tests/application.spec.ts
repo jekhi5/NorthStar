@@ -15,10 +15,13 @@ import {
   saveComment,
   addComment,
   addVoteToQuestion,
+  addVoteToAnswer,
+  addVoteToComment,
 } from '../models/application';
 import { Answer, Question, Tag, Comment } from '../types';
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
 import AnswerModel from '../models/answers';
+import CommentModel from '../models/comments';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');
@@ -675,6 +678,166 @@ describe('application module', () => {
         }
       });
     });
+
+    describe('addVoteToAnswer', () => {
+      test('addVoteToAnswer should upvote an answer', async () => {
+        const mockAnswer = {
+          _id: 'someAnswerId',
+          upVotes: [],
+          downVotes: [],
+        ***REMOVED***
+
+        mockingoose(AnswerModel).toReturn(
+          { ...mockAnswer, upVotes: ['testUser'], downVotes: [] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToAnswer('someAnswerId', 'testUser', 'upvote');
+
+        expect(result).toEqual({
+          msg: 'Answer upvoted successfully',
+          upVotes: ['testUser'],
+          downVotes: [],
+        });
+      });
+
+      test('If a downvoter upvotes, add them to upvotes and remove them from downvotes', async () => {
+        const mockAnswer = {
+          _id: 'someAnswerId',
+          upVotes: [],
+          downVotes: ['testUser'],
+        ***REMOVED***
+
+        mockingoose(AnswerModel).toReturn(
+          { ...mockAnswer, upVotes: ['testUser'], downVotes: [] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToAnswer('someAnswerId', 'testUser', 'upvote');
+
+        expect(result).toEqual({
+          msg: 'Answer upvoted successfully',
+          upVotes: ['testUser'],
+          downVotes: [],
+        });
+      });
+
+      test('should cancel the upvote if already upvoted', async () => {
+        const mockAnswer = {
+          _id: 'someAnswerId',
+          upVotes: ['testUser'],
+          downVotes: [],
+        ***REMOVED***
+
+        mockingoose(AnswerModel).toReturn(
+          { ...mockAnswer, upVotes: [], downVotes: [] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToAnswer('someAnswerId', 'testUser', 'upvote');
+
+        expect(result).toEqual({
+          msg: 'Upvote cancelled successfully',
+          upVotes: [],
+          downVotes: [],
+        });
+      });
+
+      test('addVoteToAnswer should return an error if the answer is not found', async () => {
+        mockingoose(AnswerModel).toReturn(null, 'findById');
+
+        const result = await addVoteToAnswer('nonExistentId', 'testUser', 'upvote');
+
+        expect(result).toEqual({ error: 'Answer not found!' });
+      });
+
+      test('addVoteToAnswer should return an error when there is an issue with adding an upvote', async () => {
+        mockingoose(AnswerModel).toReturn(new Error('Database error'), 'findOneAndUpdate');
+
+        const result = await addVoteToAnswer('someAnswerId', 'testUser', 'upvote');
+
+        expect(result).toEqual({ error: 'Error when adding upvote to answer' });
+      });
+
+      test('addVoteToAnswer should downvote an answer', async () => {
+        const mockAnswer = {
+          _id: 'someAnswerId',
+          upVotes: [],
+          downVotes: [],
+        ***REMOVED***
+
+        mockingoose(AnswerModel).toReturn(
+          { ...mockAnswer, upVotes: [], downVotes: ['testUser'] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToAnswer('someAnswerId', 'testUser', 'downvote');
+
+        expect(result).toEqual({
+          msg: 'Answer downvoted successfully',
+          upVotes: [],
+          downVotes: ['testUser'],
+        });
+      });
+
+      test('If an upvoter downvotes, add them to downvotes and remove them from upvotes', async () => {
+        const mockAnswer = {
+          _id: 'someAnswerId',
+          upVotes: ['testUser'],
+          downVotes: [],
+        ***REMOVED***
+
+        mockingoose(AnswerModel).toReturn(
+          { ...mockAnswer, upVotes: [], downVotes: ['testUser'] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToAnswer('someAnswerId', 'testUser', 'downvote');
+
+        expect(result).toEqual({
+          msg: 'Answer downvoted successfully',
+          upVotes: [],
+          downVotes: ['testUser'],
+        });
+      });
+
+      test('should cancel the downvote if already downvoted', async () => {
+        const mockAnswer = {
+          _id: 'someAnswerId',
+          upVotes: [],
+          downVotes: ['testUser'],
+        ***REMOVED***
+
+        mockingoose(AnswerModel).toReturn(
+          { ...mockAnswer, upVotes: [], downVotes: [] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToAnswer('someAnswerId', 'testUser', 'downvote');
+
+        expect(result).toEqual({
+          msg: 'Downvote cancelled successfully',
+          upVotes: [],
+          downVotes: [],
+        });
+      });
+
+      test('addVoteToAnswer should return an error if the answer is not found', async () => {
+        mockingoose(AnswerModel).toReturn(null, 'findById');
+
+        const result = await addVoteToAnswer('nonExistentId', 'testUser', 'downvote');
+
+        expect(result).toEqual({ error: 'Answer not found!' });
+      });
+
+      test('addVoteToAnswer should return an error when there is an issue with adding a downvote', async () => {
+        mockingoose(AnswerModel).toReturn(new Error('Database error'), 'findOneAndUpdate');
+
+        const result = await addVoteToAnswer('someAnswerId', 'testUser', 'downvote');
+
+        expect(result).toEqual({ error: 'Error when adding downvote to answer' });
+      });
+    });
   });
 
   describe('Tag model', () => {
@@ -893,6 +1056,166 @@ describe('application module', () => {
           expect(err).toBeInstanceOf(Error);
           if (err instanceof Error) expect(err.message).toBe('Invalid comment');
         }
+      });
+    });
+
+    describe('addVoteToComment', () => {
+      test('addVoteToComment should upvote an comment', async () => {
+        const mockComment = {
+          _id: 'someCommentId',
+          upVotes: [],
+          downVotes: [],
+        ***REMOVED***
+
+        mockingoose(CommentModel).toReturn(
+          { ...mockComment, upVotes: ['testUser'], downVotes: [] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToComment('someCommentId', 'testUser', 'upvote');
+
+        expect(result).toEqual({
+          msg: 'Comment upvoted successfully',
+          upVotes: ['testUser'],
+          downVotes: [],
+        });
+      });
+
+      test('If a downvoter upvotes, add them to upvotes and remove them from downvotes', async () => {
+        const mockComment = {
+          _id: 'someCommentId',
+          upVotes: [],
+          downVotes: ['testUser'],
+        ***REMOVED***
+
+        mockingoose(CommentModel).toReturn(
+          { ...mockComment, upVotes: ['testUser'], downVotes: [] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToComment('someCommentId', 'testUser', 'upvote');
+
+        expect(result).toEqual({
+          msg: 'Comment upvoted successfully',
+          upVotes: ['testUser'],
+          downVotes: [],
+        });
+      });
+
+      test('should cancel the upvote if already upvoted', async () => {
+        const mockComment = {
+          _id: 'someCommentId',
+          upVotes: ['testUser'],
+          downVotes: [],
+        ***REMOVED***
+
+        mockingoose(CommentModel).toReturn(
+          { ...mockComment, upVotes: [], downVotes: [] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToComment('someCommentId', 'testUser', 'upvote');
+
+        expect(result).toEqual({
+          msg: 'Upvote cancelled successfully',
+          upVotes: [],
+          downVotes: [],
+        });
+      });
+
+      test('addVoteToComment should return an error if the comment is not found', async () => {
+        mockingoose(CommentModel).toReturn(null, 'findById');
+
+        const result = await addVoteToComment('nonExistentId', 'testUser', 'upvote');
+
+        expect(result).toEqual({ error: 'Comment not found!' });
+      });
+
+      test('addVoteToComment should return an error when there is an issue with adding an upvote', async () => {
+        mockingoose(CommentModel).toReturn(new Error('Database error'), 'findOneAndUpdate');
+
+        const result = await addVoteToComment('someCommentId', 'testUser', 'upvote');
+
+        expect(result).toEqual({ error: 'Error when adding upvote to comment' });
+      });
+
+      test('addVoteToComment should downvote a comment', async () => {
+        const mockComment = {
+          _id: 'someCommentId',
+          upVotes: [],
+          downVotes: [],
+        ***REMOVED***
+
+        mockingoose(CommentModel).toReturn(
+          { ...mockComment, upVotes: [], downVotes: ['testUser'] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToComment('someCommentId', 'testUser', 'downvote');
+
+        expect(result).toEqual({
+          msg: 'Comment downvoted successfully',
+          upVotes: [],
+          downVotes: ['testUser'],
+        });
+      });
+
+      test('If an upvoter downvotes, add them to downvotes and remove them from upvotes', async () => {
+        const mockComment = {
+          _id: 'someCommentId',
+          upVotes: ['testUser'],
+          downVotes: [],
+        ***REMOVED***
+
+        mockingoose(CommentModel).toReturn(
+          { ...mockComment, upVotes: [], downVotes: ['testUser'] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToComment('someCommentId', 'testUser', 'downvote');
+
+        expect(result).toEqual({
+          msg: 'Comment downvoted successfully',
+          upVotes: [],
+          downVotes: ['testUser'],
+        });
+      });
+
+      test('should cancel the downvote if already downvoted', async () => {
+        const mockComment = {
+          _id: 'someCommentId',
+          upVotes: [],
+          downVotes: ['testUser'],
+        ***REMOVED***
+
+        mockingoose(CommentModel).toReturn(
+          { ...mockComment, upVotes: [], downVotes: [] },
+          'findOneAndUpdate',
+        );
+
+        const result = await addVoteToComment('someCommentId', 'testUser', 'downvote');
+
+        expect(result).toEqual({
+          msg: 'Downvote cancelled successfully',
+          upVotes: [],
+          downVotes: [],
+        });
+      });
+
+      test('addVoteToComment should return an error if the comment is not found', async () => {
+        mockingoose(CommentModel).toReturn(null, 'findById');
+
+        const result = await addVoteToComment('nonExistentId', 'testUser', 'downvote');
+
+        expect(result).toEqual({ error: 'Comment not found!' });
+      });
+
+      test('addVoteToComment should return an error when there is an issue with adding a downvote', async () => {
+        mockingoose(CommentModel).toReturn(new Error('Database error'), 'findOneAndUpdate');
+
+        const result = await addVoteToComment('someCommentId', 'testUser', 'downvote');
+
+        expect(result).toEqual({ error: 'Error when adding downvote to comment' });
       });
     });
   });
