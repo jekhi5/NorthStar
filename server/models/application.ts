@@ -572,7 +572,7 @@ export const addAnswerToQuestion = async (qid: string, ans: Answer): Promise<Que
  * Adds a vote to an answer.
  *
  * @param id The ID of the answer to add a vote to.
- * @param username The username of the user who voted.
+ * @param uid The username of the user who voted.
  * @param type The type of vote to add, either 'upvote' or 'downvote'.
  *
  * @returns A Promise that resolves to an object containing either a success message or an error message,
@@ -580,7 +580,7 @@ export const addAnswerToQuestion = async (qid: string, ans: Answer): Promise<Que
  */
 export const addVoteToAnswer = async (
   id: string,
-  username: string,
+  uid: string,
   type: 'upvote' | 'downvote',
 ): Promise<{ msg: string; upVotes: string[]; downVotes: string[] } | { error: string }> => {
   let updateOperation: QueryOptions;
@@ -591,16 +591,16 @@ export const addVoteToAnswer = async (
         $set: {
           upVotes: {
             $cond: [
-              { $in: [username, '$upVotes'] },
-              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
-              { $concatArrays: ['$upVotes', [username]] },
+              { $in: [uid, '$upVotes'] },
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', uid] } } },
+              { $concatArrays: ['$upVotes', [uid]] },
             ],
           },
           downVotes: {
             $cond: [
-              { $in: [username, '$upVotes'] },
+              { $in: [uid, '$upVotes'] },
               '$downVotes',
-              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', uid] } } },
             ],
           },
         },
@@ -612,16 +612,16 @@ export const addVoteToAnswer = async (
         $set: {
           downVotes: {
             $cond: [
-              { $in: [username, '$downVotes'] },
-              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
-              { $concatArrays: ['$downVotes', [username]] },
+              { $in: [uid, '$downVotes'] },
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', uid] } } },
+              { $concatArrays: ['$downVotes', [uid]] },
             ],
           },
           upVotes: {
             $cond: [
-              { $in: [username, '$downVotes'] },
+              { $in: [uid, '$downVotes'] },
               '$upVotes',
-              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', uid] } } },
             ],
           },
         },
@@ -641,11 +641,11 @@ export const addVoteToAnswer = async (
     let msg = '';
 
     if (type === 'upvote') {
-      msg = result.upVotes.includes(username)
+      msg = result.upVotes.includes(uid)
         ? 'Answer upvoted successfully'
         : 'Upvote cancelled successfully';
     } else {
-      msg = result.downVotes.includes(username)
+      msg = result.downVotes.includes(uid)
         ? 'Answer downvoted successfully'
         : 'Downvote cancelled successfully';
     }
@@ -710,7 +710,7 @@ export const addComment = async (
  * Adds a vote to a comment.
  *
  * @param id The ID of the comment to add a vote to.
- * @param username The username of the user who voted.
+ * @param uid The username of the user who voted.
  * @param type The type of vote to add, either 'upvote' or 'downvote'.
  *
  * @returns A Promise that resolves to an object containing either a success message or an error message,
@@ -718,7 +718,7 @@ export const addComment = async (
  */
 export const addVoteToComment = async (
   id: string,
-  username: string,
+  uid: string,
   type: 'upvote' | 'downvote',
 ): Promise<{ msg: string; upVotes: string[]; downVotes: string[] } | { error: string }> => {
   let updateOperation: QueryOptions;
@@ -729,16 +729,16 @@ export const addVoteToComment = async (
         $set: {
           upVotes: {
             $cond: [
-              { $in: [username, '$upVotes'] },
-              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
-              { $concatArrays: ['$upVotes', [username]] },
+              { $in: [uid, '$upVotes'] },
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', uid] } } },
+              { $concatArrays: ['$upVotes', [uid]] },
             ],
           },
           downVotes: {
             $cond: [
-              { $in: [username, '$upVotes'] },
+              { $in: [uid, '$upVotes'] },
               '$downVotes',
-              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', uid] } } },
             ],
           },
         },
@@ -750,16 +750,16 @@ export const addVoteToComment = async (
         $set: {
           downVotes: {
             $cond: [
-              { $in: [username, '$downVotes'] },
-              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
-              { $concatArrays: ['$downVotes', [username]] },
+              { $in: [uid, '$downVotes'] },
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', uid] } } },
+              { $concatArrays: ['$downVotes', [uid]] },
             ],
           },
           upVotes: {
             $cond: [
-              { $in: [username, '$downVotes'] },
+              { $in: [uid, '$downVotes'] },
               '$upVotes',
-              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', uid] } } },
             ],
           },
         },
@@ -779,11 +779,11 @@ export const addVoteToComment = async (
     let msg = '';
 
     if (type === 'upvote') {
-      msg = result.upVotes.includes(username)
+      msg = result.upVotes.includes(uid)
         ? 'Comment upvoted successfully'
         : 'Upvote cancelled successfully';
     } else {
-      msg = result.downVotes.includes(username)
+      msg = result.downVotes.includes(uid)
         ? 'Comment downvoted successfully'
         : 'Downvote cancelled successfully';
     }
