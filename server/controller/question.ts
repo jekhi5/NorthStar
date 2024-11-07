@@ -51,7 +51,7 @@ const questionController = (socket: FakeSOSocket) => {
         res.status(500).send(`Error when fetching questions by filter`);
       }
     }
-  ***REMOVED***
+  };
 
   /**
    * Retrieves a question by its unique ID, and increments the view count for that question.
@@ -93,7 +93,7 @@ const questionController = (socket: FakeSOSocket) => {
         res.status(500).send(`Error when fetching question by id`);
       }
     }
-  ***REMOVED***
+  };
 
   /**
    * Validates the question object to ensure it contains all the necessary fields.
@@ -133,7 +133,7 @@ const questionController = (socket: FakeSOSocket) => {
       const questionswithtags: Question = {
         ...question,
         tags: await processTags(question.tags),
-      ***REMOVED***
+      };
       if (questionswithtags.tags.length === 0) {
         throw new Error('Invalid tags');
       }
@@ -158,7 +158,7 @@ const questionController = (socket: FakeSOSocket) => {
         res.status(500).send(`Error when saving question`);
       }
     }
-  ***REMOVED***
+  };
 
   /**
    * Helper function to handle upvoting or downvoting a question.
@@ -204,7 +204,7 @@ const questionController = (socket: FakeSOSocket) => {
     } catch (err) {
       res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
     }
-  ***REMOVED***
+  };
 
   /**
    * Handles upvoting a question. The request must contain the question ID (qid) and the username.
@@ -217,7 +217,7 @@ const questionController = (socket: FakeSOSocket) => {
    */
   const upvoteQuestion = async (req: VoteRequest, res: Response): Promise<void> => {
     voteQuestion(req, res, 'upvote');
-  ***REMOVED***
+  };
 
   /**
    * Handles downvoting a question. The request must contain the question ID (qid) and the username.
@@ -230,7 +230,7 @@ const questionController = (socket: FakeSOSocket) => {
    */
   const downvoteQuestion = async (req: VoteRequest, res: Response): Promise<void> => {
     voteQuestion(req, res, 'downvote');
-  ***REMOVED***
+  };
 
   // add appropriate HTTP verbs and their endpoints to the router
   router.get('/getQuestion', getQuestionsByFilter);
@@ -240,6 +240,6 @@ const questionController = (socket: FakeSOSocket) => {
   router.post('/downvoteQuestion', downvoteQuestion);
 
   return router;
-***REMOVED***
+};
 
 export default questionController;

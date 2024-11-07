@@ -74,4 +74,4 @@ app.use('/answer', answerController(socket));
 app.use('/comment', commentController(socket));
 
 // Export the app instance
-export { app, server, startServer ***REMOVED***
+export { app, server, startServer };

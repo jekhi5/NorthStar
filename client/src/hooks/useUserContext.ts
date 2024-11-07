@@ -16,6 +16,6 @@ const useUserContext = (): UserContextType => {
   }
 
   return context;
-***REMOVED***
+};
 
 export default useUserContext;

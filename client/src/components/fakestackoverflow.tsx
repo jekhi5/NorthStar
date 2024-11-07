@@ -25,7 +25,7 @@ const ProtectedRoute = ({
   }
 
   return <UserContext.Provider value={{ user, socket }}>{children}</UserContext.Provider>;
-***REMOVED***
+};
 
 /**
  * Represents the main component of the application.
@@ -58,6 +58,6 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
       </Routes>
     </LoginContext.Provider>
   );
-***REMOVED***
+};
 
 export default FakeStackOverflow;

@@ -26,7 +26,7 @@ const App = () => {
       if (socket !== null) {
         socket.disconnect();
       }
-    ***REMOVED***
+    };
   }, [socket, serverURL]);
 
   return (
@@ -34,7 +34,7 @@ const App = () => {
       <FakeStackOverflow socket={socket} />
     </Router>
   );
-***REMOVED***
+};
 
 if (container) {
   const root = ReactDOM.createRoot(container);

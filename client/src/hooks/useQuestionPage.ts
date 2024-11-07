@@ -51,7 +51,7 @@ const useQuestionPage = () => {
         // eslint-disable-next-line no-console
         console.log(error);
       }
-    ***REMOVED***
+    };
 
     /**
      * Function to handle question updates from the socket.
@@ -69,7 +69,7 @@ const useQuestionPage = () => {
 
         return [question, ...prevQlist];
       });
-    ***REMOVED***
+    };
 
     /**
      * Function to handle answer updates from the socket.
@@ -81,7 +81,7 @@ const useQuestionPage = () => {
       setQlist(prevQlist =>
         prevQlist.map(q => (q._id === qid ? { ...q, answers: [...q.answers, answer] } : q)),
       );
-    ***REMOVED***
+    };
 
     /**
      * Function to handle views updates from the socket.
@@ -90,7 +90,7 @@ const useQuestionPage = () => {
      */
     const handleViewsUpdate = (question: Question) => {
       setQlist(prevQlist => prevQlist.map(q => (q._id === question._id ? question : q)));
-    ***REMOVED***
+    };
 
     fetchData();
 
@@ -102,10 +102,10 @@ const useQuestionPage = () => {
       socket.off('questionUpdate', handleQuestionUpdate);
       socket.off('answerUpdate', handleAnswerUpdate);
       socket.off('viewsUpdate', handleViewsUpdate);
-    ***REMOVED***
+    };
   }, [questionOrder, search, socket]);
 
-  return { titleText, qlist, setQuestionOrder ***REMOVED***
-***REMOVED***
+  return { titleText, qlist, setQuestionOrder };
+};
 
 export default useQuestionPage;

@@ -27,6 +27,6 @@ const NewAnswerPage = () => {
       </div>
     </Form>
   );
-***REMOVED***
+};
 
 export default NewAnswerPage;

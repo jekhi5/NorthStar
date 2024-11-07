@@ -61,6 +61,6 @@ const NewQuestionPage = () => {
       </div>
     </Form>
   );
-***REMOVED***
+};
 
 export default NewQuestionPage;

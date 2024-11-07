@@ -33,7 +33,7 @@ const QuestionView = ({ q }: QuestionProps) => {
     searchParams.set('tag', tagName);
 
     navigate(`/home?${searchParams.toString()}`);
-  ***REMOVED***
+  };
 
   /**
    * Function to navigate to the specified question page based on the question ID.
@@ -42,7 +42,7 @@ const QuestionView = ({ q }: QuestionProps) => {
    */
   const handleAnswer = (questionID: string) => {
     navigate(`/question/${questionID}`);
-  ***REMOVED***
+  };
 
   return (
     <div
@@ -79,6 +79,6 @@ const QuestionView = ({ q }: QuestionProps) => {
       </div>
     </div>
   );
-***REMOVED***
+};
 
 export default QuestionView;

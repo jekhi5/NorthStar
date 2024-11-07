@@ -26,7 +26,7 @@ const useAnswerPage = () => {
    */
   const handleNewAnswer = () => {
     navigate(`/new/answer/${questionID}`);
-  ***REMOVED***
+  };
 
   useEffect(() => {
     if (!qid) {
@@ -59,7 +59,7 @@ const useAnswerPage = () => {
       // eslint-disable-next-line no-console
       console.error('Error adding comment:', error);
     }
-  ***REMOVED***
+  };
 
   useEffect(() => {
     /**
@@ -73,7 +73,7 @@ const useAnswerPage = () => {
         // eslint-disable-next-line no-console
         console.error('Error fetching question:', error);
       }
-    ***REMOVED***
+    };
 
     // eslint-disable-next-line no-console
     fetchData().catch(e => console.log(e));
@@ -94,7 +94,7 @@ const useAnswerPage = () => {
             : prevQuestion,
         );
       }
-    ***REMOVED***
+    };
 
     /**
      * Function to handle updates to the comments of a question or answer.
@@ -128,7 +128,7 @@ const useAnswerPage = () => {
             : prevQuestion,
         );
       }
-    ***REMOVED***
+    };
 
     /**
      * Function to handle updates to the views of a question.
@@ -139,7 +139,7 @@ const useAnswerPage = () => {
       if (q._id === questionID) {
         setQuestion(q);
       }
-    ***REMOVED***
+    };
 
     /**
      * Function to handle vote updates for a question.
@@ -214,7 +214,7 @@ const useAnswerPage = () => {
       } else {
         throw new Error('Invalid type provided');
       }
-    ***REMOVED***
+    };
 
     socket.on('answerUpdate', handleAnswerUpdate);
     socket.on('viewsUpdate', handleViewsUpdate);
@@ -226,7 +226,7 @@ const useAnswerPage = () => {
       socket.off('viewsUpdate', handleViewsUpdate);
       socket.off('commentUpdate', handleCommentUpdate);
       socket.off('voteUpdate', handleVoteUpdate);
-    ***REMOVED***
+    };
   }, [questionID, socket]);
 
   return {
@@ -234,7 +234,7 @@ const useAnswerPage = () => {
     question,
     handleNewComment,
     handleNewAnswer,
-  ***REMOVED***
-***REMOVED***
+  };
+};
 
 export default useAnswerPage;

@@ -36,13 +36,13 @@ export interface AnswerRequest extends Request {
   body: {
     qid: string;
     ans: Answer;
-  ***REMOVED***
+  };
 }
 
 /**
  * Type representing the possible responses for an Answer-related operation.
  */
-export type AnswerResponse = Answer | { error: string ***REMOVED***
+export type AnswerResponse = Answer | { error: string };
 
 /**
  * Interface representing a Tag document, which contains:
@@ -86,7 +86,7 @@ export interface Question {
 /**
  * Type representing the possible responses for a Question-related operation.
  */
-export type QuestionResponse = Question | { error: string ***REMOVED***
+export type QuestionResponse = Question | { error: string };
 
 /**
  * Interface for the request query to find questions using a search string, which contains:
@@ -99,7 +99,7 @@ export interface FindQuestionRequest extends Request {
     order: OrderType;
     search: string;
     askedBy: string;
-  ***REMOVED***
+  };
 }
 
 /**
@@ -109,10 +109,10 @@ export interface FindQuestionRequest extends Request {
 export interface FindQuestionByIdRequest extends Request {
   params: {
     qid: string;
-  ***REMOVED***
+  };
   query: {
     username: string;
-  ***REMOVED***
+  };
 }
 
 /**
@@ -133,7 +133,7 @@ export interface VoteRequest extends Request {
   body: {
     id: string;
     username: string;
-  ***REMOVED***
+  };
 }
 
 /**
@@ -164,13 +164,13 @@ export interface AddCommentRequest extends Request {
     id: string;
     type: 'question' | 'answer';
     comment: Comment;
-  ***REMOVED***
+  };
 }
 
 /**
  * Type representing the possible responses for a Comment-related operation.
  */
-export type CommentResponse = Comment | { error: string ***REMOVED***
+export type CommentResponse = Comment | { error: string };
 
 /**
  * Interface representing the payload for a comment update event, which contains:

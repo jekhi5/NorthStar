@@ -27,7 +27,7 @@ const clearDatabase = async (): Promise<void> => {
     console.log('ERROR: ' + err);
     if (db) db.close();
   }
-***REMOVED***
+};
 
 clearDatabase()
   .then(() => {

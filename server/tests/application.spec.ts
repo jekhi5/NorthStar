@@ -30,19 +30,19 @@ const tag1: Tag = {
   _id: new ObjectId('507f191e810c19729de860ea'),
   name: 'react',
   description: T1_DESC,
-***REMOVED***
+};
 
 const tag2: Tag = {
   _id: new ObjectId('65e9a5c2b26199dbcc3e6dc8'),
   name: 'javascript',
   description: T2_DESC,
-***REMOVED***
+};
 
 const tag3: Tag = {
   _id: new ObjectId('65e9b4b1766fca9451cba653'),
   name: 'android',
   description: T3_DESC,
-***REMOVED***
+};
 
 const com1: Comment = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6de'),
@@ -51,7 +51,7 @@ const com1: Comment = {
   commentDateTime: new Date('2023-11-18T09:25:00'),
   upVotes: [],
   downVotes: [],
-***REMOVED***
+};
 
 const ans1: Answer = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
@@ -61,7 +61,7 @@ const ans1: Answer = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const ans2: Answer = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6dd'),
@@ -71,7 +71,7 @@ const ans2: Answer = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const ans3: Answer = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6de'),
@@ -81,7 +81,7 @@ const ans3: Answer = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const ans4: Answer = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6df'),
@@ -91,7 +91,7 @@ const ans4: Answer = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const QUESTIONS: Question[] = [
   {
@@ -407,7 +407,7 @@ describe('application module', () => {
           'question2_user',
         )) as {
           error: string;
-        ***REMOVED***
+        };
 
         expect(result.error).toEqual('Error when fetching and updating a question');
       });
@@ -426,7 +426,7 @@ describe('application module', () => {
           upVotes: [],
           downVotes: [],
           comments: [],
-        ***REMOVED***
+        };
 
         const result = (await saveQuestion(mockQn)) as Question;
 
@@ -448,7 +448,7 @@ describe('application module', () => {
           _id: 'someQuestionId',
           upVotes: [],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(QuestionModel).toReturn(
           { ...mockQuestion, upVotes: ['testUser'], downVotes: [] },
@@ -469,7 +469,7 @@ describe('application module', () => {
           _id: 'someQuestionId',
           upVotes: [],
           downVotes: ['testUser'],
-        ***REMOVED***
+        };
 
         mockingoose(QuestionModel).toReturn(
           { ...mockQuestion, upVotes: ['testUser'], downVotes: [] },
@@ -490,7 +490,7 @@ describe('application module', () => {
           _id: 'someQuestionId',
           upVotes: ['testUser'],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(QuestionModel).toReturn(
           { ...mockQuestion, upVotes: [], downVotes: [] },
@@ -527,7 +527,7 @@ describe('application module', () => {
           _id: 'someQuestionId',
           upVotes: [],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(QuestionModel).toReturn(
           { ...mockQuestion, upVotes: [], downVotes: ['testUser'] },
@@ -548,7 +548,7 @@ describe('application module', () => {
           _id: 'someQuestionId',
           upVotes: ['testUser'],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(QuestionModel).toReturn(
           { ...mockQuestion, upVotes: [], downVotes: ['testUser'] },
@@ -569,7 +569,7 @@ describe('application module', () => {
           _id: 'someQuestionId',
           upVotes: [],
           downVotes: ['testUser'],
-        ***REMOVED***
+        };
 
         mockingoose(QuestionModel).toReturn(
           { ...mockQuestion, upVotes: [], downVotes: [] },
@@ -613,7 +613,7 @@ describe('application module', () => {
           upVotes: [],
           downVotes: [],
           comments: [],
-        ***REMOVED***
+        };
 
         const result = (await saveAnswer(mockAnswer)) as Answer;
 
@@ -666,7 +666,7 @@ describe('application module', () => {
         const invalidAnswer: Partial<Answer> = {
           text: 'This is an answer text',
           ansBy: 'user123', // Missing ansDateTime
-        ***REMOVED***
+        };
 
         const qid = 'validQuestionId';
 
@@ -685,7 +685,7 @@ describe('application module', () => {
           _id: 'someAnswerId',
           upVotes: [],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(AnswerModel).toReturn(
           { ...mockAnswer, upVotes: ['testUser'], downVotes: [] },
@@ -706,7 +706,7 @@ describe('application module', () => {
           _id: 'someAnswerId',
           upVotes: [],
           downVotes: ['testUser'],
-        ***REMOVED***
+        };
 
         mockingoose(AnswerModel).toReturn(
           { ...mockAnswer, upVotes: ['testUser'], downVotes: [] },
@@ -727,7 +727,7 @@ describe('application module', () => {
           _id: 'someAnswerId',
           upVotes: ['testUser'],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(AnswerModel).toReturn(
           { ...mockAnswer, upVotes: [], downVotes: [] },
@@ -764,7 +764,7 @@ describe('application module', () => {
           _id: 'someAnswerId',
           upVotes: [],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(AnswerModel).toReturn(
           { ...mockAnswer, upVotes: [], downVotes: ['testUser'] },
@@ -785,7 +785,7 @@ describe('application module', () => {
           _id: 'someAnswerId',
           upVotes: ['testUser'],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(AnswerModel).toReturn(
           { ...mockAnswer, upVotes: [], downVotes: ['testUser'] },
@@ -806,7 +806,7 @@ describe('application module', () => {
           _id: 'someAnswerId',
           upVotes: [],
           downVotes: ['testUser'],
-        ***REMOVED***
+        };
 
         mockingoose(AnswerModel).toReturn(
           { ...mockAnswer, upVotes: [], downVotes: [] },
@@ -996,7 +996,7 @@ describe('application module', () => {
     describe('addComment', () => {
       test('addComment should return the updated question when given `question`', async () => {
         // copy the question to avoid modifying the original
-        const question = { ...QUESTIONS[0], comments: [com1] ***REMOVED***
+        const question = { ...QUESTIONS[0], comments: [com1] };
         mockingoose(QuestionModel).toReturn(question, 'findOneAndUpdate');
 
         const result = (await addComment(
@@ -1011,7 +1011,7 @@ describe('application module', () => {
 
       test('addComment should return the updated answer when given `answer`', async () => {
         // copy the answer to avoid modifying the original
-        const answer: Answer = { ...ans1 ***REMOVED***
+        const answer: Answer = { ...ans1 };
         (answer.comments as Comment[]).push(com1);
         mockingoose(AnswerModel).toReturn(answer, 'findOneAndUpdate');
 
@@ -1036,7 +1036,7 @@ describe('application module', () => {
       });
 
       test('addComment should return an object with error if findOneAndUpdate returns null', async () => {
-        const answer: Answer = { ...ans1 ***REMOVED***
+        const answer: Answer = { ...ans1 };
         mockingoose(AnswerModel).toReturn(null, 'findOneAndUpdate');
         const result = await addComment(answer._id?.toString() as string, 'answer', com1);
         expect(result).toEqual({ error: 'Error when adding comment: Failed to add comment' });
@@ -1046,7 +1046,7 @@ describe('application module', () => {
         const invalidComment: Partial<Comment> = {
           text: 'This is an answer text',
           commentBy: 'user123', // Missing commentDateTime
-        ***REMOVED***
+        };
 
         const qid = 'validQuestionId';
 
@@ -1065,7 +1065,7 @@ describe('application module', () => {
           _id: 'someCommentId',
           upVotes: [],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(CommentModel).toReturn(
           { ...mockComment, upVotes: ['testUser'], downVotes: [] },
@@ -1086,7 +1086,7 @@ describe('application module', () => {
           _id: 'someCommentId',
           upVotes: [],
           downVotes: ['testUser'],
-        ***REMOVED***
+        };
 
         mockingoose(CommentModel).toReturn(
           { ...mockComment, upVotes: ['testUser'], downVotes: [] },
@@ -1107,7 +1107,7 @@ describe('application module', () => {
           _id: 'someCommentId',
           upVotes: ['testUser'],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(CommentModel).toReturn(
           { ...mockComment, upVotes: [], downVotes: [] },
@@ -1144,7 +1144,7 @@ describe('application module', () => {
           _id: 'someCommentId',
           upVotes: [],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(CommentModel).toReturn(
           { ...mockComment, upVotes: [], downVotes: ['testUser'] },
@@ -1165,7 +1165,7 @@ describe('application module', () => {
           _id: 'someCommentId',
           upVotes: ['testUser'],
           downVotes: [],
-        ***REMOVED***
+        };
 
         mockingoose(CommentModel).toReturn(
           { ...mockComment, upVotes: [], downVotes: ['testUser'] },
@@ -1186,7 +1186,7 @@ describe('application module', () => {
           _id: 'someCommentId',
           upVotes: [],
           downVotes: ['testUser'],
-        ***REMOVED***
+        };
 
         mockingoose(CommentModel).toReturn(
           { ...mockComment, upVotes: [], downVotes: [] },

@@ -16,6 +16,6 @@ const useLoginContext = (): LoginContextType => {
   }
 
   return context;
-***REMOVED***
+};
 
 export default useLoginContext;

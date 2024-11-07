@@ -22,7 +22,7 @@ const useHeader = () => {
    */
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setVal(e.target.value);
-  ***REMOVED***
+  };
 
   /**
    * Function to handle 'Enter' key press and trigger the search.
@@ -38,14 +38,14 @@ const useHeader = () => {
 
       navigate(`/home?${searchParams.toString()}`);
     }
-  ***REMOVED***
+  };
 
   return {
     val,
     setVal,
     handleInputChange,
     handleKeyDown,
-  ***REMOVED***
-***REMOVED***
+  };
+};
 
 export default useHeader;

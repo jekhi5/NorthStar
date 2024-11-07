@@ -30,7 +30,7 @@ const getDateHelper = (date: Date): string => {
     return `0${day}`;
   }
   return `${day}`;
-***REMOVED***
+};
 
 /**
  * Function to get a human-readable metadata string representing the time difference
@@ -60,7 +60,7 @@ const getMetaData = (date: Date): string => {
   return `${MONTHS[date.getMonth()]} ${getDateHelper(
     date,
   )}, ${date.getFullYear()} at ${date.toTimeString().slice(0, 8)}`;
-***REMOVED***
+};
 
 /**
  * Validates the hyperlinks present in the given text. It checks that:
@@ -96,7 +96,7 @@ const validateHyperlink = (text: string): boolean => {
   }
 
   return true;
-***REMOVED***
+};
 
 /**
  * Function to validate hyperlinks within a given text.
@@ -129,6 +129,6 @@ const handleHyperlink = (text: string) => {
   });
 
   return <div>{content}</div>;
-***REMOVED***
+};
 
-export { getMetaData, handleHyperlink, validateHyperlink ***REMOVED***
+export { getMetaData, handleHyperlink, validateHyperlink };

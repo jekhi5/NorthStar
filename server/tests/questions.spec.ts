@@ -11,12 +11,12 @@ const tag1: Tag = {
   _id: new mongoose.Types.ObjectId('507f191e810c19729de860ea'),
   name: 'tag1',
   description: 'tag1 description',
-***REMOVED***
+};
 const tag2: Tag = {
   _id: new mongoose.Types.ObjectId('65e9a5c2b26199dbcc3e6dc8'),
   name: 'tag2',
   description: 'tag2 description',
-***REMOVED***
+};
 
 const ans1: Answer = {
   _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6dc'),
@@ -26,7 +26,7 @@ const ans1: Answer = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const ans2: Answer = {
   _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6dd'),
@@ -36,7 +36,7 @@ const ans2: Answer = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const ans3: Answer = {
   _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6df'),
@@ -46,7 +46,7 @@ const ans3: Answer = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const ans4: Answer = {
   _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6de'),
@@ -56,7 +56,7 @@ const ans4: Answer = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const MOCK_QUESTIONS: Question[] = [
   {
@@ -137,7 +137,7 @@ describe('GET /getQuestion', () => {
     const mockReqQuery = {
       order: 'dummyOrder',
       search: 'dummySearch',
-    ***REMOVED***
+    };
     getQuestionsByOrderSpy.mockResolvedValueOnce(MOCK_QUESTIONS);
     filterQuestionsBySearchSpy.mockReturnValueOnce(MOCK_QUESTIONS);
     // Making the request
@@ -153,7 +153,7 @@ describe('GET /getQuestion', () => {
     const mockReqQuery = {
       order: 'dummyOrder',
       search: 'dummySearch',
-    ***REMOVED***
+    };
     getQuestionsByOrderSpy.mockRejectedValueOnce(new Error('Error fetching questions'));
     // Making the request
     const response = await supertest(app).get('/question/getQuestion').query(mockReqQuery);
@@ -167,7 +167,7 @@ describe('GET /getQuestion', () => {
     const mockReqQuery = {
       order: 'dummyOrder',
       search: 'dummySearch',
-    ***REMOVED***
+    };
     getQuestionsByOrderSpy.mockResolvedValueOnce(MOCK_QUESTIONS);
     filterQuestionsBySearchSpy.mockRejectedValueOnce(new Error('Error filtering questions'));
     // Making the request

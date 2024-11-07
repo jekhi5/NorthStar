@@ -75,7 +75,7 @@ const useNewQuestion = () => {
     }
 
     return isValid;
-  ***REMOVED***
+  };
 
   /**
    * Function to post a question to the server.
@@ -102,14 +102,14 @@ const useNewQuestion = () => {
       downVotes: [],
       views: [],
       comments: [],
-    ***REMOVED***
+    };
 
     const res = await addQuestion(question);
 
     if (res && res._id) {
       navigate('/home');
     }
-  ***REMOVED***
+  };
 
   return {
     title,
@@ -122,7 +122,7 @@ const useNewQuestion = () => {
     textErr,
     tagErr,
     postQuestion,
-  ***REMOVED***
-***REMOVED***
+  };
+};
 
 export default useNewQuestion;

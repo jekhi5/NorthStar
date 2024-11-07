@@ -39,7 +39,7 @@ const VoteComponent = ({ question }: VoteComponentProps) => {
     } catch (error) {
       // Handle error
     }
-  ***REMOVED***
+  };
 
   return (
     <div className='vote-container'>
@@ -56,6 +56,6 @@ const VoteComponent = ({ question }: VoteComponentProps) => {
       <span className='vote-count'>{count}</span>
     </div>
   );
-***REMOVED***
+};
 
 export default VoteComponent;

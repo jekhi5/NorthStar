@@ -34,7 +34,7 @@ const useVoteStatus = ({ question }: { question: Question }) => {
         return -1;
       }
       return 0;
-    ***REMOVED***
+    };
 
     // Set the initial count and vote value
     setCount((question.upVotes || []).length - (question.downVotes || []).length);
@@ -46,7 +46,7 @@ const useVoteStatus = ({ question }: { question: Question }) => {
     setCount,
     voted,
     setVoted,
-  ***REMOVED***
-***REMOVED***
+  };
+};
 
 export default useVoteStatus;

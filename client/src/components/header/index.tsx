@@ -24,6 +24,6 @@ const Header = () => {
       />
     </div>
   );
-***REMOVED***
+};
 
 export default Header;

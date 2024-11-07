@@ -25,6 +25,6 @@ const TagPage = () => {
       </div>
     </>
   );
-***REMOVED***
+};
 
 export default TagPage;

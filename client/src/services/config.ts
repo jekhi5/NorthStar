@@ -12,7 +12,7 @@ const handleErr = (err: AxiosError) => {
   // eslint-disable-next-line no-console
   console.log(err);
   return Promise.reject(err);
-***REMOVED***
+};
 
 const api = axios.create({ withCredentials: true });
 

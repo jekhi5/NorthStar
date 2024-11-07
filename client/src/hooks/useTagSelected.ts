@@ -25,14 +25,14 @@ const useTagSelected = (t: TagData) => {
         // eslint-disable-next-line no-console
         console.log(e);
       }
-    ***REMOVED***
+    };
     fetchData();
   }, [t.name]);
 
   return {
     tag,
     setTag,
-  ***REMOVED***
-***REMOVED***
+  };
+};
 
 export default useTagSelected;

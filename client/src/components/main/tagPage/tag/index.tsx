@@ -36,6 +36,6 @@ const TagView = ({ t, clickTag }: TagProps) => {
       <div>{t.qcnt} questions</div>
     </div>
   );
-***REMOVED***
+};
 
 export default TagView;

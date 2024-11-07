@@ -8,12 +8,12 @@ const tag1: Tag = {
   _id: new mongoose.Types.ObjectId('507f191e810c19729de860ea'),
   name: 'tag1',
   description: 'tag1 description',
-***REMOVED***
+};
 const tag2: Tag = {
   _id: new mongoose.Types.ObjectId('65e9a5c2b26199dbcc3e6dc8'),
   name: 'tag2',
   description: 'tag2 description',
-***REMOVED***
+};
 
 const mockQuestion: Question = {
   _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6fe'),
@@ -27,7 +27,7 @@ const mockQuestion: Question = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const simplifyQuestion = (question: Question) => ({
   ...question,
@@ -156,7 +156,7 @@ describe('POST /addQuestion', () => {
       upVotes: [],
       downVotes: [],
       comments: [],
-    ***REMOVED***
+    };
 
     const result: Question = {
       _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6fe'),
@@ -170,7 +170,7 @@ describe('POST /addQuestion', () => {
       upVotes: [],
       downVotes: [],
       comments: [],
-    ***REMOVED***
+    };
 
     // Set up the mock to resolve with unique tags
     jest.spyOn(util, 'processTags').mockResolvedValue([tag1, tag2] as Tag[]);

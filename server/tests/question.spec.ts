@@ -15,11 +15,11 @@ interface MockResponse {
 const tag1 = {
   _id: '507f191e810c19729de860ea',
   name: 'tag1',
-***REMOVED***
+};
 const tag2 = {
   _id: '65e9a5c2b26199dbcc3e6dc8',
   name: 'tag2',
-***REMOVED***
+};
 
 const ans1 = {
   _id: '65e9b58910afe6e94fc6e6dc',
@@ -29,7 +29,7 @@ const ans1 = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const ans2 = {
   _id: '65e9b58910afe6e94fc6e6dd',
@@ -39,7 +39,7 @@ const ans2 = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const ans3 = {
   _id: '65e9b58910afe6e94fc6e6df',
@@ -49,7 +49,7 @@ const ans3 = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const ans4 = {
   _id: '65e9b58910afe6e94fc6e6dg',
@@ -59,7 +59,7 @@ const ans4 = {
   upVotes: [],
   downVotes: [],
   comments: [],
-***REMOVED***
+};
 
 const MOCK_QUESTIONS = [
   {
@@ -116,13 +116,13 @@ describe('POST /upvoteQuestion', () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
       username: 'new-user',
-    ***REMOVED***
+    };
 
     const mockResponse = {
       msg: 'Question upvoted successfully',
       upVotes: ['new-user'],
       downVotes: [],
-    ***REMOVED***
+    };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
 
@@ -136,13 +136,13 @@ describe('POST /upvoteQuestion', () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
       username: 'some-user',
-    ***REMOVED***
+    };
 
     const mockSecondResponse = {
       msg: 'Upvote cancelled successfully',
       upVotes: [],
       downVotes: [],
-    ***REMOVED***
+    };
 
     await supertest(app).post('/question/upvoteQuestion').send(mockReqBody);
 
@@ -158,14 +158,14 @@ describe('POST /upvoteQuestion', () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
       username: 'new-user',
-    ***REMOVED***
+    };
 
     // First upvote the question
     let mockResponseWithBothVotes: MockResponse = {
       msg: 'Question upvoted successfully',
       upVotes: ['new-user'],
       downVotes: [],
-    ***REMOVED***
+    };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
 
@@ -179,7 +179,7 @@ describe('POST /upvoteQuestion', () => {
       msg: 'Question downvoted successfully',
       downVotes: ['new-user'],
       upVotes: [],
-    ***REMOVED***
+    };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
 
@@ -192,7 +192,7 @@ describe('POST /upvoteQuestion', () => {
   it('should return bad request error if the request had qid missing', async () => {
     const mockReqBody = {
       username: 'some-user',
-    ***REMOVED***
+    };
 
     const response = await supertest(app).post(`/question/upvoteQuestion`).send(mockReqBody);
 
@@ -202,7 +202,7 @@ describe('POST /upvoteQuestion', () => {
   it('should return bad request error if the request had username missing', async () => {
     const mockReqBody = {
       qid: '65e9b5a995b6c7045a30d823',
-    ***REMOVED***
+    };
 
     const response = await supertest(app).post(`/question/upvoteQuestion`).send(mockReqBody);
 
@@ -223,13 +223,13 @@ describe('POST /downvoteQuestion', () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
       username: 'new-user',
-    ***REMOVED***
+    };
 
     const mockResponse = {
       msg: 'Question upvoted successfully',
       downVotes: ['new-user'],
       upVotes: [],
-    ***REMOVED***
+    };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
 
@@ -243,13 +243,13 @@ describe('POST /downvoteQuestion', () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
       username: 'some-user',
-    ***REMOVED***
+    };
 
     const mockSecondResponse = {
       msg: 'Downvote cancelled successfully',
       downVotes: [],
       upVotes: [],
-    ***REMOVED***
+    };
 
     await supertest(app).post('/question/downvoteQuestion').send(mockReqBody);
 
@@ -265,14 +265,14 @@ describe('POST /downvoteQuestion', () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
       username: 'new-user',
-    ***REMOVED***
+    };
 
     // First downvote the question
     let mockResponse: MockResponse = {
       msg: 'Question downvoted successfully',
       downVotes: ['new-user'],
       upVotes: [],
-    ***REMOVED***
+    };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
 
@@ -286,7 +286,7 @@ describe('POST /downvoteQuestion', () => {
       msg: 'Question upvoted successfully',
       downVotes: [],
       upVotes: ['new-user'],
-    ***REMOVED***
+    };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
 
@@ -299,7 +299,7 @@ describe('POST /downvoteQuestion', () => {
   it('should return bad request error if the request had qid missing', async () => {
     const mockReqBody = {
       username: 'some-user',
-    ***REMOVED***
+    };
 
     const response = await supertest(app).post(`/question/downvoteQuestion`).send(mockReqBody);
 
@@ -309,7 +309,7 @@ describe('POST /downvoteQuestion', () => {
   it('should return bad request error if the request had username missing', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-    ***REMOVED***
+    };
 
     const response = await supertest(app).post(`/question/downvoteQuestion`).send(mockReqBody);
 
@@ -330,10 +330,10 @@ describe('GET /getQuestionById/:qid', () => {
     // Mock request parameters
     const mockReqParams = {
       qid: '65e9b5a995b6c7045a30d823',
-    ***REMOVED***
+    };
     const mockReqQuery = {
       username: 'question3_user',
-    ***REMOVED***
+    };
 
     const findq = MOCK_QUESTIONS.filter(q => q._id.toString() === mockReqParams.qid)[0];
 
@@ -344,7 +344,7 @@ describe('GET /getQuestionById/:qid', () => {
       tags: [],
       answers: [],
       askDateTime: findq.askDateTime,
-    ***REMOVED***
+    };
 
     // Provide mock question data
     jest
@@ -360,7 +360,7 @@ describe('GET /getQuestionById/:qid', () => {
       ...mockPopulatedQuestion,
       _id: mockPopulatedQuestion._id.toString(),
       askDateTime: mockPopulatedQuestion.askDateTime.toISOString(),
-    ***REMOVED***
+    };
     // Asserting the response
     expect(response.status).toBe(200);
     expect(response.body).toEqual(expectedResponse);
@@ -370,10 +370,10 @@ describe('GET /getQuestionById/:qid', () => {
     // Mock request parameters
     const mockReqParams = {
       qid: '65e9b5a995b6c7045a30d823',
-    ***REMOVED***
+    };
     const mockReqQuery = {
       username: 'question2_user',
-    ***REMOVED***
+    };
 
     const findq = MOCK_QUESTIONS.filter(q => q._id.toString() === mockReqParams.qid)[0];
 
@@ -383,7 +383,7 @@ describe('GET /getQuestionById/:qid', () => {
       tags: [],
       answers: [],
       askDateTime: findq.askDateTime,
-    ***REMOVED***
+    };
 
     // Provide mock question data
     jest
@@ -399,7 +399,7 @@ describe('GET /getQuestionById/:qid', () => {
       ...mockPopulatedQuestion,
       _id: mockPopulatedQuestion._id.toString(),
       askDateTime: mockPopulatedQuestion.askDateTime.toISOString(),
-    ***REMOVED***
+    };
     // Asserting the response
     expect(response.status).toBe(200);
     expect(response.body).toEqual(expectedResponse);
@@ -409,10 +409,10 @@ describe('GET /getQuestionById/:qid', () => {
     // Mock request parameters
     const mockReqParams = {
       qid: 'invalid id',
-    ***REMOVED***
+    };
     const mockReqQuery = {
       username: 'question2_user',
-    ***REMOVED***
+    };
 
     jest.spyOn(util, 'fetchAndIncrementQuestionViewsById').mockResolvedValueOnce(null);
 
@@ -430,7 +430,7 @@ describe('GET /getQuestionById/:qid', () => {
     // Mock request parameters
     const mockReqParams = {
       qid: '65e9b5a995b6c7045a30d823',
-    ***REMOVED***
+    };
 
     jest.spyOn(util, 'fetchAndIncrementQuestionViewsById').mockResolvedValueOnce(null);
 
@@ -446,10 +446,10 @@ describe('GET /getQuestionById/:qid', () => {
     // Mock request parameters
     const mockReqParams = {
       qid: '65e9b5a995b6c7045a30d823',
-    ***REMOVED***
+    };
     const mockReqQuery = {
       username: 'question2_user',
-    ***REMOVED***
+    };
 
     jest.spyOn(util, 'fetchAndIncrementQuestionViewsById').mockResolvedValueOnce(null);
 
@@ -466,10 +466,10 @@ describe('GET /getQuestionById/:qid', () => {
     // Mock request parameters
     const mockReqParams = {
       qid: '65e9b5a995b6c7045a30d823',
-    ***REMOVED***
+    };
     const mockReqQuery = {
       username: 'question2_user',
-    ***REMOVED***
+    };
 
     jest
       .spyOn(util, 'fetchAndIncrementQuestionViewsById')

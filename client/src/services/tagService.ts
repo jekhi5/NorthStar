@@ -14,7 +14,7 @@ const getTagsWithQuestionNumber = async (): Promise<TagData[]> => {
     throw new Error('Error when fetching tags with question number');
   }
   return res.data;
-***REMOVED***
+};
 
 /**
  * Function to get a tag by its name.
@@ -28,6 +28,6 @@ const getTagByName = async (name: string): Promise<Tag> => {
     throw new Error(`Error when fetching tag: ${name}`);
   }
   return res.data;
-***REMOVED***
+};
 
-export { getTagsWithQuestionNumber, getTagByName ***REMOVED***
+export { getTagsWithQuestionNumber, getTagByName };

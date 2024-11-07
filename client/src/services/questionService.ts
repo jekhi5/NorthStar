@@ -19,7 +19,7 @@ const getQuestionsByFilter = async (
     throw new Error('Error when fetching or filtering questions');
   }
   return res.data;
-***REMOVED***
+};
 
 /**
  * Function to get a question by its ID.
@@ -34,7 +34,7 @@ const getQuestionById = async (qid: string, username: string): Promise<Question>
     throw new Error('Error when fetching question by id');
   }
   return res.data;
-***REMOVED***
+};
 
 /**
  * Function to add a new question.
@@ -50,7 +50,7 @@ const addQuestion = async (q: Question): Promise<Question> => {
   }
 
   return res.data;
-***REMOVED***
+};
 
 /**
  * Function to upvote a question.
@@ -60,13 +60,13 @@ const addQuestion = async (q: Question): Promise<Question> => {
  * @throws Error if there is an issue upvoting the question.
  */
 const upvoteQuestion = async (qid: string, username: string) => {
-  const data = { qid, username ***REMOVED***
+  const data = { qid, username };
   const res = await api.post(`${QUESTION_API_URL}/upvoteQuestion`, data);
   if (res.status !== 200) {
     throw new Error('Error while upvoting the question');
   }
   return res.data;
-***REMOVED***
+};
 
 /**
  * Function to downvote a question.
@@ -76,12 +76,12 @@ const upvoteQuestion = async (qid: string, username: string) => {
  * @throws Error if there is an issue downvoting the question.
  */
 const downvoteQuestion = async (qid: string, username: string) => {
-  const data = { qid, username ***REMOVED***
+  const data = { qid, username };
   const res = await api.post(`${QUESTION_API_URL}/downvoteQuestion`, data);
   if (res.status !== 200) {
     throw new Error('Error while downvoting the question');
   }
   return res.data;
-***REMOVED***
+};
 
-export { getQuestionsByFilter, getQuestionById, addQuestion, upvoteQuestion, downvoteQuestion ***REMOVED***
+export { getQuestionsByFilter, getQuestionById, addQuestion, upvoteQuestion, downvoteQuestion };

@@ -83,7 +83,7 @@ const answerController = (socket: FakeSOSocket) => {
     } catch (err) {
       res.status(500).send(`Error when adding answer: ${(err as Error).message}`);
     }
-  ***REMOVED***
+  };
 
   /**
    * Helper function to handle upvoting or downvoting an answer.
@@ -129,7 +129,7 @@ const answerController = (socket: FakeSOSocket) => {
     } catch (err) {
       res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
     }
-  ***REMOVED***
+  };
 
   /**
    * Handles upvoting an answer. The request must contain the answer ID and the username.
@@ -142,7 +142,7 @@ const answerController = (socket: FakeSOSocket) => {
    */
   const upvoteAnswer = async (req: VoteRequest, res: Response): Promise<void> => {
     voteAnswer(req, res, 'upvote');
-  ***REMOVED***
+  };
 
   /**
    * Handles downvoting an answer. The request must contain the answer ID and the username.
@@ -155,7 +155,7 @@ const answerController = (socket: FakeSOSocket) => {
    */
   const downvoteAnswer = async (req: VoteRequest, res: Response): Promise<void> => {
     voteAnswer(req, res, 'downvote');
-  ***REMOVED***
+  };
 
   // add appropriate HTTP verbs and their endpoints to the router.
   router.post('/addAnswer', addAnswer);
@@ -163,6 +163,6 @@ const answerController = (socket: FakeSOSocket) => {
   router.post('/downvoteAnswer', downvoteAnswer);
 
   return router;
-***REMOVED***
+};
 
 export default answerController;

@@ -96,7 +96,7 @@ const commentController = (socket: FakeSOSocket) => {
     } catch (err: unknown) {
       res.status(500).send(`Error when adding comment: ${(err as Error).message}`);
     }
-  ***REMOVED***
+  };
 
   /**
    * Helper function to handle upvoting or downvoting a comment.
@@ -142,7 +142,7 @@ const commentController = (socket: FakeSOSocket) => {
     } catch (err) {
       res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
     }
-  ***REMOVED***
+  };
 
   /**
    * Handles upvoting a comment. The request must contain the comment ID and the username.
@@ -155,7 +155,7 @@ const commentController = (socket: FakeSOSocket) => {
    */
   const upvoteComment = async (req: VoteRequest, res: Response): Promise<void> => {
     voteComment(req, res, 'upvote');
-  ***REMOVED***
+  };
 
   /**
    * Handles downvoting a comment. The request must contain the comment ID and the username.
@@ -168,13 +168,13 @@ const commentController = (socket: FakeSOSocket) => {
    */
   const downvoteComment = async (req: VoteRequest, res: Response): Promise<void> => {
     voteComment(req, res, 'downvote');
-  ***REMOVED***
+  };
 
   router.post('/addComment', addCommentRoute);
   router.post('/upvoteComment', upvoteComment);
   router.post('/downvoteComment', downvoteComment);
 
   return router;
-***REMOVED***
+};
 
 export default commentController;

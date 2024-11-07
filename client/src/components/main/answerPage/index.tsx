@@ -53,6 +53,6 @@ const AnswerPage = () => {
       </button>
     </>
   );
-***REMOVED***
+};
 
 export default AnswerPage;

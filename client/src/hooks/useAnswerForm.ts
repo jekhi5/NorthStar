@@ -61,7 +61,7 @@ const useAnswerForm = () => {
       upVotes: [],
       downVotes: [],
       comments: [],
-    ***REMOVED***
+    };
 
     const res = await addAnswer(questionID, answer);
 
@@ -69,14 +69,14 @@ const useAnswerForm = () => {
       // navigate to the question that was answered
       navigate(`/question/${questionID}`);
     }
-  ***REMOVED***
+  };
 
   return {
     text,
     textErr,
     setText,
     postAnswer,
-  ***REMOVED***
-***REMOVED***
+  };
+};
 
 export default useAnswerForm;

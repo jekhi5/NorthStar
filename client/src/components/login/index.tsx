@@ -29,6 +29,6 @@ const Login = () => {
       </form>
     </div>
   );
-***REMOVED***
+};
 
 export default Login;

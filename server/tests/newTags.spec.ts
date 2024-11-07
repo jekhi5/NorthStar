@@ -18,7 +18,7 @@ describe('GET /getTagByName/:name', () => {
 
   it('should return the tag when found', async () => {
     // Mock a tag object to be returned by the findOne method
-    const mockTag = { name: 'exampleTag', description: 'This is a test tag' ***REMOVED***
+    const mockTag = { name: 'exampleTag', description: 'This is a test tag' };
     findOneSpy.mockResolvedValueOnce(mockTag);
 
     const response = await supertest(app).get('/tag/getTagByName/exampleTag');

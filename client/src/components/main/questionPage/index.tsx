@@ -29,6 +29,6 @@ const QuestionPage = () => {
       )}
     </>
   );
-***REMOVED***
+};
 
 export default QuestionPage;

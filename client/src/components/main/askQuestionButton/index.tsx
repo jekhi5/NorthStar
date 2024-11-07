@@ -14,7 +14,7 @@ const AskQuestionButton = () => {
    */
   const handleNewQuestion = () => {
     navigate('/new/question');
-  ***REMOVED***
+  };
 
   return (
     <button
@@ -25,6 +25,6 @@ const AskQuestionButton = () => {
       Ask a Question
     </button>
   );
-***REMOVED***
+};
 
 export default AskQuestionButton;

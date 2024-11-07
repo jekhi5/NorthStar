@@ -21,7 +21,7 @@ const useLogin = () => {
    */
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
-  ***REMOVED***
+  };
 
   /**
    * Function to handle the form submission event.
@@ -32,9 +32,9 @@ const useLogin = () => {
     event.preventDefault();
     setUser({ username });
     navigate('/home');
-  ***REMOVED***
+  };
 
-  return { username, handleInputChange, handleSubmit ***REMOVED***
-***REMOVED***
+  return { username, handleInputChange, handleSubmit };
+};
 
 export default useLogin;

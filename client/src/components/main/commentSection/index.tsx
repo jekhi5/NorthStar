@@ -42,12 +42,12 @@ const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => 
       commentDateTime: new Date(),
       upVotes: [],
       downVotes: [],
-    ***REMOVED***
+    };
 
     handleAddComment(newComment);
     setText('');
     setTextErr('');
-  ***REMOVED***
+  };
 
   return (
     <div className='comment-section'>
@@ -90,6 +90,6 @@ const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => 
       )}
     </div>
   );
-***REMOVED***
+};
 
 export default CommentSection;

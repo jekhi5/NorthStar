@@ -70,7 +70,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
  */
 async function tagCreate(name: string, description: string): Promise<Tag> {
   if (name === '') throw new Error('Invalid Tag Format');
-  const tag: Tag = { name: name, description: description ***REMOVED***
+  const tag: Tag = { name: name, description: description };
   return await TagModel.create(tag);
 }
 
@@ -94,7 +94,7 @@ async function commentCreate(
     text: text,
     commentBy: commentBy,
     commentDateTime: commentDateTime,
-  ***REMOVED***
+  };
   return await CommentModel.create(commentDetail);
 }
 
@@ -121,7 +121,7 @@ async function answerCreate(
     ansBy: ansBy,
     ansDateTime: ansDateTime,
     comments: comments,
-  ***REMOVED***
+  };
   return await AnswerModel.create(answerDetail);
 }
 
@@ -169,7 +169,7 @@ async function questionCreate(
     upVotes: [],
     downVotes: [],
     comments: comments,
-  ***REMOVED***
+  };
   return await QuestionModel.create(questionDetail);
 }
 
@@ -256,7 +256,7 @@ const populate = async () => {
     if (db) db.close();
     console.log('done');
   }
-***REMOVED***
+};
 
 populate();
 

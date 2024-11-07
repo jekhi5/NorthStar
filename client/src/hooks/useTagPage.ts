@@ -23,7 +23,7 @@ const useTagPage = () => {
     searchParams.set('tag', tagName);
 
     navigate(`/home?${searchParams.toString()}`);
-  ***REMOVED***
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,12 +34,12 @@ const useTagPage = () => {
         // eslint-disable-next-line no-console
         console.log(e);
       }
-    ***REMOVED***
+    };
 
     fetchData();
   }, []);
 
-  return { tlist, clickTag ***REMOVED***
-***REMOVED***
+  return { tlist, clickTag };
+};
 
 export default useTagPage;

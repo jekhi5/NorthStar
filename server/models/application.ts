@@ -53,7 +53,7 @@ const checkTagInQuestion = (q: Question, taglist: string[]): boolean => {
   }
 
   return false;
-***REMOVED***
+};
 
 /**
  * Checks if any keywords in the provided list exist in a given question's title or text.
@@ -71,7 +71,7 @@ const checkKeywordInQuestion = (q: Question, keywordlist: string[]): boolean => 
   }
 
   return false;
-***REMOVED***
+};
 
 /**
  * Gets the newest questions from a list, sorted by the asking date in descending order.
@@ -120,7 +120,7 @@ const getMostRecentAnswerTime = (question: Question, mp: Map<string, Date>): voi
       }
     }
   });
-***REMOVED***
+};
 
 /**
  * Gets active questions from a list, sorted by the most recent answer date in descending order.
@@ -152,7 +152,7 @@ const sortQuestionsByActive = (qlist: Question[]): Question[] => {
     }
     return 0;
   });
-***REMOVED***
+};
 
 /**
  * Sorts a list of questions by the number of views in descending order. First, the questions are
@@ -190,7 +190,7 @@ export const addTag = async (tag: Tag): Promise<Tag | null> => {
   } catch (error) {
     return null;
   }
-***REMOVED***
+};
 
 /**
  * Retrieves questions from the database, ordered by the specified criteria.
@@ -220,7 +220,7 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
   } catch (error) {
     return [];
   }
-***REMOVED***
+};
 
 /**
  * Filters a list of questions by the user who asked them.
@@ -263,7 +263,7 @@ export const filterQuestionsBySearch = (qlist: Question[], search: string): Ques
 
     return checkKeywordInQuestion(q, searchKeyword) || checkTagInQuestion(q, searchTags);
   });
-***REMOVED***
+};
 
 /**
  * Fetches and populates a question or answer document based on the provided ID and type.
@@ -308,9 +308,9 @@ export const populateDocument = async (
     }
     return result;
   } catch (error) {
-    return { error: `Error when fetching and populating a document: ${(error as Error).message}` ***REMOVED***
+    return { error: `Error when fetching and populating a document: ${(error as Error).message}` };
   }
-***REMOVED***
+};
 
 /**
  * Fetches a question by its ID and increments its view count.
@@ -344,9 +344,9 @@ export const fetchAndIncrementQuestionViewsById = async (
     ]);
     return q;
   } catch (error) {
-    return { error: 'Error when fetching and updating a question' ***REMOVED***
+    return { error: 'Error when fetching and updating a question' };
   }
-***REMOVED***
+};
 
 /**
  * Saves a new question to the database.
@@ -360,9 +360,9 @@ export const saveQuestion = async (question: Question): Promise<QuestionResponse
     const result = await QuestionModel.create(question);
     return result;
   } catch (error) {
-    return { error: 'Error when saving a question' ***REMOVED***
+    return { error: 'Error when saving a question' };
   }
-***REMOVED***
+};
 
 /**
  * Saves a new answer to the database.
@@ -376,9 +376,9 @@ export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
     const result = await AnswerModel.create(answer);
     return result;
   } catch (error) {
-    return { error: 'Error when saving an answer' ***REMOVED***
+    return { error: 'Error when saving an answer' };
   }
-***REMOVED***
+};
 
 /**
  * Saves a new comment to the database.
@@ -392,9 +392,9 @@ export const saveComment = async (comment: Comment): Promise<CommentResponse> =>
     const result = await CommentModel.create(comment);
     return result;
   } catch (error) {
-    return { error: 'Error when saving a comment' ***REMOVED***
+    return { error: 'Error when saving a comment' };
   }
-***REMOVED***
+};
 
 /**
  * Processes a list of tags by removing duplicates, checking for existing tags in the database,
@@ -442,7 +442,7 @@ export const processTags = async (tags: Tag[]): Promise<Tag[]> => {
     console.log('An error occurred while adding tags:', errorMessage);
     return [];
   }
-***REMOVED***
+};
 
 /**
  * Adds a vote to a question.
@@ -511,7 +511,7 @@ export const addVoteToQuestion = async (
     });
 
     if (!result) {
-      return { error: 'Question not found!' ***REMOVED***
+      return { error: 'Question not found!' };
     }
 
     let msg = '';
@@ -530,16 +530,16 @@ export const addVoteToQuestion = async (
       msg,
       upVotes: result.upVotes || [],
       downVotes: result.downVotes || [],
-    ***REMOVED***
+    };
   } catch (err) {
     return {
       error:
         type === 'upvote'
           ? 'Error when adding upvote to question'
           : 'Error when adding downvote to question',
-    ***REMOVED***
+    };
   }
-***REMOVED***
+};
 
 /**
  * Adds an answer to a question.
@@ -564,9 +564,9 @@ export const addAnswerToQuestion = async (qid: string, ans: Answer): Promise<Que
     }
     return result;
   } catch (error) {
-    return { error: 'Error when adding answer to question' ***REMOVED***
+    return { error: 'Error when adding answer to question' };
   }
-***REMOVED***
+};
 
 /**
  * Adds a vote to an answer.
@@ -635,7 +635,7 @@ export const addVoteToAnswer = async (
     });
 
     if (!result) {
-      return { error: 'Answer not found!' ***REMOVED***
+      return { error: 'Answer not found!' };
     }
 
     let msg = '';
@@ -654,16 +654,16 @@ export const addVoteToAnswer = async (
       msg,
       upVotes: result.upVotes || [],
       downVotes: result.downVotes || [],
-    ***REMOVED***
+    };
   } catch (err) {
     return {
       error:
         type === 'upvote'
           ? 'Error when adding upvote to answer'
           : 'Error when adding downvote to answer',
-    ***REMOVED***
+    };
   }
-***REMOVED***
+};
 
 /**
  * Adds a comment to a question or answer.
@@ -702,9 +702,9 @@ export const addComment = async (
     }
     return result;
   } catch (error) {
-    return { error: `Error when adding comment: ${(error as Error).message}` ***REMOVED***
+    return { error: `Error when adding comment: ${(error as Error).message}` };
   }
-***REMOVED***
+};
 
 /**
  * Adds a vote to a comment.
@@ -773,7 +773,7 @@ export const addVoteToComment = async (
     });
 
     if (!result) {
-      return { error: 'Comment not found!' ***REMOVED***
+      return { error: 'Comment not found!' };
     }
 
     let msg = '';
@@ -792,16 +792,16 @@ export const addVoteToComment = async (
       msg,
       upVotes: result.upVotes || [],
       downVotes: result.downVotes || [],
-    ***REMOVED***
+    };
   } catch (err) {
     return {
       error:
         type === 'upvote'
           ? 'Error when adding upvote to comment'
           : 'Error when adding downvote to comment',
-    ***REMOVED***
+    };
   }
-***REMOVED***
+};
 
 /**
  * Gets a map of tags and their corresponding question counts.
@@ -833,6 +833,6 @@ export const getTagCountMap = async (): Promise<Map<string, number> | null | { e
 
     return tmap;
   } catch (error) {
-    return { error: 'Error when construction tag map' ***REMOVED***
+    return { error: 'Error when construction tag map' };
   }
-***REMOVED***
+};

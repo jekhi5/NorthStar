@@ -13,4 +13,4 @@ module.exports = {
   proseWrap: 'always',
   htmlWhitespaceSensitivity: 'ignore',
   endOfLine: 'lf',
-***REMOVED***
+};

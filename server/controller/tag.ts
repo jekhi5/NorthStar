@@ -30,7 +30,7 @@ const tagController = () => {
     } catch (err) {
       res.status(500).send(`Error when fetching tag count map: ${(err as Error).message}`);
     }
-  ***REMOVED***
+  };
 
   /**
    * Retrieves a tag from the database by its name, provided in the request parameters.
@@ -54,13 +54,13 @@ const tagController = () => {
     } catch (err) {
       res.status(500).send(`Error when fetching tag: ${(err as Error).message}`);
     }
-  ***REMOVED***
+  };
 
   // Add appropriate HTTP verbs and their endpoints to the router.
   router.get('/getTagsWithQuestionNumber', getTagsWithQuestionNumber);
   router.get('/getTagByName/:name', getTagByName); // New endpoint to get tag by name
 
   return router;
-***REMOVED***
+};
 
 export default tagController;
