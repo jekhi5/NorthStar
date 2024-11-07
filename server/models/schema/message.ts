@@ -17,7 +17,7 @@ const messageSchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    ansDateTime: {
+    sentDateType: {
       type: Date,
     },
   },
