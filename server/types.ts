@@ -10,6 +10,25 @@ export type FakeSOSocket = Server<ServerToClientEvents>;
 export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed';
 
 /**
+ * Interface representing a user in the application, which contains:
+ * - uid - The unique identifier for the user.
+ * - username - The username of the user.
+ * - email - The email address of the user.
+ * - password - The password of the user. Optional field.
+ *
+ **/
+export interface User {
+  _id?: ObjectId;
+  uid: string;
+  email: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  profilePicture?: string;
+  status: 'Not endorsed' | 'Endorsed';
+}
+
+/**
  * Interface representing an Answer document, which contains:
  * - _id - The unique identifier for the answer. Optional field
  * - text - The content of the answer
@@ -20,7 +39,7 @@ export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed';
 export interface Answer {
   _id?: ObjectId;
   text: string;
-  ansBy: string;
+  ansBy: User;
   ansDateTime: Date;
   upVotes: string[];
   downVotes: string[];
@@ -68,19 +87,21 @@ export interface Tag {
  * - upVotes - An array of usernames that have upvoted the question.
  * - downVotes - An array of usernames that have downvoted the question.
  * - comments - Object IDs of comments that have been added to the question by users, or comments themselves if populated.
+ * - subscribers - An array of users who are subscribed to the question.
  */
 export interface Question {
   _id?: ObjectId;
   title: string;
   text: string;
   tags: Tag[];
-  askedBy: string;
+  askedBy: User;
   askDateTime: Date;
   answers: Answer[] | ObjectId[];
   views: string[];
   upVotes: string[];
   downVotes: string[];
   comments: Comment[] | ObjectId[];
+  subscribers: User[] | ObjectId[];
 }
 
 /**
@@ -111,7 +132,7 @@ export interface FindQuestionByIdRequest extends Request {
     qid: string;
   };
   query: {
-    username: string;
+    uid: string;
   };
 }
 
@@ -126,13 +147,13 @@ export interface AddQuestionRequest extends Request {
 /**
  * Interface for the request body when upvoting or downvoting a question.
  * - body - The question ID and the username of the user voting.
- *  - qid - The unique identifier of the question.
+ *  - id - The unique identifier of the post being voted on.
  *  - username - The username of the user voting.
  */
 export interface VoteRequest extends Request {
   body: {
     id: string;
-    username: string;
+    uid: string;
   };
 }
 
@@ -147,10 +168,55 @@ export interface VoteRequest extends Request {
 export interface Comment {
   _id?: ObjectId;
   text: string;
-  commentBy: string;
+  commentBy: User;
   commentDateTime: Date;
   upVotes: string[];
   downVotes: string[];
+}
+
+/**
+ * Interface extending the request body when adding a subscriber to a question, which contains:
+ * - id - The unique identifier of the question.
+ * - user - The user who is subscribing to the question.
+ */
+export interface ToggleSubscriberRequest extends Request {
+  body: {
+    id: string;
+    user: User;
+  };
+}
+
+/**
+ * Interface representing the payload for a subscriber update event, which contains:
+ * - result - The updated question or null if not found.
+ */
+export interface SubscriberUpdatePayload {
+  result: QuestionResponse | null;
+}
+
+/**
+ * Interface extending the request body when adding a subscriber to a question, which contains:
+ * - id - The unique identifier of the question.
+ * - user - The user who is subscribing to the question.
+ */
+export interface ToggleSubscriberRequest extends Request {
+  body: {
+    id: string;
+    user: User;
+  };
+}
+
+/**
+ * Type representing the possible responses for a Subscriber-related operation.
+ */
+export type SubscriberResponse = User | { error: string };
+
+/**
+ * Interface representing the payload for a subscriber update event, which contains:
+ * - result - The updated question or null if not found.
+ */
+export interface SubscriberUpdatePayload {
+  result: QuestionResponse | null;
 }
 
 /**
@@ -183,8 +249,13 @@ export interface CommentUpdatePayload {
 }
 
 /**
+ * Type representing the possible responses for a User-related operation.
+ */
+export type UserResponse = User | { error: string };
+
+/**
  * Interface representing the payload for a vote update event, which contains:
- * - qid - The unique identifier of the question.
+ * - id - The unique identifier of post being voted on.
  * - upVotes - An array of usernames who upvoted the question.
  * - downVotes - An array of usernames who downvoted the question.
  */
@@ -214,4 +285,5 @@ export interface ServerToClientEvents {
   viewsUpdate: (question: QuestionResponse) => void;
   voteUpdate: (vote: VoteUpdatePayload) => void;
   commentUpdate: (comment: CommentUpdatePayload) => void;
+  subscriberUpdate: (payload: SubscriberUpdatePayload) => void;
 }

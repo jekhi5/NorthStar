@@ -9,6 +9,7 @@ import { User } from '../types';
  *             to indicate no user is logged in.
  */
 export interface LoginContextType {
+  user: User | null;
   setUser: (user: User | null) => void;
 }
 

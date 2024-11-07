@@ -64,20 +64,20 @@ const questionController = (socket: FakeSOSocket) => {
    */
   const getQuestionById = async (req: FindQuestionByIdRequest, res: Response): Promise<void> => {
     const { qid } = req.params;
-    const { username } = req.query;
+    const { uid } = req.query;
 
     if (!ObjectId.isValid(qid)) {
       res.status(400).send('Invalid ID format');
       return;
     }
 
-    if (username === undefined) {
-      res.status(400).send('Invalid username requesting question.');
+    if (uid === undefined || uid === '') {
+      res.status(400).send('Invalid user requesting question.');
       return;
     }
 
     try {
-      const q = await fetchAndIncrementQuestionViewsById(qid, username);
+      const q = await fetchAndIncrementQuestionViewsById(qid, uid);
 
       if (q && !('error' in q)) {
         socket.emit('viewsUpdate', q);
@@ -110,7 +110,7 @@ const questionController = (socket: FakeSOSocket) => {
     question.tags !== undefined &&
     question.tags.length > 0 &&
     question.askedBy !== undefined &&
-    question.askedBy !== '' &&
+    question.askedBy.uid !== undefined &&
     question.askDateTime !== undefined &&
     question.askDateTime !== null;
 
@@ -163,7 +163,7 @@ const questionController = (socket: FakeSOSocket) => {
   /**
    * Helper function to handle upvoting or downvoting a question.
    *
-   * @param req The VoteRequest object containing the question ID and the username.
+   * @param req The VoteRequest object containing the question ID and the uid of the user.
    * @param res The HTTP response object used to send back the result of the operation.
    * @param type The type of vote to perform (upvote or downvote).
    *
@@ -174,19 +174,19 @@ const questionController = (socket: FakeSOSocket) => {
     res: Response,
     type: 'upvote' | 'downvote',
   ): Promise<void> => {
-    if (!req.body.id || !req.body.username) {
+    if (!req.body.id || !req.body.uid) {
       res.status(400).send('Invalid request');
       return;
     }
 
-    const { id, username } = req.body;
+    const { id, uid } = req.body;
 
     try {
       let status;
       if (type === 'upvote') {
-        status = await addVoteToQuestion(id, username, type);
+        status = await addVoteToQuestion(id, uid, type);
       } else {
-        status = await addVoteToQuestion(id, username, type);
+        status = await addVoteToQuestion(id, uid, type);
       }
 
       if (status && 'error' in status) {
@@ -220,7 +220,7 @@ const questionController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Handles downvoting a question. The request must contain the question ID (qid) and the username.
+   * Handles downvoting a question. The request must contain the question ID (qid) and the uid of the user.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
    * @param req The VoteRequest object containing the question ID and the username.

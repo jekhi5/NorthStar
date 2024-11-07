@@ -21,6 +21,12 @@ const SideBarNav = () => (
       className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
       Tags
     </NavLink>
+    <NavLink
+      to='/profile'
+      id='menu_profile'
+      className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
+      Profile
+    </NavLink>
   </div>
 );
 

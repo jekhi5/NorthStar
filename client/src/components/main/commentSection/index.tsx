@@ -38,7 +38,7 @@ const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => 
 
     const newComment: Comment = {
       text,
-      commentBy: user.username,
+      commentBy: user,
       commentDateTime: new Date(),
       upVotes: [],
       downVotes: [],
@@ -63,7 +63,7 @@ const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => 
                 <li key={index} className='comment-item'>
                   <p className='comment-text'>{comment.text}</p>
                   <small className='comment-meta'>
-                    {comment.commentBy}, {getMetaData(new Date(comment.commentDateTime))}
+                    {comment.commentBy.username}, {getMetaData(new Date(comment.commentDateTime))}
                   </small>
                 </li>
               ))

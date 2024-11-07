@@ -7,9 +7,9 @@ const commentController = (socket: FakeSOSocket) => {
   const router = express.Router();
 
   /**
-   * Checks if the provided answer request contains the required fields.
+   * Checks if the provided comment request contains the required fields.
    *
-   * @param req The request object containing the answer data.
+   * @param req The request object containing the comment data.
    *
    * @returns `true` if the request is valid, otherwise `false`.
    */
@@ -33,7 +33,7 @@ const commentController = (socket: FakeSOSocket) => {
     comment.text !== undefined &&
     comment.text !== '' &&
     comment.commentBy !== undefined &&
-    comment.commentBy !== '' &&
+    comment.commentBy.uid !== '' &&
     comment.commentDateTime !== undefined &&
     comment.commentDateTime !== null;
 
@@ -112,19 +112,19 @@ const commentController = (socket: FakeSOSocket) => {
     res: Response,
     type: 'upvote' | 'downvote',
   ): Promise<void> => {
-    if (!req.body.id || !req.body.username) {
+    if (!req.body.id || !req.body.uid) {
       res.status(400).send('Invalid request');
       return;
     }
 
-    const { id, username } = req.body;
+    const { id, uid } = req.body;
 
     try {
       let status;
       if (type === 'upvote') {
-        status = await addVoteToComment(id, username, type);
+        status = await addVoteToComment(id, uid, type);
       } else {
-        status = await addVoteToComment(id, username, type);
+        status = await addVoteToComment(id, uid, type);
       }
 
       if (status && 'error' in status) {

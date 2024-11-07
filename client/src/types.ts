@@ -6,7 +6,14 @@ export type FakeSOSocket = Socket<ServerToClientEvents>;
  * Represents a user in the application.
  */
 export interface User {
+  _id?: string;
+  uid: string;
   username: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  profilePicture?: string;
+  status: 'Not endorsed' | 'Endorsed';
 }
 
 /**
@@ -30,7 +37,7 @@ export type OrderType = keyof typeof orderTypeDisplayName;
  * Interface represents a comment.
  *
  * text - The text of the comment.
- * commentBy - Username of the author of the comment.
+ * commentBy - The author of the comment.
  * commentDateTime - Time at which the comment was created.
  * upVotes - An array of usernames who upvoted the comment.
  * downVotes - An array of usernames who downvoted the comment.
@@ -38,7 +45,7 @@ export type OrderType = keyof typeof orderTypeDisplayName;
 export interface Comment {
   _id?: string;
   text: string;
-  commentBy: string;
+  commentBy: User;
   commentDateTime: Date;
   upVotes: string[];
   downVotes: string[];
@@ -93,7 +100,7 @@ export interface VoteData {
 export interface Answer {
   _id?: string;
   text: string;
-  ansBy: string;
+  ansBy: User;
   ansDateTime: Date;
   upVotes: string[];
   downVotes: string[];
@@ -109,11 +116,12 @@ export interface Answer {
  * - title - The title of the question.
  * - views - An array of usernames who viewed the question.
  * - text - The content of the question.
- * - askedBy - The username of the user who asked the question.
+ * - askedBy - The User who asked the question.
  * - askDateTime - The date and time when the question was asked.
  * - upVotes - An array of usernames who upvoted the question.
  * - downVotes - An array of usernames who downvoted the question.
  * - comments - Comments associated with the question.
+ * - subscribers - An array of Users subscribed to the question.
  */
 export interface Question {
   _id?: string;
@@ -122,11 +130,12 @@ export interface Question {
   title: string;
   views: string[];
   text: string;
-  askedBy: string;
+  askedBy: User;
   askDateTime: Date;
   upVotes: string[];
   downVotes: string[];
   comments: Comment[];
+  subscribers: User[];
 }
 
 /**
@@ -149,6 +158,10 @@ export interface CommentUpdatePayload {
   type: 'question' | 'answer';
 }
 
+export interface SubscriberUpdatePayload {
+  result: Question;
+}
+
 /**
  * Interface representing the possible events that the server can emit to the client.
  */
@@ -158,4 +171,5 @@ export interface ServerToClientEvents {
   viewsUpdate: (question: Question) => void;
   voteUpdate: (vote: VoteUpdatePayload) => void;
   commentUpdate: (update: CommentUpdatePayload) => void;
+  subscriberUpdate: (payload: SubscriberUpdatePayload) => void;
 }

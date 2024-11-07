@@ -5,6 +5,9 @@
   "dependencies": {
     "@cypress/instrument-cra": "^1.4.0",
     "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "dotenv-webpack": "^8.1.0",
+    "firebase": "^11.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0",
@@ -41,6 +44,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^8.57.0",
+    "@types/node": "^22.9.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",

@@ -1,19 +1,20 @@
 import React from 'react';
 import './index.css';
 import { handleHyperlink } from '../../../../tool';
+import { User } from '../../../../types';
 
 /**
  * Interface representing the props for the QuestionBody component.
  *
  * - views - The number of views the question has received.
  * - text - The content of the question, which may contain hyperlinks.
- * - askby - The username of the user who asked the question.
+ * - askby - The user who asked the question.
  * - meta - Additional metadata related to the question, such as the date and time it was asked.
  */
 interface QuestionBodyProps {
   views: number;
   text: string;
-  askby: string;
+  askby: User;
   meta: string;
 }
 
@@ -24,7 +25,7 @@ interface QuestionBodyProps {
  *
  * @param views The number of views the question has received.
  * @param text The content of the question.
- * @param askby The username of the question's author.
+ * @param askby The User of the question's author.
  * @param meta Additional metadata related to the question.
  */
 const QuestionBody = ({ views, text, askby, meta }: QuestionBodyProps) => (
@@ -32,7 +33,7 @@ const QuestionBody = ({ views, text, askby, meta }: QuestionBodyProps) => (
     <div className='bold_title answer_question_view'>{views} views</div>
     <div className='answer_question_text'>{handleHyperlink(text)}</div>
     <div className='answer_question_right'>
-      <div className='question_author'>{askby}</div>
+      <div className='question_author'>{askby.username}</div>
       <div className='answer_question_meta'>asked {meta}</div>
     </div>
   </div>
