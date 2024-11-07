@@ -56,7 +56,7 @@ const useAnswerForm = () => {
 
     const answer: Answer = {
       text,
-      ansBy: user.username,
+      ansBy: user,
       ansDateTime: new Date(),
       upVotes: [],
       downVotes: [],

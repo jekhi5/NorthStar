@@ -31,9 +31,9 @@ const VoteComponent = ({ question }: VoteComponentProps) => {
     try {
       if (question._id) {
         if (type === 'upvote') {
-          await upvoteQuestion(question._id, user.username);
+          await upvoteQuestion(question._id, user.uid);
         } else if (type === 'downvote') {
-          await downvoteQuestion(question._id, user.username);
+          await downvoteQuestion(question._id, user.uid);
         }
       }
     } catch (error) {

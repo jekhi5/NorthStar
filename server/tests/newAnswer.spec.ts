@@ -3,11 +3,19 @@ import supertest from 'supertest';
 import { ObjectId } from 'mongodb';
 import { app } from '../app';
 import * as util from '../models/application';
+import { User } from '../types';
 
 const saveAnswerSpy = jest.spyOn(util, 'saveAnswer');
 const addAnswerToQuestionSpy = jest.spyOn(util, 'addAnswerToQuestion');
 const addVoteToAnswerSpy = jest.spyOn(util, 'addVoteToAnswer');
 const popDocSpy = jest.spyOn(util, 'populateDocument');
+
+const user1: User = {
+  uid: 'ab531234510c19729de860ea',
+  username: 'User1',
+  email: 'user1@email.com',
+  status: 'Not endorsed',
+};
 
 interface MockResponse {
   msg: string;
@@ -31,7 +39,7 @@ describe('POST /addAnswer', () => {
       qid: validQid,
       ans: {
         text: 'This is a test answer',
-        ansBy: 'dummyUserId',
+        ansBy: user1,
         ansDateTime: new Date('2024-06-03'),
       },
     };
@@ -39,7 +47,7 @@ describe('POST /addAnswer', () => {
     const mockAnswer = {
       _id: validAid,
       text: 'This is a test answer',
-      ansBy: 'dummyUserId',
+      ansBy: user1,
       ansDateTime: new Date('2024-06-03'),
       upVotes: [],
       downVotes: [],
@@ -52,13 +60,14 @@ describe('POST /addAnswer', () => {
       title: 'This is a test question',
       text: 'This is a test question',
       tags: [],
-      askedBy: 'dummyUserId',
+      askedBy: user1,
       askDateTime: new Date('2024-06-03'),
       views: [],
       upVotes: [],
       downVotes: [],
-      answers: [mockAnswer._id],
+      answers: [mockAnswer],
       comments: [],
+      subscribers: [],
     });
 
     popDocSpy.mockResolvedValueOnce({
@@ -66,13 +75,14 @@ describe('POST /addAnswer', () => {
       title: 'This is a test question',
       text: 'This is a test question',
       tags: [],
-      askedBy: 'dummyUserId',
+      askedBy: user1,
       askDateTime: new Date('2024-06-03'),
       views: [],
       upVotes: [],
       downVotes: [],
       answers: [mockAnswer],
       comments: [],
+      subscribers: [],
     });
 
     const response = await supertest(app).post('/answer/addAnswer').send(mockReqBody);
@@ -81,7 +91,7 @@ describe('POST /addAnswer', () => {
     expect(response.body).toEqual({
       _id: validAid.toString(),
       text: 'This is a test answer',
-      ansBy: 'dummyUserId',
+      ansBy: user1,
       ansDateTime: mockAnswer.ansDateTime.toISOString(),
       upVotes: [],
       downVotes: [],
@@ -175,7 +185,7 @@ describe('POST /addAnswer', () => {
       qid: validQid,
       ans: {
         text: 'This is a test answer',
-        ansBy: 'dummyUserId',
+        ansBy: user1,
         ansDateTime: new Date('2024-06-03'),
       },
     };
@@ -183,7 +193,7 @@ describe('POST /addAnswer', () => {
     const mockAnswer = {
       _id: new ObjectId('507f191e810c19729de860ea'),
       text: 'This is a test answer',
-      ansBy: 'dummyUserId',
+      ansBy: user1,
       ansDateTime: new Date('2024-06-03'),
       upVotes: [],
       downVotes: [],
@@ -212,7 +222,7 @@ describe('POST /addAnswer', () => {
     const mockAnswer = {
       _id: new ObjectId('507f191e810c19729de860ea'),
       text: 'This is a test answer',
-      ansBy: 'dummyUserId',
+      ansBy: user1,
       ansDateTime: new Date('2024-06-03'),
       upVotes: [],
       downVotes: [],
@@ -224,13 +234,14 @@ describe('POST /addAnswer', () => {
       title: 'This is a test question',
       text: 'This is a test question',
       tags: [],
-      askedBy: 'dummyUserId',
+      askedBy: user1,
       askDateTime: new Date('2024-06-03'),
       views: [],
       upVotes: [],
       downVotes: [],
       answers: [mockAnswer._id],
       comments: [],
+      subscribers: [],
     };
 
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
@@ -255,12 +266,12 @@ describe('POST /upvoteAnswer', () => {
   it('should upvote a answer successfully', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'new-user',
+      uid: user1.uid,
     };
 
     const mockResponse = {
       msg: 'Answer upvoted successfully',
-      upVotes: ['new-user'],
+      upVotes: [user1.uid],
       downVotes: [],
     };
 
@@ -275,7 +286,7 @@ describe('POST /upvoteAnswer', () => {
   it('should cancel the upvote successfully', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'some-user',
+      uid: user1.uid,
     };
 
     const mockSecondResponse = {
@@ -297,13 +308,13 @@ describe('POST /upvoteAnswer', () => {
   it('should handle upvote and then downvote by the same user', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'new-user',
+      uid: user1.uid,
     };
 
     // First upvote the answer
     let mockResponseWithBothVotes: MockResponse = {
       msg: 'Answer upvoted successfully',
-      upVotes: ['new-user'],
+      upVotes: [user1.uid],
       downVotes: [],
     };
 
@@ -317,7 +328,7 @@ describe('POST /upvoteAnswer', () => {
     // Now downvote the answer
     mockResponseWithBothVotes = {
       msg: 'Answer downvoted successfully',
-      downVotes: ['new-user'],
+      downVotes: [user1.uid],
       upVotes: [],
     };
 
@@ -331,7 +342,7 @@ describe('POST /upvoteAnswer', () => {
 
   it('should return bad request error if the request had id missing', async () => {
     const mockReqBody = {
-      username: 'some-user',
+      uid: user1.uid,
     };
 
     const response = await supertest(app).post(`/answer/upvoteAnswer`).send(mockReqBody);
@@ -362,12 +373,12 @@ describe('POST /downvoteAnswer', () => {
   it('should downvote a answer successfully', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'new-user',
+      uid: user1.uid,
     };
 
     const mockResponse = {
       msg: 'Answer downvoted successfully',
-      downVotes: ['new-user'],
+      downVotes: [user1.uid],
       upVotes: [],
     };
 
@@ -382,7 +393,7 @@ describe('POST /downvoteAnswer', () => {
   it('should cancel the downvote successfully', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'some-user',
+      uid: user1.uid,
     };
 
     const mockSecondResponse = {
@@ -404,13 +415,13 @@ describe('POST /downvoteAnswer', () => {
   it('should handle downvote and then upvote by the same user', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'new-user',
+      uid: user1.uid,
     };
 
     // First downvote the answer
     let mockResponse: MockResponse = {
       msg: 'Answer downvoted successfully',
-      downVotes: ['new-user'],
+      downVotes: [user1.uid],
       upVotes: [],
     };
 
@@ -425,7 +436,7 @@ describe('POST /downvoteAnswer', () => {
     mockResponse = {
       msg: 'Answer upvoted successfully',
       downVotes: [],
-      upVotes: ['new-user'],
+      upVotes: [user1.uid],
     };
 
     addVoteToAnswerSpy.mockResolvedValueOnce(mockResponse);
@@ -438,7 +449,7 @@ describe('POST /downvoteAnswer', () => {
 
   it('should return bad request error if the request had id missing', async () => {
     const mockReqBody = {
-      username: 'some-user',
+      uid: user1.uid,
     };
 
     const response = await supertest(app).post(`/answer/downvoteAnswer`).send(mockReqBody);

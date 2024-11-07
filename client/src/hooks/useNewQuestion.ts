@@ -95,13 +95,14 @@ const useNewQuestion = () => {
       title,
       text,
       tags,
-      askedBy: user.username,
+      askedBy: user,
       askDateTime: new Date(),
       answers: [],
       upVotes: [],
       downVotes: [],
       views: [],
       comments: [],
+      subscribers: [user],
     };
 
     const res = await addQuestion(question);

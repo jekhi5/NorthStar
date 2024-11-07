@@ -6,7 +6,7 @@ import { Schema } from 'mongoose';
  * This schema defines the structure of comment used in questions and answers in the database.
  * Each comment includes the following fields:
  * - `text`: The content of the comment.
- * - `commentBy`: The username of the user who commented.
+ * - `commentBy`: The user who commented.
  * - `commentDateTime`: The date and time when the comment was posted.
  * - `upVotes`: An array of usernames that have upvoted the comment.
  * - `downVotes`: An array of usernames that have downvoted the comment.
@@ -17,7 +17,8 @@ const commentSchema: Schema = new Schema(
       type: String,
     },
     commentBy: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
     commentDateTime: {
       type: Date,

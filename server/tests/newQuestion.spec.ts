@@ -2,7 +2,14 @@ import mongoose from 'mongoose';
 import supertest from 'supertest';
 import { app } from '../app';
 import * as util from '../models/application';
-import { Answer, Question, Tag } from '../types';
+import { Answer, Question, Tag, User } from '../types';
+
+const user1: User = {
+  uid: 'ab53191e810c19729de860ea',
+  username: 'User1',
+  email: 'user1@email.com',
+  status: 'Not endorsed',
+};
 
 const tag1: Tag = {
   _id: new mongoose.Types.ObjectId('507f191e810c19729de860ea'),
@@ -21,12 +28,13 @@ const mockQuestion: Question = {
   text: 'New Question Text',
   tags: [tag1, tag2],
   answers: [],
-  askedBy: 'question3_user',
+  askedBy: user1,
   askDateTime: new Date('2024-06-06'),
   views: [],
   upVotes: [],
   downVotes: [],
   comments: [],
+  subscribers: [],
 };
 
 const simplifyQuestion = (question: Question) => ({
@@ -150,12 +158,13 @@ describe('POST /addQuestion', () => {
       text: 'New Question Text',
       tags: [tag1, tag1, tag2, tag2], // Duplicate tags
       answers: [],
-      askedBy: 'question3_user',
+      askedBy: user1,
       askDateTime: new Date('2024-06-06'),
       views: [],
       upVotes: [],
       downVotes: [],
       comments: [],
+      subscribers: [],
     };
 
     const result: Question = {
@@ -164,12 +173,13 @@ describe('POST /addQuestion', () => {
       text: 'New Question Text',
       tags: [tag1, tag2], // Duplicate tags
       answers: [],
-      askedBy: 'question3_user',
+      askedBy: user1,
       askDateTime: new Date('2024-06-06'),
       views: [],
       upVotes: [],
       downVotes: [],
       comments: [],
+      subscribers: [],
     };
 
     // Set up the mock to resolve with unique tags

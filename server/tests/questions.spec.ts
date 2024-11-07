@@ -2,10 +2,59 @@ import supertest from 'supertest';
 import mongoose from 'mongoose';
 import { app } from '../app';
 import * as util from '../models/application';
-import { Answer, Question, Tag } from '../types';
+import { Answer, Question, Tag, User } from '../types';
 
 const getQuestionsByOrderSpy: jest.SpyInstance = jest.spyOn(util, 'getQuestionsByOrder');
 const filterQuestionsBySearchSpy: jest.SpyInstance = jest.spyOn(util, 'filterQuestionsBySearch');
+
+const answer1User: User = {
+  uid: 'ab53191e810c19729de860ea',
+  username: 'Answer1User',
+  email: 'answer1User@email.com',
+  status: 'Not endorsed',
+};
+
+const answer2User: User = {
+  uid: 'ab531bcf520c19729de860ea',
+  username: 'Answer2User',
+  email: 'answer2User@email.com',
+  status: 'Not endorsed',
+};
+
+const answer3User: User = {
+  uid: 'ab53191e810c197aaae860ea',
+  username: 'Answer3User',
+  email: 'answer3User@email.com',
+  status: 'Not endorsed',
+};
+
+const answer4User: User = {
+  uid: 'ab51234e810c19729de860ea',
+  username: 'Answer4User',
+  email: 'answer4User@email.com',
+  status: 'Not endorsed',
+};
+
+const question1User: User = {
+  uid: 'ab51234e810c19729deef0ea',
+  username: 'Question1User',
+  email: 'question1User@email.com',
+  status: 'Not endorsed',
+};
+
+const question2User: User = {
+  uid: 'ab5123abc10c19729deef0ea',
+  username: 'Question2User',
+  email: 'question2User@email.com',
+  status: 'Not endorsed',
+};
+
+const question3User: User = {
+  uid: 'ab51234e867c19729deef0ea',
+  username: 'Question3User',
+  email: 'question3User@email.com',
+  status: 'Not endorsed',
+};
 
 const tag1: Tag = {
   _id: new mongoose.Types.ObjectId('507f191e810c19729de860ea'),
@@ -21,7 +70,7 @@ const tag2: Tag = {
 const ans1: Answer = {
   _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6dc'),
   text: 'Answer 1 Text',
-  ansBy: 'answer1_user',
+  ansBy: answer1User,
   ansDateTime: new Date('2024-06-09'), // The mock date is string type but in the actual implementation it is a Date type
   upVotes: [],
   downVotes: [],
@@ -31,7 +80,7 @@ const ans1: Answer = {
 const ans2: Answer = {
   _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6dd'),
   text: 'Answer 2 Text',
-  ansBy: 'answer2_user',
+  ansBy: answer2User,
   ansDateTime: new Date('2024-06-10'),
   upVotes: [],
   downVotes: [],
@@ -41,7 +90,7 @@ const ans2: Answer = {
 const ans3: Answer = {
   _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6df'),
   text: 'Answer 3 Text',
-  ansBy: 'answer3_user',
+  ansBy: answer3User,
   ansDateTime: new Date('2024-06-11'),
   upVotes: [],
   downVotes: [],
@@ -51,7 +100,7 @@ const ans3: Answer = {
 const ans4: Answer = {
   _id: new mongoose.Types.ObjectId('65e9b58910afe6e94fc6e6de'),
   text: 'Answer 4 Text',
-  ansBy: 'answer4_user',
+  ansBy: answer4User,
   ansDateTime: new Date('2024-06-14'),
   upVotes: [],
   downVotes: [],
@@ -65,12 +114,13 @@ const MOCK_QUESTIONS: Question[] = [
     text: 'Question 1 Text',
     tags: [tag1],
     answers: [ans1],
-    askedBy: 'question1_user',
+    askedBy: question1User,
     askDateTime: new Date('2024-06-03'),
     views: ['question1_user', 'question2_user'],
     upVotes: [],
     downVotes: [],
     comments: [],
+    subscribers: [],
   },
   {
     _id: new mongoose.Types.ObjectId('65e9b5a995b6c7045a30d823'),
@@ -78,12 +128,13 @@ const MOCK_QUESTIONS: Question[] = [
     text: 'Question 2 Text',
     tags: [tag2],
     answers: [ans2, ans3],
-    askedBy: 'question2_user',
+    askedBy: question2User,
     askDateTime: new Date('2024-06-04'),
     views: ['question1_user', 'question2_user', 'question3_user'],
     upVotes: [],
     downVotes: [],
     comments: [],
+    subscribers: [],
   },
   {
     _id: new mongoose.Types.ObjectId('34e9b58910afe6e94fc6e99f'),
@@ -91,12 +142,13 @@ const MOCK_QUESTIONS: Question[] = [
     text: 'Question 3 Text',
     tags: [tag1, tag2],
     answers: [ans4],
-    askedBy: 'question3_user',
+    askedBy: question3User,
     askDateTime: new Date('2024-06-03'),
     views: ['question3_user'],
     upVotes: [],
     downVotes: [],
     comments: [],
+    subscribers: [],
   },
 ];
 

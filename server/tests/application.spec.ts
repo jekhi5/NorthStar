@@ -18,13 +18,45 @@ import {
   addVoteToAnswer,
   addVoteToComment,
 } from '../models/application';
-import { Answer, Question, Tag, Comment } from '../types';
+import { Answer, Question, Tag, Comment, User } from '../types';
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
 import AnswerModel from '../models/answers';
 import CommentModel from '../models/comments';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');
+
+const user1: User = {
+  _id: new ObjectId(),
+  uid: 'ab53191e810c19729de860ea',
+  username: 'User1',
+  email: 'user1@email.com',
+  status: 'Not endorsed',
+};
+
+const user2: User = {
+  _id: new ObjectId(),
+  uid: 'ab531234510c19729de860ea',
+  username: 'User2',
+  email: 'user4@email.com',
+  status: 'Not endorsed',
+};
+
+const user3: User = {
+  _id: new ObjectId(),
+  uid: 'ab53191e810caaa29de860ea',
+  username: 'User3',
+  email: 'user4@email.com',
+  status: 'Not endorsed',
+};
+
+const user4: User = {
+  _id: new ObjectId(),
+  uid: 'ab45891e810c19729de860ea',
+  username: 'User4',
+  email: 'user4@email.com',
+  status: 'Not endorsed',
+};
 
 const tag1: Tag = {
   _id: new ObjectId('507f191e810c19729de860ea'),
@@ -47,7 +79,7 @@ const tag3: Tag = {
 const com1: Comment = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6de'),
   text: 'com1',
-  commentBy: 'com_by1',
+  commentBy: user1,
   commentDateTime: new Date('2023-11-18T09:25:00'),
   upVotes: [],
   downVotes: [],
@@ -56,7 +88,7 @@ const com1: Comment = {
 const ans1: Answer = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
   text: 'ans1',
-  ansBy: 'ansBy1',
+  ansBy: user1,
   ansDateTime: new Date('2023-11-18T09:24:00'),
   upVotes: [],
   downVotes: [],
@@ -66,7 +98,7 @@ const ans1: Answer = {
 const ans2: Answer = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6dd'),
   text: 'ans2',
-  ansBy: 'ansBy2',
+  ansBy: user2,
   ansDateTime: new Date('2023-11-20T09:24:00'),
   upVotes: [],
   downVotes: [],
@@ -76,7 +108,7 @@ const ans2: Answer = {
 const ans3: Answer = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6de'),
   text: 'ans3',
-  ansBy: 'ansBy3',
+  ansBy: user3,
   ansDateTime: new Date('2023-11-19T09:24:00'),
   upVotes: [],
   downVotes: [],
@@ -86,7 +118,7 @@ const ans3: Answer = {
 const ans4: Answer = {
   _id: new ObjectId('65e9b58910afe6e94fc6e6df'),
   text: 'ans4',
-  ansBy: 'ansBy4',
+  ansBy: user4,
   ansDateTime: new Date('2023-11-19T09:24:00'),
   upVotes: [],
   downVotes: [],
@@ -100,12 +132,13 @@ const QUESTIONS: Question[] = [
     text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
     tags: [tag3, tag2],
     answers: [ans1, ans2],
-    askedBy: 'q_by1',
+    askedBy: user1,
     askDateTime: new Date('2023-11-16T09:24:00'),
     views: ['question1_user', 'question2_user'],
     upVotes: [],
     downVotes: [],
     comments: [],
+    subscribers: [],
   },
   {
     _id: new ObjectId('65e9b5a995b6c7045a30d823'),
@@ -113,12 +146,13 @@ const QUESTIONS: Question[] = [
     text: 'I am currently working on a website where, roughly 40 million documents and images should be served to its users. I need suggestions on which method is the most suitable for storing content with subject to these requirements.',
     tags: [tag1, tag2],
     answers: [ans1, ans2, ans3],
-    askedBy: 'q_by2',
+    askedBy: user2,
     askDateTime: new Date('2023-11-17T09:24:00'),
     views: ['question2_user'],
     upVotes: [],
     downVotes: [],
     comments: [],
+    subscribers: [],
   },
   {
     _id: new ObjectId('65e9b9b44c052f0a08ecade0'),
@@ -126,12 +160,13 @@ const QUESTIONS: Question[] = [
     text: 'Does something like that exist?',
     tags: [],
     answers: [],
-    askedBy: 'q_by3',
+    askedBy: user3,
     askDateTime: new Date('2023-11-19T09:24:00'),
     views: ['question1_user', 'question2_user', 'question3_user', 'question4_user'],
     upVotes: [],
     downVotes: [],
     comments: [],
+    subscribers: [],
   },
   {
     _id: new ObjectId('65e9b716ff0e892116b2de09'),
@@ -139,12 +174,13 @@ const QUESTIONS: Question[] = [
     text: 'Does something like that exist?',
     tags: [],
     answers: [],
-    askedBy: 'q_by4',
+    askedBy: user4,
     askDateTime: new Date('2023-11-20T09:24:00'),
     views: [],
     upVotes: [],
     downVotes: [],
     comments: [],
+    subscribers: [],
   },
 ];
 
@@ -192,7 +228,7 @@ describe('application module', () => {
       });
 
       test('filter question by one user', () => {
-        const result = filterQuestionsByAskedBy(QUESTIONS, 'q_by4');
+        const result = filterQuestionsByAskedBy(QUESTIONS, user4.uid);
 
         expect(result.length).toEqual(1);
         expect(result[0]._id?.toString()).toEqual('65e9b716ff0e892116b2de09');
@@ -200,7 +236,7 @@ describe('application module', () => {
 
       test('filter question by tag and then by user', () => {
         let result = filterQuestionsBySearch(QUESTIONS, '[javascript]');
-        result = filterQuestionsByAskedBy(result, 'q_by2');
+        result = filterQuestionsByAskedBy(result, user2.uid);
 
         expect(result.length).toEqual(1);
         expect(result[0]._id?.toString()).toEqual('65e9b5a995b6c7045a30d823');
@@ -419,13 +455,14 @@ describe('application module', () => {
           title: 'New Question Title',
           text: 'New Question Text',
           tags: [tag1, tag2],
-          askedBy: 'question3_user',
+          askedBy: user3,
           askDateTime: new Date('2024-06-06'),
           answers: [],
           views: [],
           upVotes: [],
           downVotes: [],
           comments: [],
+          subscribers: [],
         };
 
         const result = (await saveQuestion(mockQn)) as Question;
@@ -435,7 +472,7 @@ describe('application module', () => {
         expect(result.text).toEqual(mockQn.text);
         expect(result.tags[0]._id?.toString()).toEqual(tag1._id?.toString());
         expect(result.tags[1]._id?.toString()).toEqual(tag2._id?.toString());
-        expect(result.askedBy).toEqual(mockQn.askedBy);
+        expect(result.askedBy._id).toEqual(mockQn.askedBy._id);
         expect(result.askDateTime).toEqual(mockQn.askDateTime);
         expect(result.views).toEqual([]);
         expect(result.answers.length).toEqual(0);
@@ -608,7 +645,7 @@ describe('application module', () => {
       test('saveAnswer should return the saved answer', async () => {
         const mockAnswer = {
           text: 'This is a test answer',
-          ansBy: 'dummyUserId',
+          ansBy: user1,
           ansDateTime: new Date('2024-06-06'),
           upVotes: [],
           downVotes: [],
@@ -619,7 +656,7 @@ describe('application module', () => {
 
         expect(result._id).toBeDefined();
         expect(result.text).toEqual(mockAnswer.text);
-        expect(result.ansBy).toEqual(mockAnswer.ansBy);
+        expect(result.ansBy._id).toEqual(mockAnswer.ansBy._id);
         expect(result.ansDateTime).toEqual(mockAnswer.ansDateTime);
       });
     });
@@ -665,7 +702,7 @@ describe('application module', () => {
       test('addAnswerToQuestion should throw an error if a required field is missing in the answer', async () => {
         const invalidAnswer: Partial<Answer> = {
           text: 'This is an answer text',
-          ansBy: 'user123', // Missing ansDateTime
+          ansBy: user3, // Missing ansDateTime
         };
 
         const qid = 'validQuestionId';
@@ -988,7 +1025,7 @@ describe('application module', () => {
 
         expect(result._id).toBeDefined();
         expect(result.text).toEqual(com1.text);
-        expect(result.commentBy).toEqual(com1.commentBy);
+        expect(result.commentBy._id).toEqual(com1.commentBy._id);
         expect(result.commentDateTime).toEqual(com1.commentDateTime);
       });
     });
@@ -1045,7 +1082,7 @@ describe('application module', () => {
       test('addComment should throw an error if a required field is missing in the comment', async () => {
         const invalidComment: Partial<Comment> = {
           text: 'This is an answer text',
-          commentBy: 'user123', // Missing commentDateTime
+          commentBy: user4, // Missing commentDateTime
         };
 
         const qid = 'validQuestionId';

@@ -25,11 +25,11 @@ const getQuestionsByFilter = async (
  * Function to get a question by its ID.
  *
  * @param qid - The ID of the question to retrieve.
- * @param username - The username of the user requesting the question.
+ * @param uid - The uid of the user requesting the question.
  * @throws Error if there is an issue fetching the question by ID.
  */
-const getQuestionById = async (qid: string, username: string): Promise<Question> => {
-  const res = await api.get(`${QUESTION_API_URL}/getQuestionById/${qid}?username=${username}`);
+const getQuestionById = async (qid: string, uid: string): Promise<Question> => {
+  const res = await api.get(`${QUESTION_API_URL}/getQuestionById/${qid}?uid=${uid}`);
   if (res.status !== 200) {
     throw new Error('Error when fetching question by id');
   }
@@ -56,11 +56,11 @@ const addQuestion = async (q: Question): Promise<Question> => {
  * Function to upvote a question.
  *
  * @param qid - The ID of the question to upvote.
- * @param username - The username of the person upvoting the question.
+ * @param uid - The uid of the person upvoting the question.
  * @throws Error if there is an issue upvoting the question.
  */
-const upvoteQuestion = async (qid: string, username: string) => {
-  const data = { qid, username };
+const upvoteQuestion = async (qid: string, uid: string) => {
+  const data = { qid, uid };
   const res = await api.post(`${QUESTION_API_URL}/upvoteQuestion`, data);
   if (res.status !== 200) {
     throw new Error('Error while upvoting the question');
@@ -72,11 +72,11 @@ const upvoteQuestion = async (qid: string, username: string) => {
  * Function to downvote a question.
  *
  * @param qid - The ID of the question to downvote.
- * @param username - The username of the person downvoting the question.
+ * @param uid - The uid of the person downvoting the question.
  * @throws Error if there is an issue downvoting the question.
  */
-const downvoteQuestion = async (qid: string, username: string) => {
-  const data = { qid, username };
+const downvoteQuestion = async (qid: string, uid: string) => {
+  const data = { qid, uid };
   const res = await api.post(`${QUESTION_API_URL}/downvoteQuestion`, data);
   if (res.status !== 200) {
     throw new Error('Error while downvoting the question');

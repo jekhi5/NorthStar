@@ -27,10 +27,10 @@ const useVoteStatus = ({ question }: { question: Question }) => {
      * @returns The current vote value for the user in the question, 1 for upvote, -1 for downvote, 0 for no vote.
      */
     const getVoteValue = () => {
-      if (user.username && question?.upVotes?.includes(user.username)) {
+      if (user.uid && question?.upVotes?.includes(user.uid)) {
         return 1;
       }
-      if (user.username && question?.downVotes?.includes(user.username)) {
+      if (user.uid && question?.downVotes?.includes(user.uid)) {
         return -1;
       }
       return 0;
@@ -39,7 +39,7 @@ const useVoteStatus = ({ question }: { question: Question }) => {
     // Set the initial count and vote value
     setCount((question.upVotes || []).length - (question.downVotes || []).length);
     setVoted(getVoteValue());
-  }, [question, user.username, socket]);
+  }, [question, user.uid, socket]);
 
   return {
     count,

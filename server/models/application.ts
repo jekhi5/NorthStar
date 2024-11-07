@@ -9,11 +9,14 @@ import {
   Question,
   QuestionResponse,
   Tag,
+  User,
+  UserResponse,
 } from '../types';
 import AnswerModel from './answers';
 import QuestionModel from './questions';
 import TagModel from './tags';
 import CommentModel from './comments';
+import UserModel from './user';
 
 /**
  * Parses tags from a search string.
@@ -206,6 +209,7 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
       qlist = await QuestionModel.find().populate([
         { path: 'tags', model: TagModel },
         { path: 'answers', model: AnswerModel },
+        { path: 'askedBy', model: UserModel },
       ]);
       return sortQuestionsByActive(qlist);
     }
@@ -226,12 +230,12 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
  * Filters a list of questions by the user who asked them.
  *
  * @param qlist The array of Question objects to be filtered.
- * @param askedBy The username of the user who asked the questions.
+ * @param askedBy The uid of the user who asked the questions.
  *
  * @returns Filtered Question objects.
  */
-export const filterQuestionsByAskedBy = (qlist: Question[], askedBy: string): Question[] =>
-  qlist.filter(q => q.askedBy === askedBy);
+export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Question[] =>
+  qlist.filter(q => q.askedBy.uid === uid);
 
 /**
  * Filters questions based on a search string containing tags and/or keywords.
@@ -297,10 +301,12 @@ export const populateDocument = async (
           populate: { path: 'comments', model: CommentModel },
         },
         { path: 'comments', model: CommentModel },
+        { path: 'askedBy', model: UserModel },
       ]);
     } else if (type === 'answer') {
       result = await AnswerModel.findOne({ _id: id }).populate([
         { path: 'comments', model: CommentModel },
+        { path: 'ansBy', model: UserModel },
       ]);
     }
     if (!result) {
@@ -316,19 +322,19 @@ export const populateDocument = async (
  * Fetches a question by its ID and increments its view count.
  *
  * @param {string} qid - The ID of the question to fetch.
- * @param {string} username - The username of the user requesting the question.
+ * @param {string} uid - The uid of the user requesting the question.
  *
  * @returns {Promise<QuestionResponse | null>} - Promise that resolves to the fetched question
  *          with incremented views, null if the question is not found, or an error message.
  */
 export const fetchAndIncrementQuestionViewsById = async (
   qid: string,
-  username: string,
+  uid: string,
 ): Promise<QuestionResponse | null> => {
   try {
     const q = await QuestionModel.findOneAndUpdate(
       { _id: new ObjectId(qid) },
-      { $addToSet: { views: username } },
+      { $addToSet: { views: uid } },
       { new: true },
     ).populate([
       {
@@ -341,6 +347,7 @@ export const fetchAndIncrementQuestionViewsById = async (
         populate: { path: 'comments', model: CommentModel },
       },
       { path: 'comments', model: CommentModel },
+      { path: 'askedBy', model: UserModel },
     ]);
     return q;
   } catch (error) {
@@ -397,6 +404,22 @@ export const saveComment = async (comment: Comment): Promise<CommentResponse> =>
 };
 
 /**
+ * Saves a new comment to the database.
+ *
+ * @param {User} user - The user to save
+ *
+ * @returns {Promise<UserResponse>} - The saved user, or an error message if the save failed
+ */
+export const saveUser = async (user: User): Promise<UserResponse> => {
+  try {
+    const result = await UserModel.create(user);
+    return result;
+  } catch (error) {
+    return { error: 'Error when saving a User' };
+  }
+};
+
+/**
  * Processes a list of tags by removing duplicates, checking for existing tags in the database,
  * and adding non-existing tags. Returns an array of the existing or newly added tags.
  * If an error occurs during the process, it is logged, and an empty array is returned.
@@ -448,7 +471,7 @@ export const processTags = async (tags: Tag[]): Promise<Tag[]> => {
  * Adds a vote to a question.
  *
  * @param qid The ID of the question to add a vote to.
- * @param username The username of the user who voted.
+ * @param uid The uid of the user who voted.
  * @param type The type of vote to add, either 'upvote' or 'downvote'.
  *
  * @returns A Promise that resolves to an object containing either a success message or an error message,
@@ -456,7 +479,7 @@ export const processTags = async (tags: Tag[]): Promise<Tag[]> => {
  */
 export const addVoteToQuestion = async (
   qid: string,
-  username: string,
+  uid: string,
   type: 'upvote' | 'downvote',
 ): Promise<{ msg: string; upVotes: string[]; downVotes: string[] } | { error: string }> => {
   let updateOperation: QueryOptions;
@@ -467,16 +490,16 @@ export const addVoteToQuestion = async (
         $set: {
           upVotes: {
             $cond: [
-              { $in: [username, '$upVotes'] },
-              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
-              { $concatArrays: ['$upVotes', [username]] },
+              { $in: [uid, '$upVotes'] },
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', uid] } } },
+              { $concatArrays: ['$upVotes', [uid]] },
             ],
           },
           downVotes: {
             $cond: [
-              { $in: [username, '$upVotes'] },
+              { $in: [uid, '$upVotes'] },
               '$downVotes',
-              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', uid] } } },
             ],
           },
         },
@@ -488,16 +511,16 @@ export const addVoteToQuestion = async (
         $set: {
           downVotes: {
             $cond: [
-              { $in: [username, '$downVotes'] },
-              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', username] } } },
-              { $concatArrays: ['$downVotes', [username]] },
+              { $in: [uid, '$downVotes'] },
+              { $filter: { input: '$downVotes', as: 'd', cond: { $ne: ['$$d', uid] } } },
+              { $concatArrays: ['$downVotes', [uid]] },
             ],
           },
           upVotes: {
             $cond: [
-              { $in: [username, '$downVotes'] },
+              { $in: [uid, '$downVotes'] },
               '$upVotes',
-              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', username] } } },
+              { $filter: { input: '$upVotes', as: 'u', cond: { $ne: ['$$u', uid] } } },
             ],
           },
         },
@@ -517,11 +540,11 @@ export const addVoteToQuestion = async (
     let msg = '';
 
     if (type === 'upvote') {
-      msg = result.upVotes.includes(username)
+      msg = result.upVotes.includes(uid)
         ? 'Question upvoted successfully'
         : 'Upvote cancelled successfully';
     } else {
-      msg = result.downVotes.includes(username)
+      msg = result.downVotes.includes(uid)
         ? 'Question downvoted successfully'
         : 'Downvote cancelled successfully';
     }
@@ -703,6 +726,44 @@ export const addComment = async (
     return result;
   } catch (error) {
     return { error: `Error when adding comment: ${(error as Error).message}` };
+  }
+};
+
+/**
+ * Toggles a subscriber for a question.
+ *
+ * @param id The ID of the question to toggle the subscriber for
+ * @param user The user to toggle as a subscriber
+ *
+ * @returns A Promise that resolves to the updated question or an error message if the operation fails
+ */
+export const toggleSubscribe = async (id: string, user: User): Promise<QuestionResponse> => {
+  try {
+    if (!user || !user.uid || !user.username || !user.email) {
+      throw new Error('Invalid user');
+    }
+
+    const result: QuestionResponse | null = await QuestionModel.findOneAndUpdate(
+      { _id: id },
+      {
+        $set: {
+          subscribers: {
+            $cond: [
+              { $in: [user.uid, '$subscribers'] },
+              { $filter: { input: '$subscribers', as: 's', cond: { $ne: ['$$s', user.uid] } } },
+              { $concatArrays: ['$subscribers', [user.uid]] },
+            ],
+          },
+        },
+      },
+      { new: true },
+    );
+    if (result === null) {
+      throw new Error('Failed to toggle subscriber');
+    }
+    return result;
+  } catch (error) {
+    return { error: `Error when toggling subscriber: ${(error as Error).message}` };
   }
 };
 

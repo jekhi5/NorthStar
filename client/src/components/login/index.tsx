@@ -1,32 +1,50 @@
-import React from 'react';
 import './index.css';
 import useLogin from '../../hooks/useLogin';
 
 /**
- * Login Component contains a form that allows the user to input their username, which is then submitted
- * to the application's context through the useLoginContext hook.
+ * Login Component contains a form for Firebase email/password authentication.
  */
-const Login = () => {
-  const { username, handleSubmit, handleInputChange } = useLogin();
+const Login = ({
+  showLogIn,
+  setShowLogIn,
+}: {
+  showLogIn: boolean;
+  setShowLogIn: (showLogIn: boolean) => void;
+}) => {
+  const { email, password, handleSubmit, handleInputChange, error } = useLogin();
 
   return (
     <div className='container'>
       <h2>Welcome to FakeStackOverflow!</h2>
-      <h4>Please enter your username.</h4>
+      <h4>Please log in with your email and password.</h4>
       <form onSubmit={handleSubmit}>
         <input
-          type='text'
-          value={username}
+          type='email'
+          value={email}
           onChange={handleInputChange}
-          placeholder='Enter your username'
+          placeholder='Enter your email'
           required
           className='input-text'
-          id={'usernameInput'}
+          id='emailInput'
+        />
+        <input
+          type='password'
+          value={password}
+          onChange={handleInputChange}
+          placeholder='Enter your password'
+          required
+          className='input-text'
+          id='passwordInput'
         />
         <button type='submit' className='login-button'>
-          Submit
+          Log In
         </button>
       </form>
+      {error && <p className='error-text'>{error}</p>}
+
+      <button onClick={() => setShowLogIn(!showLogIn)} className='login-button'>
+        Sign up instead
+      </button>
     </div>
   );
 };

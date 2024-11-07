@@ -5,7 +5,7 @@ import { Schema } from 'mongoose';
  * This schema defines the structure for storing answers in the database.
  * Each answer includes the following fields:
  * - `text`: The content of the answer.
- * - `ansBy`: The username of the user who provided the answer.
+ * - `ansBy`: The the user who provided the answer.
  * - `ansDateTime`: The date and time when the answer was given.
  * - `upVotes`: An array of usernames that have upvoted the answer.
  * - `downVotes`: An array of usernames that have downvoted the answer.
@@ -17,7 +17,8 @@ const answerSchema: Schema = new Schema(
       type: String,
     },
     ansBy: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
     ansDateTime: {
       type: Date,

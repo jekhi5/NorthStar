@@ -66,8 +66,14 @@ const useAnswerPage = () => {
      * Function to fetch the question data based on the question ID.
      */
     const fetchData = async () => {
+      if (!user || !user.uid) {
+        // eslint-disable-next-line no-console
+        console.error('User is undefined');
+        return;
+      }
+
       try {
-        const res = await getQuestionById(questionID, user.username);
+        const res = await getQuestionById(questionID, user.uid);
         setQuestion(res || null);
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -77,7 +83,7 @@ const useAnswerPage = () => {
 
     // eslint-disable-next-line no-console
     fetchData().catch(e => console.log(e));
-  }, [questionID, user.username]);
+  }, [questionID, user, user.uid]);
 
   useEffect(() => {
     /**

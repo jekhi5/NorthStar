@@ -99,19 +99,19 @@ const answerController = (socket: FakeSOSocket) => {
     res: Response,
     type: 'upvote' | 'downvote',
   ): Promise<void> => {
-    if (!req.body.id || !req.body.username) {
+    if (!req.body.id || !req.body.uid) {
       res.status(400).send('Invalid request');
       return;
     }
 
-    const { id, username } = req.body;
+    const { id, uid } = req.body;
 
     try {
       let status;
       if (type === 'upvote') {
-        status = await addVoteToAnswer(id, username, type);
+        status = await addVoteToAnswer(id, uid, type);
       } else {
-        status = await addVoteToAnswer(id, username, type);
+        status = await addVoteToAnswer(id, uid, type);
       }
 
       if (status && 'error' in status) {

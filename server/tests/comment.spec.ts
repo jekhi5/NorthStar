@@ -2,12 +2,26 @@ import mongoose from 'mongoose';
 import supertest from 'supertest';
 import { app } from '../app';
 import * as util from '../models/application';
-import { Question } from '../types';
+import { Question, User } from '../types';
 
 const saveCommentSpy = jest.spyOn(util, 'saveComment');
 const addCommentSpy = jest.spyOn(util, 'addComment');
 const addVoteToCommentSpy = jest.spyOn(util, 'addVoteToComment');
 const popDocSpy = jest.spyOn(util, 'populateDocument');
+
+const user1: User = {
+  uid: 'ab53191e810c19729de860ea',
+  username: 'user1',
+  email: 'user1@email.com',
+  status: 'Not endorsed',
+};
+
+const user2: User = {
+  uid: 'ab531bcf520c19729de860ea',
+  username: 'user2',
+  email: 'user2@email.com',
+  status: 'Not endorsed',
+};
 
 interface MockResponse {
   msg: string;
@@ -32,7 +46,7 @@ describe('POST /addComment', () => {
       type: 'question',
       comment: {
         text: 'This is a test comment',
-        commentBy: 'dummyUserId',
+        commentBy: user1,
         commentDateTime: new Date('2024-06-03'),
       },
     };
@@ -40,7 +54,7 @@ describe('POST /addComment', () => {
     const mockComment = {
       _id: validCid,
       text: 'This is a test comment',
-      commentBy: 'dummyUserId',
+      commentBy: user1,
       commentDateTime: new Date('2024-06-03'),
       upVotes: [],
       downVotes: [],
@@ -53,13 +67,14 @@ describe('POST /addComment', () => {
       title: 'This is a test question',
       text: 'This is a test question',
       tags: [],
-      askedBy: 'dummyUserId',
+      askedBy: user1,
       askDateTime: new Date('2024-06-03'),
       views: [],
       upVotes: [],
       downVotes: [],
       answers: [],
       comments: [mockComment._id],
+      subscribers: [],
     } as Question);
 
     popDocSpy.mockResolvedValueOnce({
@@ -67,13 +82,14 @@ describe('POST /addComment', () => {
       title: 'This is a test question',
       text: 'This is a test question',
       tags: [],
-      askedBy: 'dummyUserId',
+      askedBy: user1,
       askDateTime: new Date('2024-06-03'),
       views: [],
       upVotes: [],
       downVotes: [],
       answers: [],
       comments: [mockComment],
+      subscribers: [],
     });
 
     const response = await supertest(app).post('/comment/addComment').send(mockReqBody);
@@ -82,7 +98,7 @@ describe('POST /addComment', () => {
     expect(response.body).toEqual({
       _id: validCid.toString(),
       text: 'This is a test comment',
-      commentBy: 'dummyUserId',
+      commentBy: user1,
       commentDateTime: mockComment.commentDateTime.toISOString(),
       upVotes: [],
       downVotes: [],
@@ -97,7 +113,7 @@ describe('POST /addComment', () => {
       type: 'answer',
       comment: {
         text: 'This is a test comment',
-        commentBy: 'dummyUserId',
+        commentBy: user1,
         commentDateTime: new Date('2024-06-03'),
       },
     };
@@ -105,7 +121,7 @@ describe('POST /addComment', () => {
     const mockComment = {
       _id: validCid,
       text: 'This is a test comment',
-      commentBy: 'dummyUserId',
+      commentBy: user1,
       commentDateTime: new Date('2024-06-03'),
       upVotes: [],
       downVotes: [],
@@ -116,7 +132,7 @@ describe('POST /addComment', () => {
     addCommentSpy.mockResolvedValueOnce({
       _id: validAid,
       text: 'This is a test answer',
-      ansBy: 'dummyUserId',
+      ansBy: user2,
       ansDateTime: new Date('2024-06-03'),
       upVotes: [],
       downVotes: [],
@@ -126,7 +142,7 @@ describe('POST /addComment', () => {
     popDocSpy.mockResolvedValueOnce({
       _id: validAid,
       text: 'This is a test answer',
-      ansBy: 'dummyUserId',
+      ansBy: user2,
       ansDateTime: new Date('2024-06-03'),
       upVotes: [],
       downVotes: [],
@@ -139,7 +155,7 @@ describe('POST /addComment', () => {
     expect(response.body).toEqual({
       _id: validCid.toString(),
       text: 'This is a test comment',
-      commentBy: 'dummyUserId',
+      commentBy: user1,
       commentDateTime: mockComment.commentDateTime.toISOString(),
       upVotes: [],
       downVotes: [],
@@ -314,7 +330,7 @@ describe('POST /addComment', () => {
       type: 'question',
       comment: {
         text: 'This is a test comment',
-        commentBy: 'dummyUserId',
+        commentBy: user1,
         commentDateTime: new Date('2024-06-03'),
       },
     };
@@ -322,7 +338,7 @@ describe('POST /addComment', () => {
     const mockComment = {
       _id: validCid,
       text: 'This is a test comment',
-      commentBy: 'dummyUserId',
+      commentBy: user1,
       commentDateTime: new Date('2024-06-03'),
       upVotes: [],
       downVotes: [],
@@ -347,7 +363,7 @@ describe('POST /addComment', () => {
       type: 'question',
       comment: {
         text: 'This is a test comment',
-        commentBy: 'dummyUserId',
+        commentBy: user1,
         commentDateTime: new Date('2024-06-03'),
       },
     };
@@ -355,7 +371,7 @@ describe('POST /addComment', () => {
     const mockComment = {
       _id: validCid,
       text: 'This is a test comment',
-      commentBy: 'dummyUserId',
+      commentBy: user1,
       commentDateTime: new Date('2024-06-03'),
       upVotes: [],
       downVotes: [],
@@ -366,13 +382,14 @@ describe('POST /addComment', () => {
       title: 'This is a test question',
       text: 'This is a test question',
       tags: [],
-      askedBy: 'dummyUserId',
+      askedBy: user2,
       askDateTime: new Date('2024-06-03'),
       views: [],
       upVotes: [],
       downVotes: [],
       answers: [],
       comments: [mockComment._id],
+      subscribers: [],
     };
 
     saveCommentSpy.mockResolvedValueOnce(mockComment);
@@ -398,12 +415,12 @@ describe('POST /upvoteComment', () => {
   it('should upvote a comment successfully', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'new-user',
+      uid: user1.uid,
     };
 
     const mockResponse = {
       msg: 'Comment upvoted successfully',
-      upVotes: ['new-user'],
+      upVotes: [user1.uid],
       downVotes: [],
     };
 
@@ -418,7 +435,7 @@ describe('POST /upvoteComment', () => {
   it('should cancel the upvote successfully', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'some-user',
+      uid: user1.uid,
     };
 
     const mockSecondResponse = {
@@ -440,13 +457,13 @@ describe('POST /upvoteComment', () => {
   it('should handle upvote and then downvote by the same user', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'new-user',
+      uid: user2.uid,
     };
 
     // First upvote the comment
     let mockResponseWithBothVotes: MockResponse = {
       msg: 'Comment upvoted successfully',
-      upVotes: ['new-user'],
+      upVotes: [user2.uid],
       downVotes: [],
     };
 
@@ -460,7 +477,7 @@ describe('POST /upvoteComment', () => {
     // Now downvote the question
     mockResponseWithBothVotes = {
       msg: 'Comment downvoted successfully',
-      downVotes: ['new-user'],
+      downVotes: [user2.uid],
       upVotes: [],
     };
 
@@ -474,7 +491,7 @@ describe('POST /upvoteComment', () => {
 
   it('should return bad request error if the request had id missing', async () => {
     const mockReqBody = {
-      username: 'some-user',
+      uid: user1.uid,
     };
 
     const response = await supertest(app).post(`/comment/upvoteComment`).send(mockReqBody);
@@ -505,12 +522,12 @@ describe('POST /downvoteComment', () => {
   it('should downvote a comment successfully', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'new-user',
+      uid: user2.uid,
     };
 
     const mockResponse = {
       msg: 'Comment downvoted successfully',
-      downVotes: ['new-user'],
+      downVotes: [user2.uid],
       upVotes: [],
     };
 
@@ -525,7 +542,7 @@ describe('POST /downvoteComment', () => {
   it('should cancel the downvote successfully', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'some-user',
+      uid: user1.uid,
     };
 
     const mockSecondResponse = {
@@ -547,13 +564,13 @@ describe('POST /downvoteComment', () => {
   it('should handle downvote and then upvote by the same user', async () => {
     const mockReqBody = {
       id: '65e9b5a995b6c7045a30d823',
-      username: 'new-user',
+      uid: user1.uid,
     };
 
     // First downvote the comment
     let mockResponse: MockResponse = {
       msg: 'Comment downvoted successfully',
-      downVotes: ['new-user'],
+      downVotes: [user1.uid],
       upVotes: [],
     };
 
@@ -568,7 +585,7 @@ describe('POST /downvoteComment', () => {
     mockResponse = {
       msg: 'Comment upvoted successfully',
       downVotes: [],
-      upVotes: ['new-user'],
+      upVotes: [user1.uid],
     };
 
     addVoteToCommentSpy.mockResolvedValueOnce(mockResponse);
@@ -581,7 +598,7 @@ describe('POST /downvoteComment', () => {
 
   it('should return bad request error if the request had id missing', async () => {
     const mockReqBody = {
-      username: 'some-user',
+      user: user1.uid,
     };
 
     const response = await supertest(app).post(`/comment/downvoteComment`).send(mockReqBody);

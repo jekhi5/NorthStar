@@ -73,7 +73,7 @@ const QuestionView = ({ q }: QuestionProps) => {
         </div>
       </div>
       <div className='lastActivity'>
-        <div className='question_author'>{q.askedBy}</div>
+        <div className='question_author'>{q.askedBy.username}</div>
         <div>&nbsp;</div>
         <div className='question_meta'>asked {getMetaData(new Date(q.askDateTime))}</div>
       </div>

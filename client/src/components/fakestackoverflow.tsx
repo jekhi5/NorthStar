@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './layout';
 import Login from './login';
+import SignUp from './signup';
 import { FakeSOSocket, User } from '../types';
 import LoginContext from '../contexts/LoginContext';
 import UserContext from '../contexts/UserContext';
@@ -10,6 +11,7 @@ import TagPage from './main/tagPage';
 import NewQuestionPage from './main/newQuestion';
 import NewAnswerPage from './main/newAnswer';
 import AnswerPage from './main/answerPage';
+import ProfilePage from './main/profilePage';
 
 const ProtectedRoute = ({
   user,
@@ -33,13 +35,22 @@ const ProtectedRoute = ({
  */
 const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [showLogIn, setShowLogIn] = useState<boolean>(true);
 
   return (
-    <LoginContext.Provider value={{ setUser }}>
+    <LoginContext.Provider value={{ user, setUser }}>
       <Routes>
         {/* Public Route */}
-        <Route path='/' element={<Login />} />
-
+        <Route
+          path='/'
+          element={
+            showLogIn ? (
+              <Login showLogIn={showLogIn} setShowLogIn={setShowLogIn} />
+            ) : (
+              <SignUp showLogIn={showLogIn} setShowLogIn={setShowLogIn} />
+            )
+          }
+        />
         {/* Protected Routes */}
         {
           <Route
@@ -53,6 +64,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             <Route path='/question/:qid' element={<AnswerPage />} />
             <Route path='/new/question' element={<NewQuestionPage />} />
             <Route path='/new/answer/:qid' element={<NewAnswerPage />} />
+            <Route path='/profile' element={<ProfilePage />} />
           </Route>
         }
       </Routes>

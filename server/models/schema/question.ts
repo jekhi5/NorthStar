@@ -8,11 +8,11 @@ import { Schema } from 'mongoose';
  * - `text`: The detailed content of the question.
  * - `tags`: An array of references to `Tag` documents associated with the question.
  * - `answers`: An array of references to `Answer` documents associated with the question.
- * - `askedBy`: The username of the user who asked the question.
+ * - `askedBy`: The user who asked the question.
  * - `askDateTime`: The date and time when the question was asked.
- * - `views`: An array of usernames that have viewed the question.
- * - `upVotes`: An array of usernames that have upvoted the question.
- * - `downVotes`: An array of usernames that have downvoted the question.
+ * - `views`: An array of uids that have viewed the question.
+ * - `upVotes`: An array of uids that have upvoted the question.
+ * - `downVotes`: An array of uids that have downvoted the question.
  * - `comments`: Comments that have been added to the question by users.
  */
 const questionSchema: Schema = new Schema(
@@ -26,7 +26,9 @@ const questionSchema: Schema = new Schema(
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     answers: [{ type: Schema.Types.ObjectId, ref: 'Answer' }],
     askedBy: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
     askDateTime: {
       type: Date,
@@ -35,6 +37,7 @@ const questionSchema: Schema = new Schema(
     upVotes: [{ type: String }],
     downVotes: [{ type: String }],
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+    subscribers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
   { collection: 'Question' },
 );
