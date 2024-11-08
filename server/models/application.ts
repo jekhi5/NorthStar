@@ -291,10 +291,7 @@ export const populateDocument = async (
 
     if (type === 'question') {
       result = await QuestionModel.findOne({ _id: id }).populate([
-        {
-          path: 'tags',
-          model: TagModel,
-        },
+        { path: 'tags', model: TagModel },
         {
           path: 'answers',
           model: AnswerModel,
@@ -302,6 +299,7 @@ export const populateDocument = async (
         },
         { path: 'comments', model: CommentModel },
         { path: 'askedBy', model: UserModel },
+        { path: 'subscribers', model: UserModel },
       ]);
     } else if (type === 'answer') {
       result = await AnswerModel.findOne({ _id: id }).populate([
@@ -348,6 +346,7 @@ export const fetchAndIncrementQuestionViewsById = async (
       },
       { path: 'comments', model: CommentModel },
       { path: 'askedBy', model: UserModel },
+      { path: 'subscribers', model: UserModel },
     ]);
     return q;
   } catch (error) {
@@ -745,19 +744,21 @@ export const toggleSubscribe = async (id: string, user: User): Promise<QuestionR
 
     const result: QuestionResponse | null = await QuestionModel.findOneAndUpdate(
       { _id: id },
-      {
-        $set: {
-          subscribers: {
-            $cond: [
-              { $in: [user.uid, '$subscribers'] },
-              { $filter: { input: '$subscribers', as: 's', cond: { $ne: ['$$s', user.uid] } } },
-              { $concatArrays: ['$subscribers', [user.uid]] },
-            ],
+      [
+        {
+          $set: {
+            subscribers: {
+              $cond: [
+                { $in: [user.uid, '$subscribers'] },
+                { $filter: { input: '$subscribers', as: 's', cond: { $ne: ['$$s', user.uid] } } },
+                { $concatArrays: ['$subscribers', [user.uid]] },
+              ],
+            },
           },
         },
-      },
+      ],
       { new: true },
-    );
+    ).populate('subscribers');
     if (result === null) {
       throw new Error('Failed to toggle subscriber');
     }

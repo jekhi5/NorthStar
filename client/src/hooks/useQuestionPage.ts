@@ -131,7 +131,7 @@ const useQuestionPage = () => {
      * @param result - The updated question object.
      */
     const handleSubscriberUpdate = ({ result }: { result: Question }) => {
-      const questionResult = result as Question;
+      const questionResult = result;
 
       if (questionResult._id === questionID) {
         setQuestion(questionResult);
