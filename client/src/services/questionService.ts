@@ -60,7 +60,8 @@ const addQuestion = async (q: Question): Promise<Question> => {
  * @throws Error if there is an issue upvoting the question.
  */
 const upvoteQuestion = async (qid: string, uid: string) => {
-  const data = { qid, uid };
+  // The field `qid` in the data object was changed to `id` when voting was expanded beyond just questions
+  const data = { id: qid, uid };
   const res = await api.post(`${QUESTION_API_URL}/upvoteQuestion`, data);
   if (res.status !== 200) {
     throw new Error('Error while upvoting the question');
@@ -76,7 +77,8 @@ const upvoteQuestion = async (qid: string, uid: string) => {
  * @throws Error if there is an issue downvoting the question.
  */
 const downvoteQuestion = async (qid: string, uid: string) => {
-  const data = { qid, uid };
+  // The field `qid` in the data object was changed to `id` when voting was expanded beyond just questions
+  const data = { id: qid, uid };
   const res = await api.post(`${QUESTION_API_URL}/downvoteQuestion`, data);
   if (res.status !== 200) {
     throw new Error('Error while downvoting the question');
