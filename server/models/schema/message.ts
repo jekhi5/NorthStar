@@ -6,7 +6,7 @@ import { Schema } from 'mongoose';
  * Each message includes the following fields:
  * - `content`: The content of the message.
  * - `sentBy`: The the user who wrote the message.
- * - `ansDateTime`: The date and time when the message was created.
+ * - `sentDateTime`: The date and time when the message was sent.
  */
 const messageSchema: Schema = new Schema(
   {
@@ -17,7 +17,7 @@ const messageSchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    ansDateTime: {
+    sentDateTime: {
       type: Date,
     },
   },
