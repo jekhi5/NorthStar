@@ -23,7 +23,7 @@ interface VoteComponentProps {
  */
 const VoteComponent = ({ post, postType }: VoteComponentProps) => {
   const { user } = useUserContext();
-  const { count, voted } = useVoteStatus({ post, postType });
+  const { count, voted } = useVoteStatus({ post });
 
   /**
    * Function to handle upvoting or downvoting a question.

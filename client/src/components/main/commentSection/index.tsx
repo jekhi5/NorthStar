@@ -61,12 +61,15 @@ const CommentSection = ({ comments, handleAddComment }: CommentSectionProps) => 
           <ul className='comments-list'>
             {comments.length > 0 ? (
               comments.map((comment, index) => (
-                <li key={index} className='comment-item'>
-                  <p className='comment-text'>{comment.text}</p>
-                  <small className='comment-meta'>
-                    {comment.commentBy.username}, {getMetaData(new Date(comment.commentDateTime))}
-                  </small>
-                </li>
+                <>
+                  <VoteComponent post={comment} postType='Comment' />
+                  <li key={index} className='comment-item'>
+                    <p className='comment-text'>{comment.text}</p>
+                    <small className='comment-meta'>
+                      {comment.commentBy.username}, {getMetaData(new Date(comment.commentDateTime))}
+                    </small>
+                  </li>
+                </>
               ))
             ) : (
               <p className='no-comments'>No comments yet.</p>

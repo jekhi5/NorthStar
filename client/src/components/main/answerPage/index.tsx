@@ -36,6 +36,7 @@ const AnswerPage = () => {
       />
       {question.answers.map((a, idx) => (
         <>
+          <VoteComponent post={a} postType='Answer' />
           <AnswerView
             key={idx}
             text={a.text}
