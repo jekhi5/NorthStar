@@ -3,6 +3,7 @@ import { getMetaData } from '../../../tool';
 import { Comment } from '../../../types';
 import './index.css';
 import useUserContext from '../../../hooks/useUserContext';
+import VoteComponent from '../voteComponent';
 
 /**
  * Interface representing the props for the Comment Section component.

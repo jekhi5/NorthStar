@@ -1,0 +1,3 @@
+MONGODB_URI=mongodb+srv://gracelyntheobald:G4RVzvUB4p9oXUDD@db-cs4530-f24-202.lewoi.mongodb.net
+CLIENT_URL=http://localhost:3000
+PORT=8000
