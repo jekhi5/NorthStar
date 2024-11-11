@@ -47,8 +47,8 @@ const addComment = async (
  * @param username - The username of the person upvoting the comment.
  * @throws Error if there is an issue upvoting the comment.
  */
-const upvoteComment = async (id: string, username: string) => {
-  const data = { id, username };
+const upvoteComment = async (id: string, uid: string) => {
+  const data = { id, uid };
   const res = await api.post(`${COMMENT_API_URL}/upvoteComment`, data);
   if (res.status !== 200) {
     throw new Error('Error while upvoting the answer');
@@ -63,8 +63,8 @@ const upvoteComment = async (id: string, username: string) => {
  * @param username - The username of the person downvoting the comment.
  * @throws Error if there is an issue downvoting the comment.
  */
-const downvoteComment = async (id: string, username: string) => {
-  const data = { id, username };
+const downvoteComment = async (id: string, uid: string) => {
+  const data = { id, uid };
   const res = await api.post(`${COMMENT_API_URL}/downvoteComment`, data);
   if (res.status !== 200) {
     throw new Error('Error while downvoting the answer');
