@@ -9,6 +9,7 @@ const user1: User = {
   username: 'User1',
   email: 'user1@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const tag1: Tag = {

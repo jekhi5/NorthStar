@@ -17,11 +17,14 @@ import {
   addVoteToQuestion,
   addVoteToAnswer,
   addVoteToComment,
+  updateUserReputation,
 } from '../models/application';
 import { Answer, Question, Tag, Comment, User } from '../types';
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
 import AnswerModel from '../models/answers';
 import CommentModel from '../models/comments';
+import UserModel from '../models/user';
+import e from 'express';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');
@@ -32,6 +35,7 @@ const user1: User = {
   username: 'User1',
   email: 'user1@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const user2: User = {
@@ -40,6 +44,7 @@ const user2: User = {
   username: 'User2',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const user3: User = {
@@ -48,6 +53,7 @@ const user3: User = {
   username: 'User3',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const user4: User = {
@@ -56,6 +62,7 @@ const user4: User = {
   username: 'User4',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const tag1: Tag = {
@@ -473,6 +480,7 @@ describe('application module', () => {
         expect(result.tags[0]._id?.toString()).toEqual(tag1._id?.toString());
         expect(result.tags[1]._id?.toString()).toEqual(tag2._id?.toString());
         expect(result.askedBy._id).toEqual(mockQn.askedBy._id);
+        expect(result.askedBy.reputation).toEqual(0);
         expect(result.askDateTime).toEqual(mockQn.askDateTime);
         expect(result.views).toEqual([]);
         expect(result.answers.length).toEqual(0);
@@ -652,11 +660,14 @@ describe('application module', () => {
           comments: [],
         };
 
+        expect(mockAnswer.ansBy.reputation).toEqual(0);
+
         const result = (await saveAnswer(mockAnswer)) as Answer;
 
         expect(result._id).toBeDefined();
         expect(result.text).toEqual(mockAnswer.text);
         expect(result.ansBy._id).toEqual(mockAnswer.ansBy._id);
+        expect(result.ansBy.reputation).toEqual(2);
         expect(result.ansDateTime).toEqual(mockAnswer.ansDateTime);
       });
     });
@@ -1021,11 +1032,14 @@ describe('application module', () => {
   describe('Comment model', () => {
     describe('saveComment', () => {
       test('saveComment should return the saved comment', async () => {
+        expect(com1.commentBy.reputation).toEqual(0);
+
         const result = (await saveComment(com1)) as Comment;
 
         expect(result._id).toBeDefined();
         expect(result.text).toEqual(com1.text);
         expect(result.commentBy._id).toEqual(com1.commentBy._id);
+        expect(com1.commentBy.reputation).toEqual(1);
         expect(result.commentDateTime).toEqual(com1.commentDateTime);
       });
     });

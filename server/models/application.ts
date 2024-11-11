@@ -208,12 +208,15 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
     if (order === 'active') {
       qlist = await QuestionModel.find().populate([
         { path: 'tags', model: TagModel },
-        { path: 'answers', model: AnswerModel },
+        { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
         { path: 'askedBy', model: UserModel },
       ]);
       return sortQuestionsByActive(qlist);
     }
-    qlist = await QuestionModel.find().populate([{ path: 'tags', model: TagModel }]);
+    qlist = await QuestionModel.find().populate([
+      { path: 'tags', model: TagModel },
+      { path: 'askedBy', model: UserModel },
+    ]);
     if (order === 'unanswered') {
       return sortQuestionsByUnanswered(qlist);
     }
@@ -286,26 +289,36 @@ export const populateDocument = async (
     if (!id) {
       throw new Error('Provided question ID is undefined.');
     }
-
     let result = null;
-
     if (type === 'question') {
       result = await QuestionModel.findOne({ _id: id }).populate([
-        {
-          path: 'tags',
-          model: TagModel,
-        },
+        { path: 'tags', model: TagModel },
         {
           path: 'answers',
           model: AnswerModel,
-          populate: { path: 'comments', model: CommentModel },
+          populate: [
+            { path: 'ansBy', model: UserModel },
+            {
+              path: 'comments',
+              model: CommentModel,
+              populate: { path: 'commentBy', model: UserModel },
+            },
+          ],
         },
-        { path: 'comments', model: CommentModel },
+        {
+          path: 'comments',
+          model: CommentModel,
+          populate: { path: 'commentBy', model: UserModel },
+        },
         { path: 'askedBy', model: UserModel },
       ]);
     } else if (type === 'answer') {
       result = await AnswerModel.findOne({ _id: id }).populate([
-        { path: 'comments', model: CommentModel },
+        {
+          path: 'comments',
+          model: CommentModel,
+          populate: { path: 'commentBy', model: UserModel },
+        },
         { path: 'ansBy', model: UserModel },
       ]);
     }
@@ -337,16 +350,24 @@ export const fetchAndIncrementQuestionViewsById = async (
       { $addToSet: { views: uid } },
       { new: true },
     ).populate([
-      {
-        path: 'tags',
-        model: TagModel,
-      },
+      { path: 'tags', model: TagModel },
       {
         path: 'answers',
         model: AnswerModel,
-        populate: { path: 'comments', model: CommentModel },
+        populate: [
+          { path: 'ansBy', model: UserModel },
+          {
+            path: 'comments',
+            model: CommentModel,
+            populate: { path: 'commentBy', model: UserModel },
+          },
+        ],
       },
-      { path: 'comments', model: CommentModel },
+      {
+        path: 'comments',
+        model: CommentModel,
+        populate: { path: 'commentBy', model: UserModel },
+      },
       { path: 'askedBy', model: UserModel },
     ]);
     return q;
@@ -381,6 +402,10 @@ export const saveQuestion = async (question: Question): Promise<QuestionResponse
 export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
   try {
     const result = await AnswerModel.create(answer);
+
+    // Every answer is worth 2 reputation points
+    await updateUserReputation(answer.ansBy.uid, 2);
+
     return result;
   } catch (error) {
     return { error: 'Error when saving an answer' };
@@ -397,6 +422,10 @@ export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
 export const saveComment = async (comment: Comment): Promise<CommentResponse> => {
   try {
     const result = await CommentModel.create(comment);
+
+    // All comments are worth 1 reputation point
+    await updateUserReputation(comment.commentBy.uid, 1);
+
     return result;
   } catch (error) {
     return { error: 'Error when saving a comment' };
@@ -895,5 +924,44 @@ export const getTagCountMap = async (): Promise<Map<string, number> | null | { e
     return tmap;
   } catch (error) {
     return { error: 'Error when construction tag map' };
+  }
+};
+
+const isUserEndorsed = async (uid: string): Promise<boolean | { error: string }> => {
+  try {
+    const user = await UserModel.findOne({ uid: uid });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user.status === 'Endorsed';
+  } catch (error) {
+    return { error: `Error checking user endorsed status` };
+  }
+};
+
+/**
+ * Updates the reputation of a user.
+ *
+ * @param uid The uid of the user to update
+ * @param reputationChange the amount to change the reputation by
+ * @returns a Promise that resolves to the updated user or an error message if the operation fails
+ */
+export const updateUserReputation = async (
+  uid: string,
+  reputationChange: number,
+): Promise<UserResponse> => {
+  try {
+    const user = await UserModel.findOneAndUpdate(
+      { uid: uid },
+      { $inc: { reputation: reputationChange } },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  } catch (error) {
+    return { error: `Error updating user reputation` };
   }
 };

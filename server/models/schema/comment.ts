@@ -19,6 +19,7 @@ const commentSchema: Schema = new Schema(
     commentBy: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
     commentDateTime: {
       type: Date,
