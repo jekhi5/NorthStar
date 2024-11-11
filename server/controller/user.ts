@@ -61,7 +61,10 @@ const userController = () => {
         res.json({ available: false, message: 'Username is already in use' });
       } else if (emailCheck) {
         // Just email is taken
-        res.json({ available: false, message: 'Email is already in use' });
+        res.json({
+          available: false,
+          message: 'Email is already in use (perhaps try logging in instead)',
+        });
       } else {
         // Valid!
         res.json({ available: true, message: 'User is valid' });

@@ -125,7 +125,11 @@ const useSignUp = () => {
 
       navigate('/home');
     } catch (err) {
-      setError('An unexpected error occurred');
+      if (err instanceof Error && err.message.includes('email-already-in-use')) {
+        setError('Email is already in use (perhaps try logging in instead)');
+      } else {
+        setError('An unexpected error occurred');
+      }
     }
   };
 
