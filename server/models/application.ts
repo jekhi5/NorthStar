@@ -170,6 +170,33 @@ const sortQuestionsByMostViews = (qlist: Question[]): Question[] =>
   sortQuestionsByNewest(qlist).sort((a, b) => b.views.length - a.views.length);
 
 /**
+ * Updates the reputation of a user.
+ *
+ * @param uid The uid of the user to update
+ * @param reputationChange the amount to change the reputation by
+ * @returns a Promise that resolves to the updated user or an error message if the operation fails
+ */
+export const updateUserReputation = async (
+  uid: string,
+  reputationChange: number,
+): Promise<UserResponse> => {
+  try {
+    const user = await UserModel.findOneAndUpdate(
+      { uid },
+      { $inc: { reputation: reputationChange } },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  } catch (error) {
+    return { error: `Error updating user reputation` };
+  }
+};
+
+/**
  * Adds a tag to the database if it does not already exist.
  *
  * @param {Tag} tag - The tag to add
@@ -924,44 +951,5 @@ export const getTagCountMap = async (): Promise<Map<string, number> | null | { e
     return tmap;
   } catch (error) {
     return { error: 'Error when construction tag map' };
-  }
-};
-
-const isUserEndorsed = async (uid: string): Promise<boolean | { error: string }> => {
-  try {
-    const user = await UserModel.findOne({ uid: uid });
-    if (!user) {
-      throw new Error('User not found');
-    }
-    return user.status === 'Endorsed';
-  } catch (error) {
-    return { error: `Error checking user endorsed status` };
-  }
-};
-
-/**
- * Updates the reputation of a user.
- *
- * @param uid The uid of the user to update
- * @param reputationChange the amount to change the reputation by
- * @returns a Promise that resolves to the updated user or an error message if the operation fails
- */
-export const updateUserReputation = async (
-  uid: string,
-  reputationChange: number,
-): Promise<UserResponse> => {
-  try {
-    const user = await UserModel.findOneAndUpdate(
-      { uid: uid },
-      { $inc: { reputation: reputationChange } },
-      { new: true, runValidators: true },
-    );
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-    return user;
-  } catch (error) {
-    return { error: `Error updating user reputation` };
   }
 };

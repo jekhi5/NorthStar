@@ -56,13 +56,12 @@ const userSchema = new mongoose.Schema(
  * Mongo equivalent of a MYSQL trigger.
  * Updates the status of a user to 'Endorsed' if their reputation is 30 or higher.
  */
-userSchema.pre('save', function (next) {
-  if (this.reputation > 30) {
-    this.status = 'Endorsed';
-  } else {
-    this.status = 'Not endorsed';
+// eslint-disable-next-line func-names
+userSchema.post('findOneAndUpdate', async doc => {
+  if (doc.reputation > 30 && doc.status !== 'Endorsed') {
+    doc.status = 'Endorsed';
+    await doc.save();
   }
-  next();
 });
 
 export default userSchema;

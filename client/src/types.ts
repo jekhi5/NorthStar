@@ -14,6 +14,7 @@ export interface User {
   lastName?: string;
   profilePicture?: string;
   status: 'Not endorsed' | 'Endorsed';
+  reputation: number;
 }
 
 /**
