@@ -45,6 +45,20 @@ const getQuestionById = async (qid: string, uid: string): Promise<Question> => {
 };
 
 /**
+ * Retrieves questions from the database if they were posted by the user with the provided uid.
+ *
+ * @param uid - The user ID of the question poster.
+ * @throws Error if there is an issue fetching the question by UID.
+ */
+const getQuestionsByUid = async (uid: string): Promise<Question[]> => {
+  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByUid/?uid=${uid}`);
+  if (res.status !== 200) {
+    throw new Error('Error when fetching question by uid');
+  }
+  return res.data;
+};
+
+/**
  * Function to add a new question.
  *
  * @param q - The question object to add.
@@ -94,4 +108,11 @@ const downvoteQuestion = async (qid: string, uid: string) => {
   return res.data;
 };
 
-export { getQuestionsByFilter, getQuestionById, addQuestion, upvoteQuestion, downvoteQuestion };
+export {
+  getQuestionsByFilter,
+  getQuestionById,
+  getQuestionsByUid,
+  addQuestion,
+  upvoteQuestion,
+  downvoteQuestion,
+};

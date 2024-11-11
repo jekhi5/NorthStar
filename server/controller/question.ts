@@ -4,6 +4,7 @@ import {
   Question,
   FindQuestionRequest,
   FindQuestionByIdRequest,
+  FindQuestionsByUidRequest,
   AddQuestionRequest,
   VoteRequest,
   FakeSOSocket,
@@ -17,6 +18,7 @@ import {
   processTags,
   populateDocument,
   saveQuestion,
+  getQuestionsByUid,
 } from '../models/application';
 
 const questionController = (socket: FakeSOSocket) => {
@@ -91,6 +93,50 @@ const questionController = (socket: FakeSOSocket) => {
         res.status(500).send(`Error when fetching question by id: ${err.message}`);
       } else {
         res.status(500).send(`Error when fetching question by id`);
+      }
+    }
+  };
+
+  /**
+   * Retrieves a question by its unique ID, and increments the view count for that question.
+   * If there is an error, the HTTP response's status is updated.
+   *
+   * @param req The FindQuestionByIdRequest object containing the question ID as a parameter.
+   * @param res The HTTP response object used to send back the question details.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const getQuestionsByAskedBy = async (
+    req: FindQuestionsByUidRequest,
+    res: Response,
+  ): Promise<void> => {
+    const { uid } = req.query;
+
+    // if (!ObjectId.isValid(qid)) {
+    //   res.status(400).send('Invalid ID format');
+    //   return;
+    // }
+
+    if (uid === undefined || uid === '') {
+      res.status(400).send('Invalid user id.');
+      return;
+    }
+
+    try {
+      const q = await getQuestionsByUid(uid);
+
+      if (q && !('error' in q)) {
+        socket.emit('questionsUpdate', q);
+        res.json(q);
+        return;
+      }
+
+      throw new Error('Error while fetching questions by uid');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        res.status(500).send(`Error when fetching questions by uid: ${err.message}`);
+      } else {
+        res.status(500).send(`Error when fetching questions by uid`);
       }
     }
   };
@@ -235,6 +281,7 @@ const questionController = (socket: FakeSOSocket) => {
   // add appropriate HTTP verbs and their endpoints to the router
   router.get('/getQuestion', getQuestionsByFilter);
   router.get('/getQuestionById/:qid', getQuestionById);
+  router.get('/getQuestionsByUid', getQuestionsByAskedBy);
   router.post('/addQuestion', addQuestion);
   router.post('/upvoteQuestion', upvoteQuestion);
   router.post('/downvoteQuestion', downvoteQuestion);

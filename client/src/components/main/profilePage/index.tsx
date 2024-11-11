@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router-dom';
 import useProfilePage from '../../../hooks/useProfilePage';
-import { getQuestionsByFilter } from '../../../services/questionService';
 
 /**
  * ProfilePage component that displays a user's personal information.

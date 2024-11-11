@@ -235,8 +235,44 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
  *
  * @returns Filtered Question objects.
  */
-export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Question[] =>
-  qlist.filter(q => q.askedBy.uid === uid);
+export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Question[] => {
+  // qlist.filter(q => q.askedBy.uid === uid);
+  console.log(`updated filtered qlist:\n${qlist}`);
+
+  const newlist: Question[] = [];
+  qlist.forEach(q => {
+    console.log(`\neach q: ${q}`);
+    console.log(`qlist uid: ${q.askedBy.uid}`);
+    console.log(`given uid: ${uid}\n`);
+    if (q.askedBy.uid === uid) {
+      newlist.push(q);
+    }
+  });
+  console.log(`\nnewlist:\n${newlist}`);
+  return newlist;
+};
+
+/**
+ * Retrieves questions from the database, ordered by the specified criteria.
+ *
+ * @param {OrderType} order - The order type to filter the questions
+ *
+ * @returns {Promise<Question[]>} - Promise that resolves to a list of ordered questions
+ */
+export const getQuestionsByUid = async (uid: string): Promise<Question[]> => {
+  try {
+    const qlist = await QuestionModel.find();
+    return filterQuestionsByAskedBy(qlist, uid);
+    // console.log('got past questionmodel find');
+    // console.log(qlist);
+    // const coollist = filterQuestionsByAskedBy(qlist, uid);
+    // console.log(coollist);
+    // return coollist;
+  } catch (error) {
+    // console.log('did not past questionmodel find');
+    return [];
+  }
+};
 
 /**
  * Filters questions based on a search string containing tags and/or keywords.

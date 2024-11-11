@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Question, User } from '../types';
 import { getUserByUid } from '../services/userService';
 import UserContext from '../contexts/UserContext';
-import { getQuestionsByFilter } from '../services/questionService';
+import { getQuestionsByFilter, getQuestionsByUid } from '../services/questionService';
 
 /**
  * Custom hook to manage the state and logic for the profile page.
@@ -29,7 +29,7 @@ const useProfilePage = () => {
       try {
         const profileData = await getUserByUid(uid);
         setProfile(profileData);
-        const qlist = await getQuestionsByFilter('newest', '', uid);
+        const qlist = await getQuestionsByUid(uid);
         setUserQuestions(qlist || []);
       } catch (err) {
         setError('Failed to load profile.');

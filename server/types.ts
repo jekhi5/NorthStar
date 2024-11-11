@@ -110,6 +110,11 @@ export interface Question {
 export type QuestionResponse = Question | { error: string };
 
 /**
+ * Type representing the possible responses for a multiple Question-related operation.
+ */
+export type QuestionsResponse = Question[] | { error: string };
+
+/**
  * Interface for the request query to find questions using a search string, which contains:
  * - order - The order in which to sort the questions
  * - search - The search string used to find questions
@@ -131,6 +136,16 @@ export interface FindQuestionByIdRequest extends Request {
   params: {
     qid: string;
   };
+  query: {
+    uid: string;
+  };
+}
+
+/**
+ * Interface for the request parameters when finding a question by its UID.
+ * - uid - The askedby uid of the question.
+ */
+export interface FindQuestionsByUidRequest extends Request {
   query: {
     uid: string;
   };
@@ -295,6 +310,7 @@ export interface AnswerUpdatePayload {
  */
 export interface ServerToClientEvents {
   questionUpdate: (question: QuestionResponse) => void;
+  questionsUpdate: (questions: QuestionsResponse) => void;
   answerUpdate: (result: AnswerUpdatePayload) => void;
   viewsUpdate: (question: QuestionResponse) => void;
   voteUpdate: (vote: VoteUpdatePayload) => void;
