@@ -9,7 +9,7 @@ import { downvoteComment, upvoteComment } from '../../../services/commentService
 /**
  * Interface represents the props for the VoteComponent.
  *
- * question - The question object containing voting information.
+ * post - The Question/Answer/Comment object containing voting information.
  */
 interface VoteComponentProps {
   post: Question | Answer | Comment;
@@ -19,7 +19,8 @@ interface VoteComponentProps {
 /**
  * A Vote component that allows users to upvote or downvote a question.
  *
- * @param question - The question object containing voting information.
+ * @param post - The question/answer/comment object containing voting information.
+ * @param postType - the type of post.
  */
 const VoteComponent = ({ post, postType }: VoteComponentProps) => {
   const { user } = useUserContext();

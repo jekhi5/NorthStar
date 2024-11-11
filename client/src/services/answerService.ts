@@ -40,7 +40,7 @@ const upvoteAnswer = async (id: string, uid: string) => {
  * Function to downvote an answer.
  *
  * @param id - The ID of the answer to downvote.
- * @param uid - The username of the person downvoting the answer.
+ * @param uid - The uid of the person downvoting the answer.
  * @throws Error if there is an issue downvoting the answer.
  */
 const downvoteAnswer = async (id: string, uid: string) => {

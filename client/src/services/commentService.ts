@@ -44,7 +44,7 @@ const addComment = async (
  * Function to upvote a comment.
  *
  * @param id - The ID of the comment to upvote.
- * @param username - The username of the person upvoting the comment.
+ * @param uid - The uid of the person upvoting the comment.
  * @throws Error if there is an issue upvoting the comment.
  */
 const upvoteComment = async (id: string, uid: string) => {
@@ -59,8 +59,8 @@ const upvoteComment = async (id: string, uid: string) => {
 /**
  * Function to downvote a comment.
  *
- * @param qid - The ID of the comment to downvote.
- * @param username - The username of the person downvoting the comment.
+ * @param id - The ID of the comment to downvote.
+ * @param uid - The uid of the person downvoting the comment.
  * @throws Error if there is an issue downvoting the comment.
  */
 const downvoteComment = async (id: string, uid: string) => {
