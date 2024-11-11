@@ -13,8 +13,16 @@ const QUESTION_API_URL = `${process.env.REACT_APP_SERVER_URL}/question`;
 const getQuestionsByFilter = async (
   order: string = 'newest',
   search: string = '',
+  askedBy: string = '',
 ): Promise<Question[]> => {
-  const res = await api.get(`${QUESTION_API_URL}/getQuestion?order=${order}&search=${search}`);
+  let res;
+  if (askedBy === '') {
+    res = await api.get(`${QUESTION_API_URL}/getQuestion?order=${order}&search=${search}`);
+  } else {
+    res = await api.get(
+      `${QUESTION_API_URL}/getQuestion?order=${order}&search=${search}&askedBy=${askedBy}`,
+    );
+  }
   if (res.status !== 200) {
     throw new Error('Error when fetching or filtering questions');
   }
