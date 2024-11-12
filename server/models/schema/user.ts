@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema(
  */
 // eslint-disable-next-line func-names
 userSchema.post('findOneAndUpdate', async doc => {
-  if (doc.reputation > 30 && doc.status !== 'Endorsed') {
+  if (doc.reputation >= 30 && doc.status !== 'Endorsed') {
     doc.status = 'Endorsed';
     await doc.save();
   }
