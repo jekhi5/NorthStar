@@ -209,12 +209,15 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
     if (order === 'active') {
       qlist = await QuestionModel.find().populate([
         { path: 'tags', model: TagModel },
-        { path: 'answers', model: AnswerModel },
+        { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
         { path: 'askedBy', model: UserModel },
       ]);
       return sortQuestionsByActive(qlist);
     }
-    qlist = await QuestionModel.find().populate([{ path: 'tags', model: TagModel }]);
+    qlist = await QuestionModel.find().populate([
+      { path: 'tags', model: TagModel },
+      { path: 'askedBy', model: UserModel },
+    ]);
     if (order === 'unanswered') {
       return sortQuestionsByUnanswered(qlist);
     }
@@ -235,22 +238,8 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
  *
  * @returns Filtered Question objects.
  */
-export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Question[] => {
-  // qlist.filter(q => q.askedBy.uid === uid);
-  console.log(`updated filtered qlist:\n${qlist}`);
-
-  const newlist: Question[] = [];
-  qlist.forEach(q => {
-    console.log(`\neach q: ${q}`);
-    console.log(`qlist uid: ${q.askedBy.uid}`);
-    console.log(`given uid: ${uid}\n`);
-    if (q.askedBy.uid === uid) {
-      newlist.push(q);
-    }
-  });
-  console.log(`\nnewlist:\n${newlist}`);
-  return newlist;
-};
+export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Question[] =>
+  qlist.filter(q => q.askedBy.uid === uid);
 
 /**
  * Retrieves questions from the database, ordered by the specified criteria.
@@ -261,15 +250,13 @@ export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Questi
  */
 export const getQuestionsByUid = async (uid: string): Promise<Question[]> => {
   try {
-    const qlist = await QuestionModel.find();
+    const qlist = await QuestionModel.find().populate([
+      { path: 'tags', model: TagModel },
+      { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
+      { path: 'askedBy', model: UserModel },
+    ]);
     return filterQuestionsByAskedBy(qlist, uid);
-    // console.log('got past questionmodel find');
-    // console.log(qlist);
-    // const coollist = filterQuestionsByAskedBy(qlist, uid);
-    // console.log(coollist);
-    // return coollist;
   } catch (error) {
-    // console.log('did not past questionmodel find');
     return [];
   }
 };
@@ -323,26 +310,31 @@ export const populateDocument = async (
     if (!id) {
       throw new Error('Provided question ID is undefined.');
     }
-
     let result = null;
-
     if (type === 'question') {
       result = await QuestionModel.findOne({ _id: id }).populate([
-        {
-          path: 'tags',
-          model: TagModel,
-        },
+        { path: 'tags', model: TagModel },
         {
           path: 'answers',
           model: AnswerModel,
-          populate: { path: 'comments', model: CommentModel },
+          populate: [
+            { path: 'ansBy', model: UserModel },
+            {
+              path: 'comments',
+              model: CommentModel,
+              populate: { path: 'commentBy', model: UserModel },
+            },
+          ],
         },
-        { path: 'comments', model: CommentModel },
         { path: 'askedBy', model: UserModel },
       ]);
     } else if (type === 'answer') {
       result = await AnswerModel.findOne({ _id: id }).populate([
-        { path: 'comments', model: CommentModel },
+        {
+          path: 'comments',
+          model: CommentModel,
+          populate: { path: 'commentBy', model: UserModel },
+        },
         { path: 'ansBy', model: UserModel },
       ]);
     }
@@ -374,16 +366,24 @@ export const fetchAndIncrementQuestionViewsById = async (
       { $addToSet: { views: uid } },
       { new: true },
     ).populate([
-      {
-        path: 'tags',
-        model: TagModel,
-      },
+      { path: 'tags', model: TagModel },
       {
         path: 'answers',
         model: AnswerModel,
-        populate: { path: 'comments', model: CommentModel },
+        populate: [
+          { path: 'ansBy', model: UserModel },
+          {
+            path: 'comments',
+            model: CommentModel,
+            populate: { path: 'commentBy', model: UserModel },
+          },
+        ],
       },
-      { path: 'comments', model: CommentModel },
+      {
+        path: 'comments',
+        model: CommentModel,
+        populate: { path: 'commentBy', model: UserModel },
+      },
       { path: 'askedBy', model: UserModel },
     ]);
     return q;
