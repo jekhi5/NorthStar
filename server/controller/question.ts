@@ -7,6 +7,7 @@ import {
   AddQuestionRequest,
   VoteRequest,
   FakeSOSocket,
+  User,
 } from '../types';
 import {
   addVoteToQuestion,
@@ -130,9 +131,25 @@ const questionController = (socket: FakeSOSocket) => {
     }
     const question: Question = req.body;
     try {
+      const processedTags = await processTags(question.tags);
+      const subscribersFromTags = [
+        ...new Set<User>(
+          processedTags
+            .map(tag => tag.subscribers)
+            .flat()
+            .filter(
+              (subscriber): subscriber is User =>
+                typeof subscriber !== 'string' && subscriber instanceof Object,
+            ),
+        ),
+      ];
+      const { askedBy } = question;
       const questionswithtags: Question = {
         ...question,
-        tags: await processTags(question.tags),
+        tags: processedTags,
+        subscribers: subscribersFromTags.includes(askedBy)
+          ? subscribersFromTags
+          : [askedBy, ...subscribersFromTags],
       };
       if (questionswithtags.tags.length === 0) {
         throw new Error('Invalid tags');

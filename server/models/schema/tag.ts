@@ -18,7 +18,8 @@ const tagSchema: Schema = new Schema(
       type: String,
       required: true,
     },
-    subscribers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    // A new tag that is created will have no subscribers by default
+    subscribers: [{ type: Schema.Types.ObjectId, ref: 'User', default: [] }],
   },
   { collection: 'Tag' },
 );

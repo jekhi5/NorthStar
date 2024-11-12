@@ -89,6 +89,7 @@ const useNewQuestion = () => {
     const tags = tagnames.map(tagName => ({
       name: tagName,
       description: 'user added tag',
+      subscribers: [],
     }));
 
     const question: Question = {
@@ -102,7 +103,7 @@ const useNewQuestion = () => {
       downVotes: [],
       views: [],
       comments: [],
-      subscribers: [user],
+      subscribers: [],
     };
 
     const res = await addQuestion(question);

@@ -67,11 +67,14 @@ export type AnswerResponse = Answer | { error: string };
  * Interface representing a Tag document, which contains:
  * - _id - The unique identifier for the tag. Optional field.
  * - name - Name of the tag
+ * - description - Description of the tag
+ * - subscribers - Object IDs of users that are subscribed to the tag, or users themselves if populated
  */
 export interface Tag {
   _id?: ObjectId;
   name: string;
   description: string;
+  subscribers: User[] | ObjectId[];
 }
 
 /**
@@ -87,7 +90,7 @@ export interface Tag {
  * - upVotes - An array of usernames that have upvoted the question.
  * - downVotes - An array of usernames that have downvoted the question.
  * - comments - Object IDs of comments that have been added to the question by users, or comments themselves if populated.
- * - subscribers - An array of users who are subscribed to the question.
+ * - subscribers - Object IDs of users that are subscribed to the question, or users themselves if populated.
  */
 export interface Question {
   _id?: ObjectId;
