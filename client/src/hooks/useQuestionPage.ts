@@ -125,31 +125,16 @@ const useQuestionPage = () => {
       setQlist(prevQlist => prevQlist.map(q => (q._id === questionObj._id ? questionObj : q)));
     };
 
-    /**
-     * Function to handle updates to the subscribers of a question.
-     *
-     * @param result - The updated question object.
-     */
-    const handleSubscriberUpdate = ({ result }: { result: Question }) => {
-      const questionResult = result;
-
-      if (questionResult._id === questionID) {
-        setQuestion(questionResult);
-      }
-    };
-
     fetchData();
 
     socket.on('questionUpdate', handleQuestionUpdate);
     socket.on('answerUpdate', handleAnswerUpdate);
     socket.on('viewsUpdate', handleViewsUpdate);
-    socket.on('subscriberUpdate', handleSubscriberUpdate);
 
     return () => {
       socket.off('questionUpdate', handleQuestionUpdate);
       socket.off('answerUpdate', handleAnswerUpdate);
       socket.off('viewsUpdate', handleViewsUpdate);
-      socket.off('subscriberUpdate', handleSubscriberUpdate);
     };
   }, [questionID, questionOrder, search, socket]);
 
