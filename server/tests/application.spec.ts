@@ -23,7 +23,6 @@ import { Answer, Question, Tag, Comment, User, PostNotification } from '../types
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
 import AnswerModel from '../models/answers';
 import CommentModel from '../models/comments';
-import PostNotificationModel from '../models/notifications';
 import UserModel from '../models/user';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -228,19 +227,19 @@ describe('application module', () => {
 
         mockingoose(UserModel).toReturn(user1, 'findOne');
 
-        const result = await fetchNotificationsByUid(user1.uid);
+        const result = (await fetchNotificationsByUid(user1.uid)) as PostNotification[];
 
         expect(result.length).toEqual(2);
         expect(result[0]._id).toEqual(user1.postNotifications[0]._id);
         expect(result[1]._id).toEqual(user1.postNotifications[1]._id);
       });
 
-      test('fetchNotificationsByUid should return empty list if there is an error fetching the user', async () => {
+      test('fetchNotificationsByUid should return error if user cannot be found', async () => {
         mockingoose(UserModel).toReturn(new Error('Could not fund user'), 'findOne');
 
-        const result = await fetchNotificationsByUid('nonExistentUser');
+        const result = (await fetchNotificationsByUid('nonExistentUser')) as { error: string };
 
-        expect(result.length).toEqual(0);
+        expect(result.error).toEqual('Error while fetching notifications');
       });
     });
   });
