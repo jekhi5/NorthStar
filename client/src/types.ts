@@ -3,6 +3,26 @@ import { Socket } from 'socket.io-client';
 export type FakeSOSocket = Socket<ServerToClientEvents>;
 
 /**
+ * Interface representing a notification in the application, which contains:
+ * - _id - The unique identifier for the PostNotification. Optional field.
+ * - title - The title of the PostNotification.
+ * - text - The content of the PostNotification.
+ * - postType - The type of the post that the PostNotification is about.
+ * - postId - The unique identifier of the post that the PostNotification is about.
+ * - fromUser - The user who triggered the PostNotification.
+ * - forUser - The user who the PostNotification is for.
+ */
+export interface PostNotification {
+  _id?: string;
+  title: string;
+  text: string;
+  postType: 'Question' | 'Answer' | 'Comment';
+  postId: string;
+  fromUser: User;
+  forUser: User;
+}
+
+/**
  * Represents a user in the application.
  */
 export interface User {

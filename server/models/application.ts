@@ -11,12 +11,14 @@ import {
   Tag,
   User,
   UserResponse,
+  PostNotification,
 } from '../types';
 import AnswerModel from './answers';
 import QuestionModel from './questions';
 import TagModel from './tags';
 import CommentModel from './comments';
 import UserModel from './user';
+import PostNotificationModel from './notifications';
 
 /**
  * Parses tags from a search string.
@@ -895,5 +897,20 @@ export const getTagCountMap = async (): Promise<Map<string, number> | null | { e
     return tmap;
   } catch (error) {
     return { error: 'Error when construction tag map' };
+  }
+};
+
+/**
+ * Retrieves notifications from the data based intended for the user with the given UID.
+ *
+ * @param uid - The uid of the intended recipient of the notifications
+ *
+ * @returns {Promise<PostNotification[]>} - Promise that resolves to a list of notifications
+ */
+export const fetchNotificationsByUid = async (uid: string): Promise<PostNotification[]> => {
+  try {
+    const notifications = await PostNotificationModel.find([{ path: 'forUser', model: UserModel }]);
+  } catch (error) {
+    return [];
   }
 };

@@ -5,6 +5,26 @@ import { Server } from 'socket.io';
 export type FakeSOSocket = Server<ServerToClientEvents>;
 
 /**
+ * Interface representing a notification in the application, which contains:
+ * - _id - The unique identifier for the PostNotification. Optional field.
+ * - title - The title of the PostNotification.
+ * - text - The content of the PostNotification.
+ * - postType - The type of the post that the PostNotification is about.
+ * - postId - The unique identifier of the post that the PostNotification is about.
+ * - fromUser - The user who triggered the PostNotification.
+ * - forUser - The user who the PostNotification is for.
+ */
+export interface PostNotification {
+  _id?: ObjectId;
+  title: string;
+  text: string;
+  postType: 'Question' | 'Answer' | 'Comment';
+  postId: ObjectId;
+  fromUser: User;
+  forUser: User;
+}
+
+/**
  * Type representing the possible ordering options for questions.
  */
 export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed';
@@ -32,7 +52,7 @@ export interface User {
  * Interface representing an Answer document, which contains:
  * - _id - The unique identifier for the answer. Optional field
  * - text - The content of the answer
- * - ansBy - The username of the user who wrote the answer
+ * - ansBy - The User who wrote the answer
  * - ansDateTime - The date and time when the answer was created
  * - comments - Object IDs of comments that have been added to the answer by users, or comments themselves if populated
  */
@@ -80,12 +100,12 @@ export interface Tag {
  * - title - The title of the question.
  * - text - The detailed content of the question.
  * - tags - An array of tags associated with the question.
- * - askedBy - The username of the user who asked the question.
+ * - askedBy - The User who asked the question.
  * - askDateTime - he date and time when the question was asked.
  * - answers - Object IDs of answers that have been added to the question by users, or answers themselves if populated.
- * - views - An array of usernames that have viewed the question.
- * - upVotes - An array of usernames that have upvoted the question.
- * - downVotes - An array of usernames that have downvoted the question.
+ * - views - An array of uids of Users that have viewed the question.
+ * - upVotes - An array of uids of Users that have upvoted the question.
+ * - downVotes - An array of uids of Users that have downvoted the question.
  * - comments - Object IDs of comments that have been added to the question by users, or comments themselves if populated.
  * - subscribers - An array of users who are subscribed to the question.
  */
@@ -113,7 +133,7 @@ export type QuestionResponse = Question | { error: string };
  * Interface for the request query to find questions using a search string, which contains:
  * - order - The order in which to sort the questions
  * - search - The search string used to find questions
- * - askedBy - The username of the user who asked the question
+ * - askedBy - The uid of the user who asked the question
  */
 export interface FindQuestionRequest extends Request {
   query: {
@@ -146,9 +166,9 @@ export interface AddQuestionRequest extends Request {
 
 /**
  * Interface for the request body when upvoting or downvoting a question.
- * - body - The question ID and the username of the user voting.
+ * - body - The question ID and the uid of the user voting.
  *  - id - The unique identifier of the post being voted on.
- *  - username - The username of the user voting.
+ *  - uid - The uid of the user voting.
  */
 export interface VoteRequest extends Request {
   body: {
@@ -158,10 +178,21 @@ export interface VoteRequest extends Request {
 }
 
 /**
+ * Interface for the request body when getting Notifications.
+ * - body - The uid of the user voting.
+ *  - uid - The uid of the user whom the PostNotification should be delivered to.
+ */
+export interface NotificationRequest extends Request {
+  body: {
+    uid: string;
+  };
+}
+
+/**
  * Interface representing a Comment, which contains:
  * - _id - The unique identifier for the comment. Optional field.
  * - text - The content of the comment.
- * - commentBy - The username of the user who commented.
+ * - commentBy - The User of the user who commented.
  * - commentDateTime - The date and time when the comment was posted.
  *
  */
@@ -178,7 +209,7 @@ export interface Comment {
  * Interface representing a Message, which contains:
  * - _id - The unique identifier for the message. Optional field.
  * - content - The content of the message.
- * - sentBy - The username of the user who sent the message.
+ * - sentBy - The User who sent the message.
  * - sentDateTime - The date and time when the message was sent.
  */
 export interface Message {
@@ -270,8 +301,8 @@ export type UserResponse = User | { error: string };
 /**
  * Interface representing the payload for a vote update event, which contains:
  * - id - The unique identifier of post being voted on.
- * - upVotes - An array of usernames who upvoted the question.
- * - downVotes - An array of usernames who downvoted the question.
+ * - upVotes - An array of uids of Users who upvoted the question.
+ * - downVotes - An array of uids of Users who downvoted the question.
  */
 export interface VoteUpdatePayload {
   id: string;
