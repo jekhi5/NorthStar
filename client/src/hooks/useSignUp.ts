@@ -3,7 +3,7 @@ import { ChangeEvent, useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import useLoginContext from './useLoginContext';
-import { addUser, checkUsernameAvailability, getUserByUid } from '../services/userService';
+import { addUser, checkValidUser, getUserByUid } from '../services/userService';
 import { User } from '../types';
 
 /**
@@ -85,10 +85,10 @@ const useSignUp = () => {
     if (!validateForm()) return;
 
     try {
-      // Check if username is available
-      const isUsernameAvailable = await checkUsernameAvailability(formData.username);
-      if (!isUsernameAvailable) {
-        setError('Username is already taken, please choose a different one');
+      // Check if username and email is available
+      const isUserValid = await checkValidUser(formData.username, formData.email);
+      if (!isUserValid.available) {
+        setError(isUserValid.message);
         return;
       }
 
@@ -125,7 +125,11 @@ const useSignUp = () => {
 
       navigate('/home');
     } catch (err) {
-      setError('An unexpected error occurred');
+      if (err instanceof Error && err.message.includes('email-already-in-use')) {
+        setError('Email is already in use (perhaps try logging in instead)');
+      } else {
+        setError('An unexpected error occurred');
+      }
     }
   };
 

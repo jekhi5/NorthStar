@@ -209,12 +209,15 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
     if (order === 'active') {
       qlist = await QuestionModel.find().populate([
         { path: 'tags', model: TagModel },
-        { path: 'answers', model: AnswerModel },
+        { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
         { path: 'askedBy', model: UserModel },
       ]);
       return sortQuestionsByActive(qlist);
     }
-    qlist = await QuestionModel.find().populate([{ path: 'tags', model: TagModel }]);
+    qlist = await QuestionModel.find().populate([
+      { path: 'tags', model: TagModel },
+      { path: 'askedBy', model: UserModel },
+    ]);
     if (order === 'unanswered') {
       return sortQuestionsByUnanswered(qlist);
     }
@@ -287,26 +290,36 @@ export const populateDocument = async (
     if (!id) {
       throw new Error('Provided question ID is undefined.');
     }
-
     let result = null;
-
     if (type === 'question') {
       result = await QuestionModel.findOne({ _id: id }).populate([
-        {
-          path: 'tags',
-          model: TagModel,
-        },
+        { path: 'tags', model: TagModel },
         {
           path: 'answers',
           model: AnswerModel,
-          populate: { path: 'comments', model: CommentModel },
+          populate: [
+            { path: 'ansBy', model: UserModel },
+            {
+              path: 'comments',
+              model: CommentModel,
+              populate: { path: 'commentBy', model: UserModel },
+            },
+          ],
         },
-        { path: 'comments', model: CommentModel },
+        {
+          path: 'comments',
+          model: CommentModel,
+          populate: { path: 'commentBy', model: UserModel },
+        },
         { path: 'askedBy', model: UserModel },
       ]);
     } else if (type === 'answer') {
       result = await AnswerModel.findOne({ _id: id }).populate([
-        { path: 'comments', model: CommentModel },
+        {
+          path: 'comments',
+          model: CommentModel,
+          populate: { path: 'commentBy', model: UserModel },
+        },
         { path: 'ansBy', model: UserModel },
       ]);
     }
@@ -338,16 +351,24 @@ export const fetchAndIncrementQuestionViewsById = async (
       { $addToSet: { views: uid } },
       { new: true },
     ).populate([
-      {
-        path: 'tags',
-        model: TagModel,
-      },
+      { path: 'tags', model: TagModel },
       {
         path: 'answers',
         model: AnswerModel,
-        populate: { path: 'comments', model: CommentModel },
+        populate: [
+          { path: 'ansBy', model: UserModel },
+          {
+            path: 'comments',
+            model: CommentModel,
+            populate: { path: 'commentBy', model: UserModel },
+          },
+        ],
       },
-      { path: 'comments', model: CommentModel },
+      {
+        path: 'comments',
+        model: CommentModel,
+        populate: { path: 'commentBy', model: UserModel },
+      },
       { path: 'askedBy', model: UserModel },
     ]);
     return q;
