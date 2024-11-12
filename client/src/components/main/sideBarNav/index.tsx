@@ -3,7 +3,7 @@ import './index.css';
 import { NavLink } from 'react-router-dom';
 
 /**
- * The SideBarNav component has two menu items: "Questions" and "Tags".
+ * The SideBarNav component has four menu items: Questions, Tags, Profile, and Chatroom.
  * It highlights the currently selected item based on the active page and
  * triggers corresponding functions when the menu items are clicked.
  */
@@ -26,6 +26,12 @@ const SideBarNav = () => (
       id='menu_profile'
       className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
       Profile
+    </NavLink>
+    <NavLink
+      to='/chatroom'
+      id='menu_chatroom'
+      className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
+      Chatroom
     </NavLink>
   </div>
 );
