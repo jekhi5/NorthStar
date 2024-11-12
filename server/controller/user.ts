@@ -114,9 +114,9 @@ const userController = () => {
       res.status(201).json(result);
     } catch (err: unknown) {
       if (err instanceof Error) {
-        res.status(500).send(`Error when adding user: ${err.message}`);
+        res.status(500).send(`Error when updating user: ${err.message}`);
       } else {
-        res.status(500).send('Error when adding user');
+        res.status(500).send('Error when updating user');
       }
     }
   };
@@ -124,7 +124,7 @@ const userController = () => {
   router.get('/getUserByUid/:uid', getUserByUid);
   router.get('/checkUsernameAvailability/:username', checkUsernameAvailability);
   router.post('/addUser', addUser);
-  router.post('/updateUser', updateUser);
+  router.put('/updateUser', updateUser);
 
   return router;
 };

@@ -432,7 +432,7 @@ export const editUser = async (user: User): Promise<UserResponse> => {
       throw new Error('Invalid user');
     }
     const result = await UserModel.findOneAndUpdate(
-      { _id: user.uid },
+      { uid: user.uid },
       { $set: { ...user } },
       { new: true },
     );
