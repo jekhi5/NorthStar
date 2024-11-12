@@ -12,6 +12,7 @@ import NewQuestionPage from './main/newQuestion';
 import NewAnswerPage from './main/newAnswer';
 import AnswerPage from './main/answerPage';
 import ProfilePage from './main/profilePage';
+import NotificationPage from './main/notificationPage';
 
 const ProtectedRoute = ({
   user,
