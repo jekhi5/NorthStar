@@ -10,7 +10,6 @@ export type FakeSOSocket = Socket<ServerToClientEvents>;
  * - postType - The type of the post that the PostNotification is about.
  * - postId - The unique identifier of the post that the PostNotification is about.
  * - fromUser - The user who triggered the PostNotification.
- * - forUser - The user who the PostNotification is for.
  */
 export interface PostNotification {
   _id?: string;
@@ -19,7 +18,6 @@ export interface PostNotification {
   postType: 'Question' | 'Answer' | 'Comment';
   postId: string;
   fromUser: User;
-  forUser: User;
 }
 
 /**

@@ -10,32 +10,33 @@ import { Schema } from 'mongoose';
  * - postType - The type of the post that the PostNotification is about.
  * - postId - The unique identifier of the post that the PostNotification is about.
  * - fromUser - The user who triggered the PostNotification.
- * - forUser - The user who the PostNotification is for.
  */
 
 const postNotificationSchema: Schema = new Schema(
   {
     title: {
       type: String,
+      required: true,
     },
     text: {
       type: String,
+      required: true,
     },
     postType: {
       type: String,
+      enum: ['Question', 'Answer', 'Comment'],
+      required: true,
     },
-    // TODO: Investigate how to reference different kinds of posts
+    // No ref is given here because the post could be a question, answer, or comment
+    // When a query is made, the ref can be dynamically determined based on the postType
     postId: {
       type: Schema.Types.ObjectId,
-      ref: 'Question',
+      required: true,
     },
     fromUser: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-    },
-    forUser: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+      required: true,
     },
   },
   { collection: 'PostNotification' },

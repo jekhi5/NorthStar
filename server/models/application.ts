@@ -909,7 +909,13 @@ export const getTagCountMap = async (): Promise<Map<string, number> | null | { e
  */
 export const fetchNotificationsByUid = async (uid: string): Promise<PostNotification[]> => {
   try {
-    const notifications = await PostNotificationModel.find([{ path: 'forUser', model: UserModel }]);
+    const user: User | null = await UserModel.findOne({ uid });
+
+    if (!user) {
+      throw new Error(`Could not find user with id: ${uid}`);
+    }
+
+    return user.postNotifications;
   } catch (error) {
     return [];
   }

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { PostNotification } from '../types';
-import { getUserByUid } from '../services/userService';
+import getNotificationsByUid from '../services/postNotificationService';
 import UserContext from '../contexts/UserContext';
 
 /**
@@ -10,7 +10,7 @@ import UserContext from '../contexts/UserContext';
  * @returns error - An error message if fetching the notification data fails.
  */
 const useNotificationPage = () => {
-  const [notifications, setNotifications] = useState<PostNotification[] | null>(null);
+  const [notifications, setNotifications] = useState<PostNotification[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   // Get user, and subsequently user id
@@ -25,10 +25,15 @@ const useNotificationPage = () => {
       }
 
       try {
-        const fetchedNotifications = await getNotificationByUid(uid);
+        const fetchedNotifications = await getNotificationsByUid(uid);
+        if (!fetchedNotifications) {
+          setNotifications([]);
+          return;
+        }
         setNotifications(fetchedNotifications);
       } catch (err) {
-        setError('Failed to load profile.');
+        setNotifications([]);
+        setError('Failed to load notifications.');
       }
     };
 

@@ -12,7 +12,6 @@ export type FakeSOSocket = Server<ServerToClientEvents>;
  * - postType - The type of the post that the PostNotification is about.
  * - postId - The unique identifier of the post that the PostNotification is about.
  * - fromUser - The user who triggered the PostNotification.
- * - forUser - The user who the PostNotification is for.
  */
 export interface PostNotification {
   _id?: ObjectId;
@@ -21,7 +20,6 @@ export interface PostNotification {
   postType: 'Question' | 'Answer' | 'Comment';
   postId: ObjectId;
   fromUser: User;
-  forUser: User;
 }
 
 /**
@@ -35,7 +33,11 @@ export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed';
  * - username - The username of the user.
  * - email - The email address of the user.
  * - password - The password of the user. Optional field.
- *
+ * - firstName - The first name of the user.
+ * - lastName - The last name of the user.
+ * - profilePicture - The URL of the user's profile picture.
+ * - status - The status of the user, either 'Not endorsed' or 'Endorsed'.
+ * - postNotifications - An array of post notifications associated with the user.
  **/
 export interface User {
   _id?: ObjectId;
@@ -46,6 +48,7 @@ export interface User {
   lastName?: string;
   profilePicture?: string;
   status: 'Not endorsed' | 'Endorsed';
+  postNotifications: PostNotification[];
 }
 
 /**
