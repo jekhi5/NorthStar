@@ -186,15 +186,6 @@ const commentNotification: PostNotification = {
   fromUser: question2User,
 };
 
-const questionNotification: PostNotification = {
-  _id: new ObjectId('65e9b716ff0e892116b2de03'),
-  title: 'New Question',
-  text: "User2 posted a new question with a tag you're subscribed to",
-  postType: 'Question',
-  postId: MOCK_QUESTIONS[0]._id ?? new mongoose.Types.ObjectId(),
-  fromUser: question2User,
-};
-
 const notificationHavingUser1: User = {
   uid: 'ab53191e810abc729de860ea',
   username: 'notificationHavingUser1',
