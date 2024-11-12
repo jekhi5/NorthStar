@@ -176,6 +176,18 @@ async function questionCreate(
     comments == null
   )
     throw new Error('Invalid Question Format');
+
+  const subscribersFromTags = [
+    ...new Set<User>(
+      tags
+        .map(tag => tag.subscribers)
+        .flat()
+        .filter(
+          (subscriber): subscriber is User =>
+            typeof subscriber !== 'string' && subscriber instanceof Object,
+        ),
+    ),
+  ];
   const questionDetail: Question = {
     title: title,
     text: text,
@@ -187,7 +199,9 @@ async function questionCreate(
     upVotes: [],
     downVotes: [],
     comments: comments,
-    subscribers: [],
+    subscribers: subscribersFromTags.includes(askedBy)
+      ? subscribersFromTags
+      : [askedBy, ...subscribersFromTags],
   };
   return await QuestionModel.create(questionDetail);
 }
