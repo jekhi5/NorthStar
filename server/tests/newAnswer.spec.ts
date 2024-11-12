@@ -15,6 +15,7 @@ const user1: User = {
   username: 'User1',
   email: 'user1@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
 };
 
 interface MockResponse {

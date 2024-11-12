@@ -17,11 +17,14 @@ import {
   addVoteToQuestion,
   addVoteToAnswer,
   addVoteToComment,
+  fetchNotificationsByUid,
 } from '../models/application';
-import { Answer, Question, Tag, Comment, User } from '../types';
+import { Answer, Question, Tag, Comment, User, PostNotification } from '../types';
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
 import AnswerModel from '../models/answers';
 import CommentModel from '../models/comments';
+import PostNotificationModel from '../models/notifications';
+import UserModel from '../models/user';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');
@@ -32,6 +35,7 @@ const user1: User = {
   username: 'User1',
   email: 'user1@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
 };
 
 const user2: User = {
@@ -40,6 +44,7 @@ const user2: User = {
   username: 'User2',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
 };
 
 const user3: User = {
@@ -48,6 +53,7 @@ const user3: User = {
   username: 'User3',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
 };
 
 const user4: User = {
@@ -56,6 +62,7 @@ const user4: User = {
   username: 'User4',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
 };
 
 const tag1: Tag = {
@@ -184,10 +191,60 @@ const QUESTIONS: Question[] = [
   },
 ];
 
+const answerNotification: PostNotification = {
+  _id: new ObjectId('65e9b716ff0e892116b2de01'),
+  title: 'New Answer',
+  text: 'User1 answered your question',
+  postType: 'Answer',
+  postId: ans1._id ?? new ObjectId(),
+  fromUser: user1,
+};
+
+const commentNotification: PostNotification = {
+  _id: new ObjectId('65e9b716ff0e892116b2de02'),
+  title: 'New Comment',
+  text: 'User2 commented on your answer',
+  postType: 'Comment',
+  postId: com1._id ?? new ObjectId(),
+  fromUser: user2,
+};
+
 describe('application module', () => {
   beforeEach(() => {
     mockingoose.resetAll();
   });
+
+  describe('PostNotification model', () => {
+    beforeEach(() => {
+      user1.postNotifications = [];
+      user2.postNotifications = [];
+      user3.postNotifications = [];
+      user4.postNotifications = [];
+    });
+
+    describe('fetchNotificationsByUid', () => {
+      test('fetchNotificationsByUid should return all notifications for a user', async () => {
+        user1.postNotifications = [answerNotification, commentNotification];
+
+        mockingoose(UserModel).toReturn(user1, 'findOne');
+
+        const result = await fetchNotificationsByUid(user1.uid);
+
+        expect(result.length).toEqual(2);
+        expect(result[0]._id).toEqual(user1.postNotifications[0]._id);
+        expect(result[1]._id).toEqual(user1.postNotifications[1]._id);
+      });
+
+      test('fetchNotificationsByUid should return empty list if there is an error fetching the user', async () => {
+        mockingoose(UserModel).toReturn(new Error('Could not fund user'), 'findOne');
+
+        const result = await fetchNotificationsByUid('nonExistentUser');
+
+        expect(result.length).toEqual(0);
+      });
+    });
+  });
+
   describe('Question model', () => {
     beforeEach(() => {
       mockingoose.resetAll();
