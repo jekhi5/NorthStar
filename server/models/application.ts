@@ -18,7 +18,6 @@ import QuestionModel from './questions';
 import TagModel from './tags';
 import CommentModel from './comments';
 import UserModel from './user';
-import PostNotificationModel from './notifications';
 
 /**
  * Parses tags from a search string.
@@ -907,7 +906,9 @@ export const getTagCountMap = async (): Promise<Map<string, number> | null | { e
  *
  * @returns {Promise<PostNotification[]>} - Promise that resolves to a list of notifications
  */
-export const fetchNotificationsByUid = async (uid: string): Promise<PostNotification[]> => {
+export const fetchNotificationsByUid = async (
+  uid: string,
+): Promise<PostNotification[] | { error: string }> => {
   try {
     const user: User | null = await UserModel.findOne({ uid });
 
@@ -917,6 +918,6 @@ export const fetchNotificationsByUid = async (uid: string): Promise<PostNotifica
 
     return user.postNotifications;
   } catch (error) {
-    return [];
+    return { error: 'Error while fetching notifications' };
   }
 };

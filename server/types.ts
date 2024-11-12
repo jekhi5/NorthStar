@@ -186,7 +186,7 @@ export interface VoteRequest extends Request {
  *  - uid - The uid of the user whom the PostNotification should be delivered to.
  */
 export interface NotificationRequest extends Request {
-  body: {
+  params: {
     uid: string;
   };
 }
