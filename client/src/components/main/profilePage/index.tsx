@@ -10,6 +10,7 @@ const ProfilePage = () => {
     toggleEditing,
     handleChange,
     saveProfile,
+    handleProfilePictureUpload,
   } = useProfilePage();
 
   if (error) {
@@ -25,10 +26,6 @@ const ProfilePage = () => {
       <h1 className='profile-title'>Profile</h1>
 
       <div className='profile-details'>
-        {profile.profilePicture && (
-          <img src={profile.profilePicture} alt='Profile Picture' className='profile-picture' />
-        )}
-
         {isEditing ? (
           <div className='profile-edit-form'>
             <input
@@ -55,12 +52,14 @@ const ProfilePage = () => {
               onChange={e => handleChange('email', e.target.value)}
               placeholder='Email'
             />
-            {/* Using URL for simplicity for now but want to change to file upload */}
             <input
-              type='text'
-              value={editedProfile?.profilePicture || ''}
-              onChange={e => handleChange('profilePicture', e.target.value)}
-              placeholder='Profile Picture URL'
+              type='file'
+              accept='image/*'
+              onChange={e => {
+                if (e.target.files && e.target.files[0]) {
+                  handleProfilePictureUpload(e.target.files[0]);
+                }
+              }}
             />
             <button onClick={saveProfile}>Save Changes</button>
             <button onClick={toggleEditing}>Cancel</button>

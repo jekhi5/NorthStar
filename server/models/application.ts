@@ -424,7 +424,7 @@ export const saveUser = async (user: User): Promise<UserResponse> => {
  *
  * @param {User} user - The user whose info is being changed.
  *
- * @returns Promise<UserResponse> - The updated user or an error message
+ * @returns Promise<UserResponse> - The updated user or an error message.
  */
 export const editUser = async (user: User): Promise<UserResponse> => {
   try {

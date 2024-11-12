@@ -1,4 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getAuth, updateProfile } from 'firebase/auth';
 import { User } from '../types';
 import { getUserByUid, updateUser } from '../services/userService';
 import UserContext from '../contexts/UserContext';
@@ -59,16 +61,38 @@ const useProfilePage = () => {
 
   const saveProfile = async () => {
     if (editedProfile) {
-      console.log('Edited profile:', editedProfile);
       try {
         const updatedProfile = await updateUser(editedProfile);
         setProfile(updatedProfile);
         setIsEditing(false); // Exit edit mode
         setUpdateError(null);
       } catch (err) {
-        console.error('Profile update error:', err);
         setUpdateError('Failed to update profile.');
       }
+    }
+  };
+
+  const handleProfilePictureUpload = async (file: File) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const storage = getStorage();
+
+    if (!user || !file) return;
+
+    try {
+      // Upload the file to Firebase Storage
+      const storageRef = ref(storage, `profilePictures/${user.uid}/${file.name}`);
+      await uploadBytes(storageRef, file);
+
+      // Get the download URL
+      const photoURL = await getDownloadURL(storageRef);
+
+      // Update the user's profile with the new photo URL
+      await updateProfile(user, { photoURL });
+
+      console.log('Profile picture updated successfully:', photoURL);
+    } catch (err) {
+      console.error('Error uploading profile picture:', err);
     }
   };
 
@@ -81,6 +105,7 @@ const useProfilePage = () => {
     toggleEditing,
     handleChange,
     saveProfile,
+    handleProfilePictureUpload,
   };
 };
 
