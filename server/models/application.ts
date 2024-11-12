@@ -769,21 +769,17 @@ export const addComment = async (
 export const toggleSubscribe = async (
   id: string,
   type: 'question' | 'tag',
-  user: User,
+  uid: string,
 ): Promise<QuestionResponse | TagResponse> => {
   try {
-    if (!user || !user.uid || !user.username || !user.email) {
-      throw new Error('Invalid user');
-    }
-
     const updateOp = [
       {
         $set: {
           subscribers: {
             $cond: [
-              { $in: [user.uid, '$subscribers'] },
-              { $filter: { input: '$subscribers', as: 's', cond: { $ne: ['$$s', user.uid] } } },
-              { $concatArrays: ['$subscribers', [user.uid]] },
+              { $in: [uid, '$subscribers'] },
+              { $filter: { input: '$subscribers', as: 's', cond: { $ne: ['$$s', uid] } } },
+              { $concatArrays: ['$subscribers', [uid]] },
             ],
           },
         },

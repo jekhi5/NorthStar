@@ -106,7 +106,7 @@ const subscribeController = (socket: FakeSOSocket) => {
     }
 
     try {
-      const status = await toggleSubscribe(id, type, user);
+      const status = await toggleSubscribe(id, type, user.uid);
 
       if (status && 'error' in status) {
         throw new Error(status.error);
