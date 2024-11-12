@@ -48,7 +48,7 @@ import {
 } from './data/posts_strings';
 import CommentModel from './models/comments';
 import UserModel from './models/user';
-import PostNotificationModel from './models/notifications';
+import PostNotificationModel from './models/postNotifications';
 
 // Pass URL of your mongoDB instance as first argument(e.g., mongodb://127.0.0.1:27017/fake_so)
 const userArgs = process.argv.slice(2);
