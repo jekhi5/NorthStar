@@ -66,7 +66,7 @@ const userController = () => {
           message: 'Email is already in use (perhaps try logging in instead)',
         });
       } else {
-        // Valid!
+        // The username and email are both available, and therefore the user is valid
         res.json({ available: true, message: 'User is valid' });
       }
     } catch (error) {
