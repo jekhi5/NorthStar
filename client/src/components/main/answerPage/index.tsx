@@ -23,6 +23,7 @@ const AnswerPage = () => {
 
   return (
     <>
+      <SubscribeComponent question={question} />
       <VoteComponent post={question} postType='Question' />
       <AnswerHeader ansCount={question.answers.length} title={question.title} />
       <QuestionBody
