@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { PostNotification } from '../types';
-import getNotificationsByUid from '../services/postNotificationService';
 import UserContext from '../contexts/UserContext';
+import { getUserByUid } from '../services/userService';
 
 /**
  * Custom hook to manage the state and logic for the notification page.
@@ -25,12 +25,20 @@ const useNotificationPage = () => {
       }
 
       try {
-        const fetchedNotifications = await getNotificationsByUid(uid);
-        if (!fetchedNotifications) {
+        const fetchedUser = await getUserByUid(uid);
+
+        if (!fetchedUser) {
+          setError('User not found.');
+          return;
+        }
+
+        const userNotifications = fetchedUser.notifications;
+
+        if (!userNotifications) {
           setNotifications([]);
           return;
         }
-        setNotifications(fetchedNotifications);
+        setNotifications(userNotifications);
       } catch (err) {
         setNotifications([]);
         setError('Failed to load notifications.');
