@@ -1,10 +1,16 @@
 import useProfilePage from '../../../hooks/useProfilePage';
 
-/**
- * ProfilePage component that displays a user's personal information.
- */
 const ProfilePage = () => {
-  const { profile, error } = useProfilePage();
+  const {
+    profile,
+    editedProfile,
+    error,
+    updateError,
+    isEditing,
+    toggleEditing,
+    handleChange,
+    saveProfile,
+  } = useProfilePage();
 
   if (error) {
     return <p>{error}</p>;
@@ -20,17 +26,60 @@ const ProfilePage = () => {
 
       <div className='profile-details'>
         {profile.profilePicture && (
-          <img src={profile.profilePicture} alt='Profile' className='profile-picture' />
+          <img src={profile.profilePicture} alt='Profile Picture' className='profile-picture' />
         )}
 
-        <div className='profile-info'>
-          <h2 className='profile-name'>
-            {profile.firstName} {profile.lastName}
-          </h2>
-          <p className='profile-username'>Username: {profile.username}</p>
-          <p className='profile-email'>Email: {profile.email}</p>
-          <p className='profile-status'>Status: {profile.status}</p>
-        </div>
+        {isEditing ? (
+          <div className='profile-edit-form'>
+            <input
+              type='text'
+              value={editedProfile?.firstName || ''}
+              onChange={e => handleChange('firstName', e.target.value)}
+              placeholder='First Name'
+            />
+            <input
+              type='text'
+              value={editedProfile?.lastName || ''}
+              onChange={e => handleChange('lastName', e.target.value)}
+              placeholder='Last Name'
+            />
+            <input
+              type='text'
+              value={editedProfile?.username || ''}
+              onChange={e => handleChange('username', e.target.value)}
+              placeholder='Username'
+            />
+            <input
+              type='email'
+              value={editedProfile?.email || ''}
+              onChange={e => handleChange('email', e.target.value)}
+              placeholder='Email'
+            />
+            {/* Using URL for simplicity for now but want to change to file upload */}
+            <input
+              type='text'
+              value={editedProfile?.profilePicture || ''}
+              onChange={e => handleChange('profilePicture', e.target.value)}
+              placeholder='Profile Picture URL'
+            />
+            <button onClick={saveProfile}>Save Changes</button>
+            <button onClick={toggleEditing}>Cancel</button>
+            {updateError && <p>{updateError}</p>}
+          </div>
+        ) : (
+          <div className='profile-info'>
+            {profile.profilePicture && (
+              <img src={profile.profilePicture} alt='Profile' className='profile-picture' />
+            )}
+            <h2 className='profile-name'>
+              {profile.firstName} {profile.lastName}
+            </h2>
+            <p className='profile-username'>Username: {profile.username}</p>
+            <p className='profile-email'>Email: {profile.email}</p>
+            <p className='profile-status'>Status: {profile.status}</p>
+            <button onClick={toggleEditing}>Edit Profile</button>
+          </div>
+        )}
       </div>
     </div>
   );
