@@ -132,10 +132,10 @@ const answerController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Handles upvoting an answer. The request must contain the answer ID and the username.
+   * Handles upvoting an answer. The request must contain the answer ID and the uid.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
-   * @param req The VoteRequest object containing the answer ID and the username.
+   * @param req The VoteRequest object containing the answer ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    *
    * @returns A Promise that resolves to void.
@@ -145,10 +145,10 @@ const answerController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Handles downvoting an answer. The request must contain the answer ID and the username.
+   * Handles downvoting an answer. The request must contain the answer ID and the uid.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
-   * @param req The VoteRequest object containing the answer ID and the username.
+   * @param req The VoteRequest object containing the answer ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    *
    * @returns A Promise that resolves to void.
