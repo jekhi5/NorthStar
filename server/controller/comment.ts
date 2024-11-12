@@ -1,6 +1,13 @@
 import express, { Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Comment, AddCommentRequest, FakeSOSocket, VoteRequest } from '../types';
+import {
+  Comment,
+  AddCommentRequest,
+  FakeSOSocket,
+  VoteRequest,
+  QuestionResponse,
+  AnswerResponse,
+} from '../types';
 import { addComment, addVoteToComment, populateDocument, saveComment } from '../models/application';
 
 const commentController = (socket: FakeSOSocket) => {
@@ -82,7 +89,7 @@ const commentController = (socket: FakeSOSocket) => {
 
       // Populates the fields of the question or answer that this comment
       // was added to, and emits the updated object
-      const populatedDoc = await populateDocument(id, type);
+      const populatedDoc = (await populateDocument(id, type)) as QuestionResponse | AnswerResponse;
 
       if (populatedDoc && 'error' in populatedDoc) {
         throw new Error(populatedDoc.error);
