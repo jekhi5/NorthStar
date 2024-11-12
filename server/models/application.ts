@@ -293,7 +293,11 @@ export const populateDocument = async (
     let result = null;
     if (type === 'question') {
       result = await QuestionModel.findOne({ _id: id }).populate([
-        { path: 'tags', model: TagModel },
+        {
+          path: 'tags',
+          model: TagModel,
+          populate: { path: 'subscribers', model: UserModel },
+        },
         {
           path: 'answers',
           model: AnswerModel,

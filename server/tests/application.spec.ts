@@ -62,18 +62,21 @@ const tag1: Tag = {
   _id: new ObjectId('507f191e810c19729de860ea'),
   name: 'react',
   description: T1_DESC,
+  subscribers: [],
 };
 
 const tag2: Tag = {
   _id: new ObjectId('65e9a5c2b26199dbcc3e6dc8'),
   name: 'javascript',
   description: T2_DESC,
+  subscribers: [],
 };
 
 const tag3: Tag = {
   _id: new ObjectId('65e9b4b1766fca9451cba653'),
   name: 'android',
   description: T3_DESC,
+  subscribers: [],
 };
 
 const com1: Comment = {
@@ -882,7 +885,11 @@ describe('application module', () => {
       test('addTag return tag if the tag already exists', async () => {
         mockingoose(Tags).toReturn(tag1, 'findOne');
 
-        const result = await addTag({ name: tag1.name, description: tag1.description });
+        const result = await addTag({
+          name: tag1.name,
+          description: tag1.description,
+          subscribers: [],
+        });
 
         expect(result?._id).toEqual(tag1._id);
       });
@@ -890,7 +897,11 @@ describe('application module', () => {
       test('addTag return tag id of new tag if does not exist in database', async () => {
         mockingoose(Tags).toReturn(null, 'findOne');
 
-        const result = await addTag({ name: tag2.name, description: tag2.description });
+        const result = await addTag({
+          name: tag2.name,
+          description: tag2.description,
+          subscribers: [],
+        });
 
         expect(result).toBeDefined();
       });
@@ -898,7 +909,11 @@ describe('application module', () => {
       test('addTag returns null if findOne throws an error', async () => {
         mockingoose(Tags).toReturn(new Error('error'), 'findOne');
 
-        const result = await addTag({ name: tag1.name, description: tag1.description });
+        const result = await addTag({
+          name: tag1.name,
+          description: tag1.description,
+          subscribers: [],
+        });
 
         expect(result).toBeNull();
       });
@@ -907,7 +922,11 @@ describe('application module', () => {
         mockingoose(Tags).toReturn(null, 'findOne');
         mockingoose(Tags).toReturn(new Error('error'), 'save');
 
-        const result = await addTag({ name: tag2.name, description: tag2.description });
+        const result = await addTag({
+          name: tag2.name,
+          description: tag2.description,
+          subscribers: [],
+        });
 
         expect(result).toBeNull();
       });
