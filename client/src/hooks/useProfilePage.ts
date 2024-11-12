@@ -48,7 +48,7 @@ const useProfilePage = () => {
   const toggleEditing = () => {
     setIsEditing(!isEditing);
     if (!isEditing && profile) {
-      // Reset editedProfile to the current profile data when entering edit mode
+      // Make sure editedProfile is set to the current profile data when entering edit mode
       setEditedProfile(profile);
     }
   };
@@ -59,14 +59,14 @@ const useProfilePage = () => {
 
   const saveProfile = async () => {
     if (editedProfile) {
-      console.log('Edited Profile:', editedProfile);
+      console.log('Edited profile:', editedProfile);
       try {
         const updatedProfile = await updateUser(editedProfile);
         setProfile(updatedProfile);
         setIsEditing(false); // Exit edit mode
         setUpdateError(null);
       } catch (err) {
-        console.error('Failed to update profile:', err);
+        console.error('Profile update error:', err);
         setUpdateError('Failed to update profile.');
       }
     }

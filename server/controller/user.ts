@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import UserModel from '../models/user';
 import { User } from '../types';
-import { saveUser } from '../models/application';
+import { editUser, saveUser } from '../models/application';
 
 const userController = () => {
   const router = express.Router();
@@ -13,6 +13,7 @@ const userController = () => {
     user.username !== '' &&
     user.email !== undefined &&
     user.email !== '';
+
   /**
    * Retrieves a user by their UID.
    *
@@ -90,9 +91,40 @@ const userController = () => {
     }
   };
 
+  /**
+   * Updates a user's information in the database.
+   *
+   * @param req The request object containing the user details.
+   * @param res The response object to send the result.
+   */
+  const updateUser = async (req: Request, res: Response): Promise<void> => {
+    const user: User = req.body;
+
+    if (!isUserValid(user)) {
+      res.status(400).send('Invalid user data');
+      return;
+    }
+
+    try {
+      const result = await editUser(user);
+      if ('error' in result) {
+        throw new Error(result.error);
+      }
+
+      res.status(201).json(result);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        res.status(500).send(`Error when adding user: ${err.message}`);
+      } else {
+        res.status(500).send('Error when adding user');
+      }
+    }
+  };
+
   router.get('/getUserByUid/:uid', getUserByUid);
   router.get('/checkUsernameAvailability/:username', checkUsernameAvailability);
   router.post('/addUser', addUser);
+  router.post('/updateUser', updateUser);
 
   return router;
 };

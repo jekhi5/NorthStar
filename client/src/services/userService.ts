@@ -63,7 +63,7 @@ const getUserByUid = async (uid: string): Promise<User | null> => {
  * @throws Error Throws an error if the request fails or the response status is not 200.
  */
 const updateUser = async (user: User): Promise<User> => {
-  const res = await api.put(`${USER_API_URL}/updateUser/${user.uid}`, user);
+  const res = await api.post(`${USER_API_URL}/updateUser`, user);
   if (res.status !== 200) {
     throw new Error('Error while updating user');
   }

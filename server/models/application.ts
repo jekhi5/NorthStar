@@ -404,7 +404,7 @@ export const saveComment = async (comment: Comment): Promise<CommentResponse> =>
 };
 
 /**
- * Saves a new comment to the database.
+ * Saves a new user to the database.
  *
  * @param {User} user - The user to save
  *
@@ -416,6 +416,32 @@ export const saveUser = async (user: User): Promise<UserResponse> => {
     return result;
   } catch (error) {
     return { error: 'Error when saving a User' };
+  }
+};
+
+/**
+ * Updates a user's profile information.
+ *
+ * @param {User} user - The user whose info is being changed.
+ *
+ * @returns Promise<UserResponse> - The updated user or an error message
+ */
+export const editUser = async (user: User): Promise<UserResponse> => {
+  try {
+    if (!user.uid || !user.username || !user.email) {
+      throw new Error('Invalid user');
+    }
+    const result = await UserModel.findOneAndUpdate(
+      { _id: user.uid },
+      { $set: { ...user } },
+      { new: true },
+    );
+    if (result === null) {
+      throw new Error('Error when updating user.');
+    }
+    return result;
+  } catch (error) {
+    return { error: 'Error when updating user.' };
   }
 };
 
