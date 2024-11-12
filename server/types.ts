@@ -175,6 +175,20 @@ export interface Comment {
 }
 
 /**
+ * Interface representing a Message, which contains:
+ * - _id - The unique identifier for the message. Optional field.
+ * - content - The content of the message.
+ * - sentBy - The username of the user who sent the message.
+ * - sentDateTime - The date and time when the message was sent.
+ */
+export interface Message {
+  _id?: ObjectId;
+  content: string;
+  sentBy: User;
+  sentDateTime: Date;
+}
+
+/**
  * Interface extending the request body when adding a subscriber to a question, which contains:
  * - id - The unique identifier of the question.
  * - user - The user who is subscribing to the question.

@@ -23,8 +23,7 @@ const AnswerPage = () => {
 
   return (
     <>
-      <SubscribeComponent question={question} />
-      <VoteComponent question={question} />
+      <VoteComponent post={question} postType='Question' />
       <AnswerHeader ansCount={question.answers.length} title={question.title} />
       <QuestionBody
         views={question.views.length}
@@ -37,14 +36,17 @@ const AnswerPage = () => {
         handleAddComment={(comment: Comment) => handleNewComment(comment, 'question', questionID)}
       />
       {question.answers.map((a, idx) => (
-        <AnswerView
-          key={idx}
-          text={a.text}
-          ansBy={a.ansBy}
-          meta={getMetaData(new Date(a.ansDateTime))}
-          comments={a.comments}
-          handleAddComment={(comment: Comment) => handleNewComment(comment, 'answer', a._id)}
-        />
+        <>
+          <VoteComponent post={a} postType='Answer' />
+          <AnswerView
+            key={idx}
+            text={a.text}
+            ansBy={a.ansBy}
+            meta={getMetaData(new Date(a.ansDateTime))}
+            comments={a.comments}
+            handleAddComment={(comment: Comment) => handleNewComment(comment, 'answer', a._id)}
+          />
+        </>
       ))}
       <button
         className='bluebtn ansButton'

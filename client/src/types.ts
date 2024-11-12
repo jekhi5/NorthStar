@@ -149,6 +149,20 @@ export interface Question {
 }
 
 /**
+ * Interface representing a Message document, which contains:
+ * - _id - The unique identifier for the message. Optional field.
+ * - content - The content of the message.
+ * - sentBy - The user who wrote the message.
+ * - sentDateTime - The date and time when the message was sent.
+ */
+export interface Message {
+  _id?: string;
+  content: string;
+  sentBy: User;
+  sentDateTime: Date;
+}
+
+/**
  * Interface representing the payload for a vote update socket event.
  */
 export interface VoteUpdatePayload {

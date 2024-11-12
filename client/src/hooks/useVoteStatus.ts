@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Question } from '../types';
+import { Answer, Question, Comment } from '../types';
 import useUserContext from './useUserContext';
 
 /**
@@ -7,7 +7,8 @@ import useUserContext from './useUserContext';
  * It manages the current vote count, user vote status (upvoted, downvoted),
  * and handles real-time vote updates via socket events.
  *
- * @param question - The question object for which the voting is tracked.
+ * @param post - The question/answer/comment object for which the voting is tracked.
+ * @param postType - the type of the post for which the voting is tracked.
  *
  * @returns count - The urrent vote count (upVotes - downVotes)
  * @returns setCount - The function to manually update vote count
@@ -15,7 +16,7 @@ import useUserContext from './useUserContext';
  * @returns setVoted - The function to manually update user's vote status
  */
 
-const useVoteStatus = ({ question }: { question: Question }) => {
+const useVoteStatus = ({ post }: { post: Question | Answer | Comment }) => {
   const { user, socket } = useUserContext();
   const [count, setCount] = useState<number>(0);
   const [voted, setVoted] = useState<number>(0);
@@ -27,19 +28,19 @@ const useVoteStatus = ({ question }: { question: Question }) => {
      * @returns The current vote value for the user in the question, 1 for upvote, -1 for downvote, 0 for no vote.
      */
     const getVoteValue = () => {
-      if (user.uid && question?.upVotes?.includes(user.uid)) {
+      if (user.uid && post?.upVotes?.includes(user.uid)) {
         return 1;
       }
-      if (user.uid && question?.downVotes?.includes(user.uid)) {
+      if (user.uid && post?.downVotes?.includes(user.uid)) {
         return -1;
       }
       return 0;
     };
 
     // Set the initial count and vote value
-    setCount((question.upVotes || []).length - (question.downVotes || []).length);
+    setCount((post.upVotes || []).length - (post.downVotes || []).length);
     setVoted(getVoteValue());
-  }, [question, user.uid, socket]);
+  }, [post, user.uid, socket]);
 
   return {
     count,
