@@ -14,6 +14,7 @@ const useTagSelected = (t: TagData) => {
   const [tag, setTag] = useState<Tag>({
     name: '',
     description: '',
+    subscribers: [],
   });
 
   useEffect(() => {

@@ -18,6 +18,7 @@ const tagSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    subscribers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
   { collection: 'Tag' },
 );

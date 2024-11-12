@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useUserContext from './useUserContext';
-import { Answer, OrderType, Question, User } from '../types';
+import { Answer, OrderType, Question, Tag, User } from '../types';
 import { getQuestionsByFilter } from '../services/questionService';
 import toggleSubscribe from '../services/subscriberService';
 
@@ -59,13 +59,17 @@ const useQuestionPage = () => {
    * @param user - The user object to be added.
    * @param id - The ID of the question being subscribed to.
    */
-  const handleToggleSubscriber = async (user: User, id: string | undefined) => {
+  const handleToggleSubscriber = async (
+    user: User,
+    type: 'question' | 'tag',
+    id: string | undefined,
+  ) => {
     try {
       if (id === undefined) {
         throw new Error('No ID provided.');
       }
 
-      await toggleSubscribe(id, user);
+      await toggleSubscribe(id, type, user);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error toggling subscriber:', error);
@@ -130,11 +134,20 @@ const useQuestionPage = () => {
      *
      * @param result - The updated question object.
      */
-    const handleSubscriberUpdate = ({ result }: { result: Question }) => {
-      const questionResult = result;
-
-      if (questionResult._id === questionID) {
-        setQuestion(questionResult);
+    const handleSubscriberUpdate = ({
+      result,
+      type,
+    }: {
+      result: Question | Tag;
+      type: 'question' | 'tag';
+    }) => {
+      if (type === 'question') {
+        // If the type is a question, then update the question to the version that now has the subscriber
+        // We don't make any changes if the update is meant for a tag because we only want to subscribe
+        // users to future questions with that tag.
+        if (result._id === questionID) {
+          setQuestion(result as Question);
+        }
       }
     };
 

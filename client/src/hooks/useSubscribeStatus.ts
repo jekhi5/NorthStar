@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Question } from '../types';
+import { Question, Tag } from '../types';
 import useUserContext from './useUserContext';
 
 /**
@@ -13,7 +13,7 @@ import useUserContext from './useUserContext';
  * @returns setSubscription - The function to manually update user's subscription status
  */
 
-const useSubscribeStatus = ({ question }: { question: Question }) => {
+const useSubscribeStatus = ({ item }: { item: Question | Tag }) => {
   const { user, socket } = useUserContext();
   const [subscribed, setSubscribed] = useState<boolean>(false);
 
@@ -24,10 +24,10 @@ const useSubscribeStatus = ({ question }: { question: Question }) => {
      * @returns The current subscription value for the user in the question, true for subscribe, false for unsubscribed.
      */
     const getSubscriptionValue = () =>
-      user && question?.subscribers?.find(sub => sub.uid === user.uid) !== undefined;
+      user && item?.subscribers?.find(sub => sub.uid === user.uid) !== undefined;
 
     setSubscribed(() => getSubscriptionValue());
-  }, [question, socket, user]);
+  }, [item, socket, user]);
 
   return {
     subscribed,
