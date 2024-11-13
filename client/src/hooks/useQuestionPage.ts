@@ -129,40 +129,16 @@ const useQuestionPage = () => {
       setQlist(prevQlist => prevQlist.map(q => (q._id === questionObj._id ? questionObj : q)));
     };
 
-    /**
-     * Function to handle updates to the subscribers of a question.
-     *
-     * @param result - The updated question object.
-     */
-    const handleSubscriberUpdate = ({
-      result,
-      type,
-    }: {
-      result: Question | Tag;
-      type: 'question' | 'tag';
-    }) => {
-      if (type === 'question') {
-        // If the type is a question, then update the question to the version that now has the subscriber
-        // We don't make any changes if the update is meant for a tag because we only want to subscribe
-        // users to future questions with that tag.
-        if (result._id === questionID) {
-          setQuestion(result as Question);
-        }
-      }
-    };
-
     fetchData();
 
     socket.on('questionUpdate', handleQuestionUpdate);
     socket.on('answerUpdate', handleAnswerUpdate);
     socket.on('viewsUpdate', handleViewsUpdate);
-    socket.on('subscriberUpdate', handleSubscriberUpdate);
 
     return () => {
       socket.off('questionUpdate', handleQuestionUpdate);
       socket.off('answerUpdate', handleAnswerUpdate);
       socket.off('viewsUpdate', handleViewsUpdate);
-      socket.off('subscriberUpdate', handleSubscriberUpdate);
     };
   }, [questionID, questionOrder, search, socket]);
 

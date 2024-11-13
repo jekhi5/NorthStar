@@ -222,16 +222,31 @@ const useAnswerPage = () => {
       }
     };
 
+    /**
+     * Function to handle updates to the subscribers of a question.
+     *
+     * @param result - The updated question object.
+     */
+    const handleSubscriberUpdate = ({ result }: { result: Question }) => {
+      const questionResult = result;
+
+      if (questionResult._id === questionID) {
+        setQuestion(questionResult);
+      }
+    };
+
     socket.on('answerUpdate', handleAnswerUpdate);
     socket.on('viewsUpdate', handleViewsUpdate);
     socket.on('commentUpdate', handleCommentUpdate);
     socket.on('voteUpdate', handleVoteUpdate);
+    socket.on('subscriberUpdate', handleSubscriberUpdate);
 
     return () => {
       socket.off('answerUpdate', handleAnswerUpdate);
       socket.off('viewsUpdate', handleViewsUpdate);
       socket.off('commentUpdate', handleCommentUpdate);
       socket.off('voteUpdate', handleVoteUpdate);
+      socket.off('subscriberUpdate', handleSubscriberUpdate);
     };
   }, [questionID, socket]);
 
