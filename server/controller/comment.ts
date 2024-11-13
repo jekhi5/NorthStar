@@ -101,7 +101,7 @@ const commentController = (socket: FakeSOSocket) => {
   /**
    * Helper function to handle upvoting or downvoting a comment.
    *
-   * @param req The VoteRequest object containing the comment ID and the username.
+   * @param req The VoteRequest object containing the comment ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    * @param type The type of vote to perform (upvote or downvote).
    *
@@ -145,10 +145,10 @@ const commentController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Handles upvoting a comment. The request must contain the comment ID and the username.
+   * Handles upvoting a comment. The request must contain the comment ID and the uid.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
-   * @param req The VoteRequest object containing the comment ID and the username.
+   * @param req The VoteRequest object containing the comment ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    *
    * @returns A Promise that resolves to void.
@@ -158,10 +158,10 @@ const commentController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Handles downvoting a comment. The request must contain the comment ID and the username.
+   * Handles downvoting a comment. The request must contain the comment ID and the uid.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
-   * @param req The VoteRequest object containing the comment ID and the username.
+   * @param req The VoteRequest object containing the comment ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    *
    * @returns A Promise that resolves to void.

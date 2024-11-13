@@ -24,11 +24,11 @@ const addAnswer = async (qid: string, ans: Answer): Promise<Answer> => {
  * Function to upvote an answer.
  *
  * @param id - The ID of the answer to upvote.
- * @param username - The username of the person upvoting the answer.
+ * @param uid - The uid of the person upvoting the answer.
  * @throws Error if there is an issue upvoting the answer.
  */
-const upvoteAnswer = async (id: string, username: string) => {
-  const data = { id, username };
+const upvoteAnswer = async (id: string, uid: string) => {
+  const data = { id, uid };
   const res = await api.post(`${ANSWER_API_URL}/upvoteAnswer`, data);
   if (res.status !== 200) {
     throw new Error('Error while upvoting the answer');
@@ -39,12 +39,12 @@ const upvoteAnswer = async (id: string, username: string) => {
 /**
  * Function to downvote an answer.
  *
- * @param qid - The ID of the answer to downvote.
- * @param username - The username of the person downvoting the answer.
+ * @param id - The ID of the answer to downvote.
+ * @param uid - The uid of the person downvoting the answer.
  * @throws Error if there is an issue downvoting the answer.
  */
-const downvoteAnswer = async (id: string, username: string) => {
-  const data = { id, username };
+const downvoteAnswer = async (id: string, uid: string) => {
+  const data = { id, uid };
   const res = await api.post(`${ANSWER_API_URL}/downvoteAnswer`, data);
   if (res.status !== 200) {
     throw new Error('Error while downvoting the answer');
