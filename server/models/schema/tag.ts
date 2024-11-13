@@ -7,6 +7,7 @@ import { Schema } from 'mongoose';
  * Each tag includes the following fields:
  * - `name`: The name of the tag. This field is required.
  * - `description`: A brief description of the tag. This field is required.
+ * - `subscribers`: An array of user IDs who are subscribed to the tag. This field is required.
  */
 const tagSchema: Schema = new Schema(
   {
