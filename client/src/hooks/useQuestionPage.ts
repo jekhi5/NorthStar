@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useUserContext from './useUserContext';
-import { Answer, OrderType, Question, Tag, User } from '../types';
+import { Answer, OrderType, Question, User } from '../types';
 import { getQuestionsByFilter } from '../services/questionService';
 import toggleSubscribe from '../services/subscriberService';
 
@@ -23,7 +23,7 @@ const useQuestionPage = () => {
   const [questionOrder, setQuestionOrder] = useState<OrderType>('newest');
   const [qlist, setQlist] = useState<Question[]>([]);
   const [questionID, setQuestionID] = useState<string>(qidParam || '');
-  const [question, setQuestion] = useState<Question | null>(null);
+  const [question] = useState<Question | null>(null);
 
   useEffect(() => {
     if (!qidParam) {
