@@ -37,26 +37,40 @@ const userController = () => {
   };
 
   /**
-   * Checks if a username is available (not already taken).
+   * Checks if a username and email is available (not already taken).
    *
-   * @param req The request object containing the username as a parameter.
+   * @param req The request object containing the username and email as a parameter.
    * @param res The response object to send the result.
    */
-  const checkUsernameAvailability = async (req: Request, res: Response): Promise<void> => {
+  const checkValidUser = async (req: Request, res: Response): Promise<void> => {
     const { username } = req.params;
+    const { email } = req.params;
 
     try {
-      const user = await UserModel.findOne({ username });
+      const usernameCheck = await UserModel.findOne({ username });
+      const emailCheck = await UserModel.findOne({ email });
 
-      if (user) {
-        // Username is taken
-        res.json({ available: false, message: 'Username is already taken' });
+      if (usernameCheck && emailCheck) {
+        // Username and email are both taken
+        res.json({
+          available: false,
+          message: 'Both username and email are already in use (perhaps try logging in instead)',
+        });
+      } else if (usernameCheck) {
+        // Just username is taken
+        res.json({ available: false, message: 'Username is already in use' });
+      } else if (emailCheck) {
+        // Just email is taken
+        res.json({
+          available: false,
+          message: 'Email is already in use (perhaps try logging in instead)',
+        });
       } else {
-        // Username is available
-        res.json({ available: true, message: 'Username is available' });
+        // The username and email are both available, and therefore the user is valid
+        res.json({ available: true, message: 'User is valid' });
       }
     } catch (error) {
-      res.status(500).json({ message: 'Error checking username availability' });
+      res.status(500).json({ message: 'Error checking username and email availability' });
     }
   };
 
@@ -91,7 +105,7 @@ const userController = () => {
   };
 
   router.get('/getUserByUid/:uid', getUserByUid);
-  router.get('/checkUsernameAvailability/:username', checkUsernameAvailability);
+  router.get('/checkValidUser/:username/:email', checkValidUser);
   router.post('/addUser', addUser);
 
   return router;

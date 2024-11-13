@@ -357,6 +357,11 @@ export const populateDocument = async (
             },
           ],
         },
+        {
+          path: 'comments',
+          model: CommentModel,
+          populate: { path: 'commentBy', model: UserModel },
+        },
         { path: 'askedBy', model: UserModel },
       ]);
     } else if (type === 'answer') {
