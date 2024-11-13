@@ -182,6 +182,7 @@ async function questionCreate(
   askDateTime: Date,
   views: string[],
   comments: Comment[],
+  subscribers: User[],
 ): Promise<Question> {
   if (
     title === '' ||
@@ -203,7 +204,7 @@ async function questionCreate(
     upVotes: [],
     downVotes: [],
     comments: comments,
-    subscribers: [],
+    subscribers: subscribers,
   };
   return await QuestionModel.create(questionDetail);
 }
@@ -282,6 +283,7 @@ const populate = async () => {
       new Date('2022-01-20T03:00:00'),
       ['sana', 'abaya', 'alia'],
       [c9],
+      [u2, u4],
     );
     await questionCreate(
       Q2_DESC,
@@ -292,6 +294,7 @@ const populate = async () => {
       new Date('2023-01-10T11:24:30'),
       ['mackson3332'],
       [c10],
+      [],
     );
     await questionCreate(
       Q3_DESC,
@@ -302,6 +305,7 @@ const populate = async () => {
       new Date('2023-02-18T01:02:15'),
       ['monkeyABC', 'elephantCDE'],
       [c11],
+      [u8, u5],
     );
     await questionCreate(
       Q4_DESC,
@@ -312,6 +316,7 @@ const populate = async () => {
       new Date('2023-03-10T14:28:01'),
       [],
       [c12],
+      [u9, u11],
     );
 
     const pn3 = await postNotificationCreate(

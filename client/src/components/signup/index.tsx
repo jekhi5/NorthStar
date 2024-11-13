@@ -98,11 +98,7 @@ const SignUp = ({
           Sign Up
         </button>
       </form>
-      {error && (
-        <p className='error-text' style={{ textAlign: 'center', marginLeft: '15px' }}>
-          {error}
-        </p>
-      )}
+      {error && <p className='error-text'>{error}</p>}
 
       <button onClick={() => setShowLogIn(!showLogIn)} className='sign-up-button'>
         Login instead

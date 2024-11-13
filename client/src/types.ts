@@ -107,6 +107,16 @@ export interface VoteData {
 }
 
 /**
+ * Interface representing the subscriber data for a question, which contains:
+ * - id - The ID of the question being voted on
+ * - subscribers - An array of user IDs who are subscribed the question
+ */
+export interface SubscribeData {
+  id: string;
+  subscribers: string[];
+}
+
+/**
  * Interface representing an Answer document, which contains:
  * - _id - The unique identifier for the answer. Optional field
  * - text - The content of the answer
