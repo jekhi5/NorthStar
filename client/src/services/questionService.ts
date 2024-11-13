@@ -53,7 +53,21 @@ const getQuestionById = async (qid: string, uid: string): Promise<Question> => {
 const getQuestionsByUid = async (uid: string): Promise<Question[]> => {
   const res = await api.get(`${QUESTION_API_URL}/getQuestionsByUid/?uid=${uid}`);
   if (res.status !== 200) {
-    throw new Error('Error when fetching question by uid');
+    throw new Error('Error when fetching questions by uid');
+  }
+  return res.data;
+};
+
+/**
+ * Retrieves questions from the database if they were answered by the user with the provided uid.
+ *
+ * @param uid - The user ID of the answer poster.
+ * @throws Error if there is an issue fetching the question by UID.
+ */
+const getQuestionsByAnsweredUid = async (uid: string): Promise<Question[]> => {
+  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByAnsweredUid/?uid=${uid}`);
+  if (res.status !== 200) {
+    throw new Error('Error when fetching questions by answer uid');
   }
   return res.data;
 };
@@ -112,6 +126,7 @@ export {
   getQuestionsByFilter,
   getQuestionById,
   getQuestionsByUid,
+  getQuestionsByAnsweredUid,
   addQuestion,
   upvoteQuestion,
   downvoteQuestion,

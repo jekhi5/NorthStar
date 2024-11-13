@@ -19,6 +19,7 @@ import {
   populateDocument,
   saveQuestion,
   getQuestionsByUid,
+  getQuestionsByAnsweredUid,
 } from '../models/application';
 
 const questionController = (socket: FakeSOSocket) => {
@@ -98,10 +99,10 @@ const questionController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Retrieves a question by its unique ID, and increments the view count for that question.
+   * Retrieves a list of questions by its poster's user uid.
    * If there is an error, the HTTP response's status is updated.
    *
-   * @param req The FindQuestionByIdRequest object containing the question ID as a parameter.
+   * @param req The FindQuestionByIdRequest object containing the poster's user uid as a parameter.
    * @param res The HTTP response object used to send back the question details.
    *
    * @returns A Promise that resolves to void.
@@ -112,11 +113,6 @@ const questionController = (socket: FakeSOSocket) => {
   ): Promise<void> => {
     const { uid } = req.query;
 
-    // if (!ObjectId.isValid(qid)) {
-    //   res.status(400).send('Invalid ID format');
-    //   return;
-    // }
-
     if (uid === undefined || uid === '') {
       res.status(400).send('Invalid user id.');
       return;
@@ -124,6 +120,45 @@ const questionController = (socket: FakeSOSocket) => {
 
     try {
       const q = await getQuestionsByUid(uid);
+
+      if (q && !('error' in q)) {
+        socket.emit('questionsUpdate', q);
+        res.json(q);
+        return;
+      }
+
+      throw new Error('Error while fetching questions by uid');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        res.status(500).send(`Error when fetching questions by uid: ${err.message}`);
+      } else {
+        res.status(500).send(`Error when fetching questions by uid`);
+      }
+    }
+  };
+
+  /**
+   * Retrieves a list of questions by the given user uid correlating to a potential answerer of said questions.
+   * If there is an error, the HTTP response's status is updated.
+   *
+   * @param req The FindQuestionByIdRequest object containing the user uid as a parameter.
+   * @param res The HTTP response object used to send back the question details.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const getQuestionsByAnsBy = async (
+    req: FindQuestionsByUidRequest,
+    res: Response,
+  ): Promise<void> => {
+    const { uid } = req.query;
+
+    if (uid === undefined || uid === '') {
+      res.status(400).send('Invalid user id.');
+      return;
+    }
+
+    try {
+      const q = await getQuestionsByAnsweredUid(uid);
 
       if (q && !('error' in q)) {
         socket.emit('questionsUpdate', q);
@@ -282,6 +317,7 @@ const questionController = (socket: FakeSOSocket) => {
   router.get('/getQuestion', getQuestionsByFilter);
   router.get('/getQuestionById/:qid', getQuestionById);
   router.get('/getQuestionsByUid', getQuestionsByAskedBy);
+  router.get('/getQuestionsByAnsweredUid', getQuestionsByAnsBy);
   router.post('/addQuestion', addQuestion);
   router.post('/upvoteQuestion', upvoteQuestion);
   router.post('/downvoteQuestion', downvoteQuestion);

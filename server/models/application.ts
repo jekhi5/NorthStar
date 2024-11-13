@@ -234,7 +234,7 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
  * Filters a list of questions by the user who asked them.
  *
  * @param qlist The array of Question objects to be filtered.
- * @param askedBy The uid of the user who asked the questions.
+ * @param uid The uid of the user who asked the questions.
  *
  * @returns Filtered Question objects.
  */
@@ -256,6 +256,37 @@ export const getQuestionsByUid = async (uid: string): Promise<Question[]> => {
       { path: 'askedBy', model: UserModel },
     ]);
     return filterQuestionsByAskedBy(qlist, uid);
+  } catch (error) {
+    return [];
+  }
+};
+
+/**
+ * Filters a list of questions by a user who answered them.
+ *
+ * @param qlist The array of Question objects to be filtered.
+ * @param uid The uid of the user who answered the questions.
+ *
+ * @returns Filtered Question objects.
+ */
+export const filterQuestionsByAnsBy = (qlist: Question[], uid: string): Question[] =>
+  qlist.filter(q => q.answers.some(a => (a as Answer).ansBy.uid === uid));
+
+/**
+ * Retrieves certain questions from the database, depending on if the given user's uid matches a question's answerer's
+ *
+ * @param {OrderType} uid - The user's uid of the user who answered certain questions.
+ *
+ * @returns {Promise<Question[]>} - Promise that resolves to a list of questions
+ */
+export const getQuestionsByAnsweredUid = async (uid: string): Promise<Question[]> => {
+  try {
+    const qlist = await QuestionModel.find().populate([
+      { path: 'tags', model: TagModel },
+      { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
+      { path: 'askedBy', model: UserModel },
+    ]);
+    return filterQuestionsByAnsBy(qlist, uid);
   } catch (error) {
     return [];
   }
