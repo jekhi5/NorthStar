@@ -195,6 +195,10 @@ export interface SubscriberUpdatePayload {
   result: Question;
 }
 
+export interface PostNotificationUpdatePayload {
+  notification: PostNotification;
+}
+
 /**
  * Interface representing the possible events that the server can emit to the client.
  */
@@ -205,4 +209,5 @@ export interface ServerToClientEvents {
   voteUpdate: (vote: VoteUpdatePayload) => void;
   commentUpdate: (update: CommentUpdatePayload) => void;
   subscriberUpdate: (payload: SubscriberUpdatePayload) => void;
+  postNotificationUpdate: (payload: PostNotificationUpdatePayload) => void;
 }

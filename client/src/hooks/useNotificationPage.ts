@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
-import { PostNotification } from '../types';
-import UserContext from '../contexts/UserContext';
+import { PostNotification, PostNotificationUpdatePayload, User } from '../types';
 import { getUserByUid } from '../services/userService';
+import useUserContext from './useUserContext';
+import UserContext from '../contexts/UserContext';
 
 /**
  * Custom hook to manage the state and logic for the notification page.
@@ -10,43 +11,50 @@ import { getUserByUid } from '../services/userService';
  * @returns error - An error message if fetching the notification data fails.
  */
 const useNotificationPage = () => {
-  const [notifications, setNotifications] = useState<PostNotification[]>([]);
+  const [notifications, setNotifications] = useState<PostNotification[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Get user, and subsequently user id
-  const context = useContext(UserContext);
-  const uid = context?.user?.uid;
+  const { user, socket } = useUserContext();
+  const uid = user?.uid;
 
   useEffect(() => {
-    const fetchNotifications = async () => {
+    /**
+     * Function to fetch the question data based on the question ID.
+     */
+    const fetchData = async () => {
       if (!uid) {
-        setError('UID not available.');
+        setError('User is undefined');
         return;
       }
 
       try {
-        const fetchedUser = await getUserByUid(uid);
-
-        if (!fetchedUser) {
-          setError('User not found.');
-          return;
-        }
-
-        const userNotifications = fetchedUser.notifications;
-
-        if (!userNotifications) {
-          setNotifications([]);
-          return;
-        }
-        setNotifications(userNotifications);
-      } catch (err) {
-        setNotifications([]);
-        setError('Failed to load notifications.');
+        const res = await getUserByUid(uid);
+        setNotifications(!res ? [] : res.notifications);
+      } catch (e) {
+        setError(`Error fetching notifications: ${e}`);
       }
     };
 
-    fetchNotifications();
-  }, [uid]);
+    const handleNotificationUpdate = async ({ notification }: PostNotificationUpdatePayload) => {
+      if (!uid) {
+        setError('UID is undefined');
+        return;
+      }
+
+      setNotifications(notifications ? [...notifications, notification] : [notification]);
+    };
+
+    if (uid) {
+      fetchData();
+    }
+
+    socket.on('postNotificationUpdate', handleNotificationUpdate);
+
+    return () => {
+      socket.off('postNotificationUpdate', handleNotificationUpdate);
+    };
+  }, [notifications, socket, uid]);
 
   return { notifications, error };
 };

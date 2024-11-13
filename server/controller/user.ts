@@ -1,7 +1,10 @@
 import express, { Request, Response } from 'express';
+import { ObjectId } from 'mongodb';
 import UserModel from '../models/user';
-import { User } from '../types';
+import { PostNotification, Question, User } from '../types';
 import { saveUser } from '../models/application';
+import QuestionModel from '../models/questions';
+import PostNotificationModel from '../models/postNotifications';
 
 const userController = () => {
   const router = express.Router();
@@ -89,6 +92,38 @@ const userController = () => {
     }
 
     try {
+      const fakeStackOverflowUser: User | null = await UserModel.findOne({
+        username: 'FakeStackOverflowTeam',
+      });
+
+      const fakeStackOverflowWelcomeQuestion: Question | null = await QuestionModel.findOne({
+        title: 'Welcome to Fake Stack Overflow!',
+      });
+
+      // If we can find the fake stack overflow user and welcome question,
+      // we attempt to add the notification to the database.
+      // If that is successful, then we add that notification to the user
+      if (
+        fakeStackOverflowUser &&
+        fakeStackOverflowWelcomeQuestion &&
+        fakeStackOverflowWelcomeQuestion._id instanceof ObjectId
+      ) {
+        const welcomeNotificationObject: PostNotification = {
+          title: 'Welcome to Fake Stack Overflow!',
+          text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+          postType: 'Question',
+          postId: fakeStackOverflowWelcomeQuestion._id,
+          fromUser: fakeStackOverflowUser,
+        };
+
+        const welcomeNotification: PostNotification =
+          await PostNotificationModel.create(welcomeNotificationObject);
+
+        if (welcomeNotification) {
+          user.postNotifications = [welcomeNotification];
+        }
+      }
+
       const result = await saveUser(user);
       if ('error' in result) {
         throw new Error(result.error);
