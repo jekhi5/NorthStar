@@ -80,11 +80,24 @@ async function userCreate(
   username: string,
   email: string,
   status: 'Not endorsed' | 'Endorsed',
+  reputation: number,
+  firstName?: string,
+  lastName?: string,
+  profilePicture?: string,
 ): Promise<User> {
   if (uid === '') throw new Error('Invalid User Format');
   if (username === '') throw new Error('Invalid username Format');
   if (email === '') throw new Error('Invalid email Format');
-  const user: User = { uid, username, email, status };
+  const user: User = {
+    uid,
+    username,
+    email,
+    status,
+    reputation,
+    firstName,
+    lastName,
+    profilePicture,
+  };
   return await UserModel.create(user);
 }
 
@@ -205,18 +218,120 @@ const populate = async () => {
     const t5 = await tagCreate(T5_NAME, T5_DESC);
     const t6 = await tagCreate(T6_NAME, T6_DESC);
 
-    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Endorsed');
-    const u2 = await userCreate('2', 'ihba001', 'ihba001@email.com', 'Not endorsed');
-    const u3 = await userCreate('3', 'saltyPeter', 'saltyPeter@email.com', 'Endorsed');
-    const u4 = await userCreate('4', 'monkeyABC', 'monkeyABC@email.com', 'Not endorsed');
-    const u5 = await userCreate('5', 'hamkalo', 'hamkalo@email.com', 'Endorsed');
-    const u6 = await userCreate('6', 'azad', 'azad@email.com', 'Not endorsed');
-    const u8 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed');
-    const u9 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed');
-    const u10 = await userCreate('9', 'Joji John', 'Joji_John@email.com', 'Endorsed');
-    const u11 = await userCreate('10', 'abaya', 'abaya@email.com', 'Not endorsed');
-    const u12 = await userCreate('11', 'mackson3332', 'mackson3332@email.com', 'Endorsed');
-    const u13 = await userCreate('12', 'elephantCDE', 'elephantCDE@email.com', 'Not endorsed');
+    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Endorsed', 250, 'sana', 'khan', '');
+    const u2 = await userCreate(
+      '2',
+      'ihba001',
+      'ihba001@email.com',
+      'Not endorsed',
+      10,
+      'iban',
+      'zuko',
+      '',
+    );
+    const u3 = await userCreate(
+      '3',
+      'saltyPeter',
+      'saltyPeter@email.com',
+      'Endorsed',
+      35,
+      'peter',
+      'rabbit',
+      '',
+    );
+    const u4 = await userCreate(
+      '4',
+      'monkeyABC',
+      'monkeyABC@email.com',
+      'Not endorsed',
+      24,
+      'monkey',
+      'king',
+      '',
+    );
+    const u5 = await userCreate(
+      '5',
+      'hamkalo',
+      'hamkalo@email.com',
+      'Endorsed',
+      35,
+      'ham',
+      'kalo',
+      '',
+    );
+    const u6 = await userCreate(
+      '6',
+      'azad',
+      'azad@email.com',
+      'Not endorsed',
+      1,
+      'azad',
+      'khan',
+      '',
+    );
+    const u8 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed', 40, 'alia', 'bhatt', '');
+    const u9 = await userCreate(
+      '8',
+      'abhi3241',
+      'abhi3241@email.com',
+      'Not endorsed',
+      0,
+      'abhi',
+      'kumar',
+      '',
+    );
+    const u10 = await userCreate(
+      '9',
+      'JojiJohn',
+      'Joji_John@email.com',
+      'Endorsed',
+      50,
+      'Joji',
+      'John',
+      '',
+    );
+    const u11 = await userCreate(
+      '10',
+      'abaya',
+      'abaya@email.com',
+      'Not endorsed',
+      4,
+      'abaya',
+      'khan',
+      '',
+    );
+    const u12 = await userCreate(
+      '11',
+      'mackson3332',
+      'mackson3332@email.com',
+      'Endorsed',
+      500,
+      'mackson',
+      'jackson',
+      '',
+    );
+    const u13 = await userCreate(
+      '12',
+      'elephantCDE',
+      'elephantCDE@email.com',
+      'Not endorsed',
+      4,
+      'dumbo',
+      'elephant',
+      '',
+    );
+
+    // Adding us as users
+    const u14 = await userCreate(
+      'Fm5O8RAHjqcxmNrip3luw0JF6mz1',
+      'ashleyydaviis',
+      'ashley921davis@gmail.com',
+      'Not endorsed',
+      29,
+      'Ashley',
+      'Davis',
+      '',
+    );
 
     const c1 = await commentCreate(C1_TEXT, u1, new Date('2023-12-12T03:30:00'));
     const c2 = await commentCreate(C2_TEXT, u2, new Date('2023-12-01T15:24:19'));

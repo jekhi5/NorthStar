@@ -35,7 +35,17 @@ const useProfilePage = () => {
     fetchProfile();
   }, [uid]);
 
-  return { profile, error };
+  /**
+   * Helper function to calculate the reputation percentage towards endorsed based on the user's reputation.
+   * @param reputation the user's reputation
+   * @returns the reputation percentage towards endorsed, as a whole number
+   */
+  const calculateReputationPercentage = (reputation: number) => {
+    if (reputation >= 30) return 100;
+    return ((reputation / 30) * 100).toFixed(0);
+  };
+
+  return { profile, error, calculateReputationPercentage };
 };
 
 export default useProfilePage;

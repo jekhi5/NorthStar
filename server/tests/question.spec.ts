@@ -17,6 +17,7 @@ const user1: User = {
   username: 'User1',
   email: 'user1@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const user2: User = {
@@ -24,6 +25,7 @@ const user2: User = {
   username: 'User2',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const user3: User = {
@@ -31,6 +33,7 @@ const user3: User = {
   username: 'User3',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const user4: User = {
@@ -38,6 +41,7 @@ const user4: User = {
   username: 'User4',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const tag1 = {
