@@ -114,6 +114,7 @@ const useSignUp = () => {
         status: 'Not endorsed',
         // TODO: Consider adding a "welcome to the app" notification that all new users have
         notifications: [],
+        reputation: 0,
       };
 
       await addUser(newUser);

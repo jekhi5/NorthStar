@@ -4,7 +4,7 @@ import useProfilePage from '../../../hooks/useProfilePage';
  * ProfilePage component that displays a user's personal information.
  */
 const ProfilePage = () => {
-  const { profile, error } = useProfilePage();
+  const { profile, error, calculateReputationPercentage } = useProfilePage();
 
   if (error) {
     return <p>{error}</p>;
@@ -29,7 +29,9 @@ const ProfilePage = () => {
           </h2>
           <p className='profile-username'>Username: {profile.username}</p>
           <p className='profile-email'>Email: {profile.email}</p>
-          <p className='profile-status'>Status: {profile.status}</p>
+          <p className='profile-status'>
+            Progress towards Endorsed: {calculateReputationPercentage(profile.reputation)}%
+          </p>
         </div>
       </div>
     </div>

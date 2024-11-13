@@ -96,11 +96,25 @@ async function userCreate(
   email: string,
   status: 'Not endorsed' | 'Endorsed',
   postNotifications: PostNotification[],
+  reputation: number,
+  firstName?: string,
+  lastName?: string,
+  profilePicture?: string,
 ): Promise<User> {
   if (uid === '') throw new Error('Invalid User Format');
   if (username === '') throw new Error('Invalid username Format');
   if (email === '') throw new Error('Invalid email Format');
-  const user: User = { uid, username, email, status, postNotifications };
+  const user: User = {
+    uid,
+    username,
+    email,
+    status,
+    postNotifications,
+    reputation,
+    firstName,
+    lastName,
+    profilePicture,
+  };
   return await UserModel.create(user);
 }
 
@@ -221,15 +235,118 @@ const populate = async () => {
     const t5 = await tagCreate(T5_NAME, T5_DESC);
     const t6 = await tagCreate(T6_NAME, T6_DESC);
 
-    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Endorsed', []);
-    const u2 = await userCreate('2', 'ihba001', 'ihba001@email.com', 'Not endorsed', []);
-    const u3 = await userCreate('3', 'saltyPeter', 'saltyPeter@email.com', 'Endorsed', []);
-    const u4 = await userCreate('4', 'monkeyABC', 'monkeyABC@email.com', 'Not endorsed', []);
-    const u5 = await userCreate('5', 'hamkalo', 'hamkalo@email.com', 'Endorsed', []);
-    const u6 = await userCreate('6', 'azad', 'azad@email.com', 'Not endorsed', []);
-    const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed', []);
-    const u8 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed', []);
-    const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Not endorsed', []);
+    const u1 = await userCreate(
+      '1',
+      'sana',
+      'sana@email.com',
+      'Endorsed',
+      [],
+      250,
+      'sana',
+      'khan',
+      '',
+    );
+    const u2 = await userCreate(
+      '2',
+      'ihba001',
+      'ihba001@email.com',
+      'Not endorsed',
+      [],
+      10,
+      'iban',
+      'zuko',
+      '',
+    );
+    const u3 = await userCreate(
+      '3',
+      'saltyPeter',
+      'saltyPeter@email.com',
+      'Endorsed',
+      [],
+      35,
+      'peter',
+      'rabbit',
+      '',
+    );
+    const u4 = await userCreate(
+      '4',
+      'monkeyABC',
+      'monkeyABC@email.com',
+      'Not endorsed',
+      [],
+      24,
+      'monkey',
+      'king',
+      '',
+    );
+    const u5 = await userCreate(
+      '5',
+      'hamkalo',
+      'hamkalo@email.com',
+      'Endorsed',
+      [],
+      35,
+      'ham',
+      'kalo',
+      '',
+    );
+    const u6 = await userCreate(
+      '6',
+      'azad',
+      'azad@email.com',
+      'Not endorsed',
+      [],
+      1,
+      'azad',
+      'khan',
+      '',
+    );
+    const u7 = await userCreate(
+      '7',
+      'alia',
+      'alia@email.com',
+      'Endorsed',
+      [],
+      40,
+      'alia',
+      'bhatt',
+      '',
+    );
+    const u8 = await userCreate(
+      '8',
+      'abhi3241',
+      'abhi3241@email.com',
+      'Not endorsed',
+      [],
+      0,
+      'abhi',
+      'kumar',
+      '',
+    );
+    const u9 = await userCreate(
+      '9',
+      'abaya',
+      'abaya@email.com',
+      'Not endorsed',
+      [],
+      50,
+      'Joji',
+      'John',
+      '',
+    );
+
+    // Adding us as users
+    const ashleyUser = await userCreate(
+      'Fm5O8RAHjqcxmNrip3luw0JF6mz1',
+      'ashleyydaviis',
+      'ashley921davis@gmail.com',
+      'Not endorsed',
+      [],
+      29,
+      'Ashley',
+      'Davis',
+      '',
+    );
 
     const c1 = await commentCreate(C1_TEXT, u1, new Date('2023-12-12T03:30:00'));
     const c2 = await commentCreate(C2_TEXT, u2, new Date('2023-12-01T15:24:19'));
@@ -251,9 +368,17 @@ const populate = async () => {
       c4._id ?? new ObjectId(),
       u3,
     );
-    const u10 = await userCreate('10', 'elephantCDE', 'elephantCDE@email.com', 'Not endorsed', [
-      pn1,
-    ]);
+    const u10 = await userCreate(
+      '10',
+      'elephantCDE',
+      'elephantCDE@email.com',
+      'Not endorsed',
+      [pn1],
+      4,
+      'abaya',
+      'khan',
+      '',
+    );
 
     const a1 = await answerCreate(A1_TXT, u5, new Date('2023-11-20T03:24:42'), [c1]);
     const a2 = await answerCreate(A2_TXT, u6, new Date('2023-11-23T08:24:00'), [c2]);
@@ -271,7 +396,17 @@ const populate = async () => {
       a4._id ?? new ObjectId(),
       u2,
     );
-    const u11 = await userCreate('11', 'Joji John', 'Joji_John@email.com', 'Endorsed', [pn2]);
+    const u11 = await userCreate(
+      '11',
+      'Joji John',
+      'Joji_John@email.com',
+      'Endorsed',
+      [pn2],
+      500,
+      'mackson',
+      'jackson',
+      '',
+    );
 
     const q1 = await questionCreate(
       Q1_DESC,
@@ -322,7 +457,17 @@ const populate = async () => {
       u1,
     );
 
-    await userCreate('12', 'mackson3332', 'mackson3332@email.com', 'Endorsed', [pn3]);
+    await userCreate(
+      '12',
+      'mackson3332',
+      'mackson3332@email.com',
+      'Endorsed',
+      [pn3],
+      4,
+      'dumbo',
+      'elephant',
+      '',
+    );
 
     console.log('Database populated');
   } catch (err) {

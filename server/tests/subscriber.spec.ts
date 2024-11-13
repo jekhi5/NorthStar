@@ -13,6 +13,7 @@ const user1: User = {
   email: 'user1@email.com',
   status: 'Not endorsed',
   postNotifications: [],
+  reputation: 0,
 };
 
 const user2: User = {
@@ -21,6 +22,7 @@ const user2: User = {
   email: 'user2@email.com',
   status: 'Not endorsed',
   postNotifications: [],
+  reputation: 0,
 };
 
 describe('POST /toggleSubscribe', () => {
