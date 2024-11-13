@@ -12,6 +12,7 @@ import mongoose from 'mongoose';
  * - `lastName`: The last name of the user. This field is optional.
  * - `profilePicture`: The URL of the user's profile photo. This field is optional.
  * - `status`: An enum indicating whether or not the user is an endorsed answerer.
+ * - `postNotifications`: An array of post notifications associated with the user.
  */
 const userSchema = new mongoose.Schema(
   {
@@ -43,6 +44,15 @@ const userSchema = new mongoose.Schema(
       default: 'Not endorsed', // All users start out in the application as not endorsed
       required: true,
     },
+    postNotifications: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PostNotification',
+        // TODO: Consider starting a new user off with a "Welcome to the app" notification
+        default: [], // All users start out with no post notifications
+        required: true,
+      },
+    ],
     reputation: {
       type: Number,
       default: 0,

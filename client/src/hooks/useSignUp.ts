@@ -112,6 +112,8 @@ const useSignUp = () => {
         username: formData.username,
         email: formData.email,
         status: 'Not endorsed',
+        // TODO: Consider adding a "welcome to the app" notification that all new users have
+        notifications: [],
         reputation: 0,
       };
 

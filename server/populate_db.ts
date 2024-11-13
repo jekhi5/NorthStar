@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import { ObjectId } from 'mongodb';
 import AnswerModel from './models/answers';
 import QuestionModel from './models/questions';
 import TagModel from './models/tags';
-import { Answer, Comment, Question, Tag, User } from './types';
+import { Answer, Comment, PostNotification, Question, Tag, User } from './types';
 import {
   Q1_DESC,
   Q1_TXT,
@@ -47,6 +48,7 @@ import {
 } from './data/posts_strings';
 import CommentModel from './models/comments';
 import UserModel from './models/user';
+import PostNotificationModel from './models/postNotifications';
 
 // Pass URL of your mongoDB instance as first argument(e.g., mongodb://127.0.0.1:27017/fake_so)
 const userArgs = process.argv.slice(2);
@@ -75,11 +77,25 @@ async function tagCreate(name: string, description: string): Promise<Tag> {
   return await TagModel.create(tag);
 }
 
+async function postNotificationCreate(
+  title: string,
+  text: string,
+  postType: 'Question' | 'Answer' | 'Comment',
+  postId: ObjectId,
+  fromUser: User,
+): Promise<PostNotification> {
+  if (title === '' || text === '' || fromUser.uid === '')
+    throw new Error('Invalid PostNotification Format');
+  const postNotification: PostNotification = { title, text, postType, postId, fromUser };
+  return await PostNotificationModel.create(postNotification);
+}
+
 async function userCreate(
   uid: string,
   username: string,
   email: string,
   status: 'Not endorsed' | 'Endorsed',
+  postNotifications: PostNotification[],
   reputation: number,
   firstName?: string,
   lastName?: string,
@@ -93,6 +109,7 @@ async function userCreate(
     username,
     email,
     status,
+    postNotifications,
     reputation,
     firstName,
     lastName,
@@ -218,12 +235,23 @@ const populate = async () => {
     const t5 = await tagCreate(T5_NAME, T5_DESC);
     const t6 = await tagCreate(T6_NAME, T6_DESC);
 
-    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Endorsed', 250, 'sana', 'khan', '');
+    const u1 = await userCreate(
+      '1',
+      'sana',
+      'sana@email.com',
+      'Endorsed',
+      [],
+      250,
+      'sana',
+      'khan',
+      '',
+    );
     const u2 = await userCreate(
       '2',
       'ihba001',
       'ihba001@email.com',
       'Not endorsed',
+      [],
       10,
       'iban',
       'zuko',
@@ -234,6 +262,7 @@ const populate = async () => {
       'saltyPeter',
       'saltyPeter@email.com',
       'Endorsed',
+      [],
       35,
       'peter',
       'rabbit',
@@ -244,6 +273,7 @@ const populate = async () => {
       'monkeyABC',
       'monkeyABC@email.com',
       'Not endorsed',
+      [],
       24,
       'monkey',
       'king',
@@ -254,6 +284,7 @@ const populate = async () => {
       'hamkalo',
       'hamkalo@email.com',
       'Endorsed',
+      [],
       35,
       'ham',
       'kalo',
@@ -264,69 +295,53 @@ const populate = async () => {
       'azad',
       'azad@email.com',
       'Not endorsed',
+      [],
       1,
       'azad',
       'khan',
       '',
     );
-    const u8 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed', 40, 'alia', 'bhatt', '');
-    const u9 = await userCreate(
+    const u7 = await userCreate(
+      '7',
+      'alia',
+      'alia@email.com',
+      'Endorsed',
+      [],
+      40,
+      'alia',
+      'bhatt',
+      '',
+    );
+    const u8 = await userCreate(
       '8',
       'abhi3241',
       'abhi3241@email.com',
       'Not endorsed',
+      [],
       0,
       'abhi',
       'kumar',
       '',
     );
-    const u10 = await userCreate(
+    const u9 = await userCreate(
       '9',
-      'JojiJohn',
-      'Joji_John@email.com',
-      'Endorsed',
+      'abaya',
+      'abaya@email.com',
+      'Not endorsed',
+      [],
       50,
       'Joji',
       'John',
       '',
     );
-    const u11 = await userCreate(
-      '10',
-      'abaya',
-      'abaya@email.com',
-      'Not endorsed',
-      4,
-      'abaya',
-      'khan',
-      '',
-    );
-    const u12 = await userCreate(
-      '11',
-      'mackson3332',
-      'mackson3332@email.com',
-      'Endorsed',
-      500,
-      'mackson',
-      'jackson',
-      '',
-    );
-    const u13 = await userCreate(
-      '12',
-      'elephantCDE',
-      'elephantCDE@email.com',
-      'Not endorsed',
-      4,
-      'dumbo',
-      'elephant',
-      '',
-    );
 
     // Adding us as users
-    const u14 = await userCreate(
+    const ashleyUser = await userCreate(
       'Fm5O8RAHjqcxmNrip3luw0JF6mz1',
       'ashleyydaviis',
       'ashley921davis@gmail.com',
       'Not endorsed',
+      [],
       29,
       'Ashley',
       'Davis',
@@ -343,19 +358,57 @@ const populate = async () => {
     const c8 = await commentCreate(C8_TEXT, u8, new Date('2023-12-19T18:20:59'));
     const c9 = await commentCreate(C9_TEXT, u2, new Date('2022-02-20T03:00:00'));
     const c10 = await commentCreate(C10_TEXT, u9, new Date('2023-02-10T11:24:30'));
-    const c11 = await commentCreate(C11_TEXT, u10, new Date('2023-03-18T01:02:15'));
-    const c12 = await commentCreate(C12_TEXT, u11, new Date('2023-04-10T14:28:01'));
+    const c11 = await commentCreate(C11_TEXT, u4, new Date('2023-03-18T01:02:15'));
+    const c12 = await commentCreate(C12_TEXT, u7, new Date('2023-04-10T14:28:01'));
+
+    const pn1 = await postNotificationCreate(
+      'New Comment',
+      'New comment added',
+      'Comment',
+      c4._id ?? new ObjectId(),
+      u3,
+    );
+    const u10 = await userCreate(
+      '10',
+      'elephantCDE',
+      'elephantCDE@email.com',
+      'Not endorsed',
+      [pn1],
+      4,
+      'abaya',
+      'khan',
+      '',
+    );
 
     const a1 = await answerCreate(A1_TXT, u5, new Date('2023-11-20T03:24:42'), [c1]);
     const a2 = await answerCreate(A2_TXT, u6, new Date('2023-11-23T08:24:00'), [c2]);
-    const a3 = await answerCreate(A3_TXT, u11, new Date('2023-11-18T09:24:00'), [c3]);
+    const a3 = await answerCreate(A3_TXT, u10, new Date('2023-11-18T09:24:00'), [c3]);
     const a4 = await answerCreate(A4_TXT, u8, new Date('2023-11-12T03:30:00'), [c4]);
     const a5 = await answerCreate(A5_TXT, u1, new Date('2023-11-01T15:24:19'), [c5]);
     const a6 = await answerCreate(A6_TXT, u9, new Date('2023-02-19T18:20:59'), [c6]);
-    const a7 = await answerCreate(A7_TXT, u12, new Date('2023-02-22T17:19:00'), [c7]);
+    const a7 = await answerCreate(A7_TXT, u9, new Date('2023-02-22T17:19:00'), [c7]);
     const a8 = await answerCreate(A8_TXT, u2, new Date('2023-03-22T21:17:53'), [c8]);
 
-    await questionCreate(
+    const pn2 = await postNotificationCreate(
+      'New Answer',
+      'New answer added',
+      'Answer',
+      a4._id ?? new ObjectId(),
+      u2,
+    );
+    const u11 = await userCreate(
+      '11',
+      'Joji John',
+      'Joji_John@email.com',
+      'Endorsed',
+      [pn2],
+      500,
+      'mackson',
+      'jackson',
+      '',
+    );
+
+    const q1 = await questionCreate(
       Q1_DESC,
       Q1_TXT,
       [t1, t2],
@@ -390,10 +443,30 @@ const populate = async () => {
       Q4_TXT,
       [t3, t4, t5],
       [a8],
-      u13,
+      u11,
       new Date('2023-03-10T14:28:01'),
       [],
       [c12],
+    );
+
+    const pn3 = await postNotificationCreate(
+      'New question',
+      'New question added',
+      'Question',
+      q1._id ?? new ObjectId(),
+      u1,
+    );
+
+    await userCreate(
+      '12',
+      'mackson3332',
+      'mackson3332@email.com',
+      'Endorsed',
+      [pn3],
+      4,
+      'dumbo',
+      'elephant',
+      '',
     );
 
     console.log('Database populated');
