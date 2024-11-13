@@ -328,11 +328,9 @@ export const populateDocument = async (
         { path: 'ansBy', model: UserModel },
       ]);
     } else if (type === 'tag') {
-      console.log(`Fetching tag with id: ${id}`);
       result = await TagModel.findOne({ _id: id }).populate([
         { path: 'subscribers', model: UserModel },
       ]);
-      console.log('Result after population:', result);
     }
     if (!result) {
       throw new Error(`Failed to fetch and populate a ${type}`);
