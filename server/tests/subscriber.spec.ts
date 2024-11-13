@@ -34,6 +34,7 @@ describe('POST /toggleSubscribe', () => {
     const validQid = new mongoose.Types.ObjectId();
     const mockReqBody = {
       id: validQid.toString(),
+      type: 'question',
       user: user2,
     };
 
