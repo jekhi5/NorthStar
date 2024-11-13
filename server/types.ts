@@ -211,6 +211,7 @@ export interface ToggleSubscriberRequest extends Request {
  */
 export interface SubscriberUpdatePayload {
   result: QuestionResponse | TagResponse | null;
+  type: 'question' | 'tag';
 }
 
 /**

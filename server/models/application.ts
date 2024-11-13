@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { QueryOptions } from 'mongoose';
+import mongoose, { QueryOptions } from 'mongoose';
 import {
   Answer,
   AnswerResponse,
@@ -775,17 +775,27 @@ export const addComment = async (
 export const toggleSubscribe = async (
   id: string,
   type: 'question' | 'tag',
-  uid: string,
+  user: User,
 ): Promise<QuestionResponse | TagResponse> => {
+  if (!user || !user._id) {
+    throw new Error('Invalid user');
+  }
+
   try {
     const updateOp = [
       {
         $set: {
           subscribers: {
             $cond: [
-              { $in: [uid, '$subscribers'] },
-              { $filter: { input: '$subscribers', as: 's', cond: { $ne: ['$$s', uid] } } },
-              { $concatArrays: ['$subscribers', [uid]] },
+              { $in: [new mongoose.Types.ObjectId(user._id), '$subscribers'] },
+              {
+                $filter: {
+                  input: '$subscribers',
+                  as: 's',
+                  cond: { $ne: ['$$s', new mongoose.Types.ObjectId(user._id)] },
+                },
+              },
+              { $concatArrays: ['$subscribers', [new mongoose.Types.ObjectId(user._id)]] },
             ],
           },
         },

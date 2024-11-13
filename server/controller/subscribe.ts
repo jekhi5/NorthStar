@@ -106,7 +106,7 @@ const subscribeController = (socket: FakeSOSocket) => {
     }
 
     try {
-      const status = await toggleSubscribe(id, type, user.uid);
+      const status = await toggleSubscribe(id, type, user);
 
       if (status && 'error' in status) {
         throw new Error(status.error);
@@ -124,6 +124,7 @@ const subscribeController = (socket: FakeSOSocket) => {
       if (populatedDoc && (isQuestionResponse(populatedDoc) || isTagResponse(populatedDoc))) {
         socket.emit('subscriberUpdate', {
           result: populatedDoc,
+          type,
         });
         res.json(populatedDoc);
       } else {
