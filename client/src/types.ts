@@ -80,6 +80,7 @@ export interface Tag {
   _id?: string;
   name: string;
   description: string;
+  subscribers: User[];
 }
 
 /**
@@ -202,7 +203,8 @@ export interface CommentUpdatePayload {
 }
 
 export interface SubscriberUpdatePayload {
-  result: Question;
+  result: Question | Tag;
+  type: 'question' | 'tag';
 }
 
 export interface PostNotificationUpdatePayload {

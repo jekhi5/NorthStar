@@ -71,9 +71,9 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
  * @returns A Promise that resolves to the created Tag document.
  * @throws An error if the name is empty.
  */
-async function tagCreate(name: string, description: string): Promise<Tag> {
+async function tagCreate(name: string, description: string, subscribers: User[]): Promise<Tag> {
   if (name === '') throw new Error('Invalid Tag Format');
-  const tag: Tag = { name: name, description: description };
+  const tag: Tag = { name: name, description: description, subscribers: subscribers };
   return await TagModel.create(tag);
 }
 
@@ -193,6 +193,18 @@ async function questionCreate(
     comments == null
   )
     throw new Error('Invalid Question Format');
+
+  const subscribersFromTags = [
+    ...new Set<User>(
+      tags
+        .map(tag => tag.subscribers)
+        .flat()
+        .filter(
+          (subscriber): subscriber is User =>
+            typeof subscriber !== 'string' && subscriber instanceof Object,
+        ),
+    ),
+  ];
   const questionDetail: Question = {
     title: title,
     text: text,
@@ -204,7 +216,9 @@ async function questionCreate(
     upVotes: [],
     downVotes: [],
     comments: comments,
-    subscribers: subscribers,
+    subscribers: subscribersFromTags.includes(askedBy)
+      ? subscribersFromTags
+      : [askedBy, ...subscribersFromTags],
   };
   return await QuestionModel.create(questionDetail);
 }
@@ -215,13 +229,6 @@ async function questionCreate(
  */
 const populate = async () => {
   try {
-    const t1 = await tagCreate(T1_NAME, T1_DESC);
-    const t2 = await tagCreate(T2_NAME, T2_DESC);
-    const t3 = await tagCreate(T3_NAME, T3_DESC);
-    const t4 = await tagCreate(T4_NAME, T4_DESC);
-    const t5 = await tagCreate(T5_NAME, T5_DESC);
-    const t6 = await tagCreate(T6_NAME, T6_DESC);
-
     const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Endorsed', []);
     const u2 = await userCreate('2', 'ihba001', 'ihba001@email.com', 'Not endorsed', []);
     const u3 = await userCreate('3', 'saltyPeter', 'saltyPeter@email.com', 'Endorsed', []);
@@ -231,6 +238,13 @@ const populate = async () => {
     const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed', []);
     const u8 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed', []);
     const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Not endorsed', []);
+
+    const t1 = await tagCreate(T1_NAME, T1_DESC, [u1, u2, u3]);
+    const t2 = await tagCreate(T2_NAME, T2_DESC, []);
+    const t3 = await tagCreate(T3_NAME, T3_DESC, [u4, u5]);
+    const t4 = await tagCreate(T4_NAME, T4_DESC, [u6, u8]);
+    const t5 = await tagCreate(T5_NAME, T5_DESC, []);
+    const t6 = await tagCreate(T6_NAME, T6_DESC, []);
 
     const c1 = await commentCreate(C1_TEXT, u1, new Date('2023-12-12T03:30:00'));
     const c2 = await commentCreate(C2_TEXT, u2, new Date('2023-12-01T15:24:19'));

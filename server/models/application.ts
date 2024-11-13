@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { QueryOptions } from 'mongoose';
+import mongoose, { QueryOptions } from 'mongoose';
 import {
   Answer,
   AnswerResponse,
@@ -9,9 +9,9 @@ import {
   Question,
   QuestionResponse,
   Tag,
+  TagResponse,
   User,
   UserResponse,
-  PostNotification,
 } from '../types';
 import AnswerModel from './answers';
 import QuestionModel from './questions';
@@ -276,16 +276,16 @@ export const filterQuestionsBySearch = (qlist: Question[], search: string): Ques
 /**
  * Fetches and populates a question or answer document based on the provided ID and type.
  *
- * @param {string | undefined} id - The ID of the question or answer to fetch.
- * @param {'question' | 'answer'} type - Specifies whether to fetch a question or an answer.
+ * @param {string | undefined} id - The ID of the question, answer, or tag to fetch.
+ * @param {'question' | 'answer' | 'tag'} type - Specifies whether to fetch a question, an answer, or a tag.
  *
- * @returns {Promise<QuestionResponse | AnswerResponse>} - Promise that resolves to the
+ * @returns {Promise<QuestionResponse | AnswerResponse | TagResponse>} - Promise that resolves to the
  *          populated question or answer, or an error message if the operation fails
  */
 export const populateDocument = async (
   id: string | undefined,
-  type: 'question' | 'answer',
-): Promise<QuestionResponse | AnswerResponse> => {
+  type: 'question' | 'answer' | 'tag',
+): Promise<QuestionResponse | AnswerResponse | TagResponse> => {
   try {
     if (!id) {
       throw new Error('Provided question ID is undefined.');
@@ -293,7 +293,11 @@ export const populateDocument = async (
     let result = null;
     if (type === 'question') {
       result = await QuestionModel.findOne({ _id: id }).populate([
-        { path: 'tags', model: TagModel },
+        {
+          path: 'tags',
+          model: TagModel,
+          populate: { path: 'subscribers', model: UserModel },
+        },
         {
           path: 'answers',
           model: AnswerModel,
@@ -322,6 +326,10 @@ export const populateDocument = async (
           populate: { path: 'commentBy', model: UserModel },
         },
         { path: 'ansBy', model: UserModel },
+      ]);
+    } else if (type === 'tag') {
+      result = await TagModel.findOne({ _id: id }).populate([
+        { path: 'subscribers', model: UserModel },
       ]);
     }
     if (!result) {
@@ -758,33 +766,55 @@ export const addComment = async (
  * Toggles a subscriber for a question.
  *
  * @param id The ID of the question to toggle the subscriber for
+ * @param type The type of the document to toggle the subscriber for, either 'Question' or 'Tag'
  * @param user The user to toggle as a subscriber
  *
  * @returns A Promise that resolves to the updated question or an error message if the operation fails
  */
-export const toggleSubscribe = async (id: string, user: User): Promise<QuestionResponse> => {
-  try {
-    if (!user || !user.uid || !user.username || !user.email) {
-      throw new Error('Invalid user');
-    }
+export const toggleSubscribe = async (
+  id: string,
+  type: 'question' | 'tag',
+  user: User,
+): Promise<QuestionResponse | TagResponse> => {
+  if (!user || !user._id) {
+    throw new Error('Invalid user');
+  }
 
-    const result: QuestionResponse | null = await QuestionModel.findOneAndUpdate(
-      { _id: id },
-      [
-        {
-          $set: {
-            subscribers: {
-              $cond: [
-                { $in: [user.uid, '$subscribers'] },
-                { $filter: { input: '$subscribers', as: 's', cond: { $ne: ['$$s', user.uid] } } },
-                { $concatArrays: ['$subscribers', [user.uid]] },
-              ],
-            },
+  try {
+    const updateOp = [
+      {
+        $set: {
+          subscribers: {
+            $cond: [
+              { $in: [new mongoose.Types.ObjectId(user._id), '$subscribers'] },
+              {
+                $filter: {
+                  input: '$subscribers',
+                  as: 's',
+                  cond: { $ne: ['$$s', new mongoose.Types.ObjectId(user._id)] },
+                },
+              },
+              { $concatArrays: ['$subscribers', [new mongoose.Types.ObjectId(user._id)]] },
+            ],
           },
         },
-      ],
-      { new: true },
-    ).populate('subscribers');
+      },
+    ];
+
+    let result: QuestionResponse | TagResponse | null = null;
+
+    if (type === 'question') {
+      result = await QuestionModel.findOneAndUpdate({ _id: id }, updateOp, { new: true }).populate(
+        'subscribers',
+      );
+    } else if (type === 'tag') {
+      result = await TagModel.findOneAndUpdate({ _id: id }, updateOp, { new: true }).populate(
+        'subscribers',
+      );
+    } else {
+      throw new Error('Invalid type');
+    }
+
     if (result === null) {
       throw new Error('Failed to toggle subscriber');
     }
@@ -922,28 +952,5 @@ export const getTagCountMap = async (): Promise<Map<string, number> | null | { e
     return tmap;
   } catch (error) {
     return { error: 'Error when construction tag map' };
-  }
-};
-
-/**
- * Retrieves notifications from the data based intended for the user with the given UID.
- *
- * @param uid - The uid of the intended recipient of the notifications
- *
- * @returns {Promise<PostNotification[]>} - Promise that resolves to a list of notifications
- */
-export const fetchNotificationsByUid = async (
-  uid: string,
-): Promise<PostNotification[] | { error: string }> => {
-  try {
-    const user: User | null = await UserModel.findOne({ uid });
-
-    if (!user) {
-      throw new Error(`Could not find user with id: ${uid}`);
-    }
-
-    return user.postNotifications;
-  } catch (error) {
-    return { error: 'Error while fetching notifications' };
   }
 };

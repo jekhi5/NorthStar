@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Comment, Answer, Question, VoteData } from '../types';
+import { Comment, Answer, Question, VoteData, Tag } from '../types';
 import useUserContext from './useUserContext';
 import { addComment } from '../services/commentService';
 import { getQuestionById } from '../services/questionService';
@@ -227,11 +227,15 @@ const useAnswerPage = () => {
      *
      * @param result - The updated question object.
      */
-    const handleSubscriberUpdate = ({ result }: { result: Question }) => {
-      const questionResult = result;
-
-      if (questionResult._id === questionID) {
-        setQuestion(questionResult);
+    const handleSubscriberUpdate = ({
+      result,
+      type,
+    }: {
+      result: Question | Tag;
+      type: 'question' | 'tag';
+    }) => {
+      if (type === 'question' && result._id === questionID) {
+        setQuestion(result as Question);
       }
     };
 

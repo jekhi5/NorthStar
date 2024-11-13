@@ -90,11 +90,14 @@ export type AnswerResponse = Answer | { error: string };
  * Interface representing a Tag document, which contains:
  * - _id - The unique identifier for the tag. Optional field.
  * - name - Name of the tag
+ * - description - Description of the tag
+ * - subscribers - Object IDs of users that are subscribed to the tag, or users themselves if populated
  */
 export interface Tag {
   _id?: ObjectId;
   name: string;
   description: string;
+  subscribers: User[] | ObjectId[];
 }
 
 /**
@@ -225,21 +228,24 @@ export interface Message {
 /**
  * Interface extending the request body when adding a subscriber to a question, which contains:
  * - id - The unique identifier of the question.
+ * - type - The type being subscribed to, either 'Question' or 'Tag'.
  * - user - The user who is subscribing to the question.
  */
 export interface ToggleSubscriberRequest extends Request {
   body: {
     id: string;
+    type: 'question' | 'tag';
     user: User;
   };
 }
 
 /**
  * Interface representing the payload for a subscriber update event, which contains:
- * - result - The updated question or null if not found.
+ * - result - The updated question or tag, depending on the type, or null if not found.
  */
 export interface SubscriberUpdatePayload {
-  result: QuestionResponse | null;
+  result: QuestionResponse | TagResponse | null;
+  type: 'question' | 'tag';
 }
 
 /**
@@ -250,6 +256,7 @@ export interface SubscriberUpdatePayload {
 export interface ToggleSubscriberRequest extends Request {
   body: {
     id: string;
+    type: 'question' | 'tag';
     user: User;
   };
 }
@@ -264,7 +271,7 @@ export type SubscriberResponse = User | { error: string };
  * - result - The updated question or null if not found.
  */
 export interface SubscriberUpdatePayload {
-  result: QuestionResponse | null;
+  result: QuestionResponse | TagResponse | null;
 }
 
 /**
@@ -280,6 +287,11 @@ export interface AddCommentRequest extends Request {
     comment: Comment;
   };
 }
+
+/**
+ * Type representing the possible responses for a Tag-related operation.
+ */
+export type TagResponse = Tag | { error: string };
 
 /**
  * Type representing the possible responses for a Comment-related operation.

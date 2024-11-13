@@ -23,7 +23,7 @@ const useQuestionPage = () => {
   const [questionOrder, setQuestionOrder] = useState<OrderType>('newest');
   const [qlist, setQlist] = useState<Question[]>([]);
   const [questionID, setQuestionID] = useState<string>(qidParam || '');
-  const [question, setQuestion] = useState<Question | null>(null);
+  const [question] = useState<Question | null>(null);
 
   useEffect(() => {
     if (!qidParam) {
@@ -59,13 +59,17 @@ const useQuestionPage = () => {
    * @param user - The user object to be added.
    * @param id - The ID of the question being subscribed to.
    */
-  const handleToggleSubscriber = async (user: User, id: string | undefined) => {
+  const handleToggleSubscriber = async (
+    user: User,
+    type: 'question' | 'tag',
+    id: string | undefined,
+  ) => {
     try {
       if (id === undefined) {
         throw new Error('No ID provided.');
       }
 
-      await toggleSubscribe(id, user);
+      await toggleSubscribe(id, type, user);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error toggling subscriber:', error);

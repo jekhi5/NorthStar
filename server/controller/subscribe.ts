@@ -6,6 +6,7 @@ import {
   User,
   QuestionResponse,
   AnswerResponse,
+  TagResponse,
 } from '../types';
 import { populateDocument, toggleSubscribe } from '../models/application';
 
@@ -46,9 +47,22 @@ const subscribeController = (socket: FakeSOSocket) => {
    * @returns `true` if the document is a valid QuestionResponse, otherwise `false`.
    */
   function isQuestionResponse(
-    doc: QuestionResponse | AnswerResponse | null,
+    doc: QuestionResponse | AnswerResponse | TagResponse | null,
   ): doc is QuestionResponse {
     return doc === null || (doc && 'title' in doc && 'tags' in doc && 'askedBy' in doc);
+  }
+
+  /**
+   * Type guard to check if a document is a valid TagResponse.
+   *
+   * @param doc The document to check.
+   *
+   * @returns `true` if the document is a valid TagResponse, otherwise `false`.
+   */
+  function isTagResponse(
+    doc: QuestionResponse | AnswerResponse | TagResponse | null,
+  ): doc is TagResponse {
+    return doc === null || (doc && 'name' in doc && 'description' in doc);
   }
 
   /**
@@ -70,10 +84,17 @@ const subscribeController = (socket: FakeSOSocket) => {
       return;
     }
 
-    const id = req.body.id as string;
+    const { id } = req.body;
 
     if (!ObjectId.isValid(id)) {
       res.status(400).send('Invalid ID format');
+      return;
+    }
+
+    const { type } = req.body;
+
+    if (type !== 'question' && type !== 'tag') {
+      res.status(400).send('Invalid type');
       return;
     }
 
@@ -85,24 +106,25 @@ const subscribeController = (socket: FakeSOSocket) => {
     }
 
     try {
-      const status = await toggleSubscribe(id, user);
+      const status = await toggleSubscribe(id, type, user);
 
       if (status && 'error' in status) {
         throw new Error(status.error);
       }
 
-      // Populates the fields of the question that this subscriber
+      // Populates the fields of the question or tag that this subscriber
       // was added to, and emits the updated object
-      const populatedDoc = await populateDocument(id, 'question');
+      const populatedDoc = await populateDocument(id, type);
 
       if (populatedDoc && 'error' in populatedDoc) {
         throw new Error(populatedDoc.error);
       }
 
       // Type guard to ensure populatedDoc is of type QuestionResponse
-      if (populatedDoc && isQuestionResponse(populatedDoc)) {
+      if (populatedDoc && (isQuestionResponse(populatedDoc) || isTagResponse(populatedDoc))) {
         socket.emit('subscriberUpdate', {
           result: populatedDoc,
+          type,
         });
         res.json(populatedDoc);
       } else {

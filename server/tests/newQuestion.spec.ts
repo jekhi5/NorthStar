@@ -16,11 +16,13 @@ const tag1: Tag = {
   _id: new mongoose.Types.ObjectId('507f191e810c19729de860ea'),
   name: 'tag1',
   description: 'tag1 description',
+  subscribers: [],
 };
 const tag2: Tag = {
   _id: new mongoose.Types.ObjectId('65e9a5c2b26199dbcc3e6dc8'),
   name: 'tag2',
   description: 'tag2 description',
+  subscribers: [],
 };
 
 const mockQuestion: Question = {

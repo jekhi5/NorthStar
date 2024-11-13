@@ -1,26 +1,28 @@
 import './index.css';
 import useSubscribeStatus from '../../hooks/useSubscribeStatus';
 import toggleSubscribe from '../../services/subscriberService';
-import { Question } from '../../types';
+import { Question, Tag } from '../../types';
 import useUserContext from '../../hooks/useUserContext';
 
 /**
  * Interface represents the props for the VoteComponent.
  *
- * question - The question object containing voting information.
+ * item - The document object containing voting information.
+ * type - The type of the item (question or tag).
  */
 interface SubscribeComponentProps {
-  question: Question;
+  item: Question | Tag;
+  type: 'question' | 'tag';
 }
 
 /**
  * A Vote component that allows users to upvote or downvote a question.
  *
- * @param question - The question object containing voting information.
+ * @param item - The document object containing voting information.
  */
-const SubscribeComponent = ({ question }: SubscribeComponentProps) => {
+const SubscribeComponent = ({ item, type }: SubscribeComponentProps) => {
   const { user } = useUserContext();
-  const { subscribed } = useSubscribeStatus({ question });
+  const { subscribed } = useSubscribeStatus({ item });
 
   /**
    * Function to handle subscribing to or unsubscribing to a question
@@ -28,8 +30,8 @@ const SubscribeComponent = ({ question }: SubscribeComponentProps) => {
    */
   const handleToggleSubscribe = async () => {
     try {
-      if (question._id) {
-        await toggleSubscribe(question._id, user);
+      if (item._id) {
+        await toggleSubscribe(item._id, type, user);
       }
     } catch (error) {
       // Handle error
@@ -40,7 +42,10 @@ const SubscribeComponent = ({ question }: SubscribeComponentProps) => {
     <div className='subscribe-container'>
       <button
         className={`subscribe-button ${subscribed ? 'subscribe-button-subscribed' : ''}`}
-        onClick={handleToggleSubscribe}>
+        onClick={e => {
+          e.preventDefault();
+          handleToggleSubscribe();
+        }}>
         {subscribed ? 'Unsubscribe' : 'Subscribe'}
       </button>
     </div>
