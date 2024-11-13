@@ -1,4 +1,6 @@
+import { ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
+import { User } from '../../types';
 
 /**
  * Mongoose schema for the User collection.
@@ -48,8 +50,6 @@ const userSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'PostNotification',
-        // TODO: Consider starting a new user off with a "Welcome to the app" notification
-        default: [], // All users start out with no post notifications
         required: true,
       },
     ],

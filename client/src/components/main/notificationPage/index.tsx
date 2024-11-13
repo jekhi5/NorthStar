@@ -6,14 +6,18 @@ import useNotificationPage from '../../../hooks/useNotificationPage';
  * NotificationPage component allows users to view their individualized notifications.
  */
 const NotificationPage = () => {
-  const { notifications }: { notifications: PostNotification[] } = useNotificationPage();
+  const {
+    notifications,
+    error,
+  }: { notifications: PostNotification[] | null; error: string | null } = useNotificationPage();
 
   return (
     <div className='notifications-page'>
       <h2>Notifications</h2>
-      {notifications.length === 0 ? (
-        <h4>No notifications</h4>
-      ) : (
+      {error && <h4>{error}</h4>}
+      {!notifications && !error && <h4>Loading...</h4>}
+      {!error && notifications && notifications.length === 0 && <h4>No notifications</h4>}
+      {!error && notifications && notifications.length > 0 && (
         <ul>
           {notifications.map((notification, i) => (
             <li key={i} className='notification'>
