@@ -12,6 +12,7 @@ const ProfilePage = () => {
     handleChange,
     saveProfile,
     handleProfilePictureUpload,
+    calculateReputationPercentage,
   } = useProfilePage();
 
   if (error) {

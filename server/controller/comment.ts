@@ -1,7 +1,21 @@
 import express, { Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Comment, AddCommentRequest, FakeSOSocket, VoteRequest } from '../types';
-import { addComment, addVoteToComment, populateDocument, saveComment } from '../models/application';
+import {
+  Comment,
+  AddCommentRequest,
+  FakeSOSocket,
+  VoteRequest,
+  QuestionResponse,
+  AnswerResponse,
+  PostNotificationResponse,
+} from '../types';
+import {
+  addComment,
+  addVoteToComment,
+  populateDocument,
+  postNotifications,
+  saveComment,
+} from '../models/application';
 
 const commentController = (socket: FakeSOSocket) => {
   const router = express.Router();
@@ -82,10 +96,28 @@ const commentController = (socket: FakeSOSocket) => {
 
       // Populates the fields of the question or answer that this comment
       // was added to, and emits the updated object
-      const populatedDoc = await populateDocument(id, type);
+      const populatedDoc = (await populateDocument(id, type)) as QuestionResponse | AnswerResponse;
 
       if (populatedDoc && 'error' in populatedDoc) {
         throw new Error(populatedDoc.error);
+      }
+
+      if (type === 'question' && comFromDb._id) {
+        const { commentBy } = populatedDoc.comments.at(-1) as Comment;
+        if (commentBy._id) {
+          const newNotification: PostNotificationResponse = await postNotifications(
+            id,
+            comFromDb._id?.toString(),
+            'commentAdded',
+            commentBy,
+          );
+
+          if (newNotification && !('error' in newNotification)) {
+            socket.emit('postNotificationUpdate', {
+              notification: newNotification,
+            });
+          }
+        }
       }
 
       socket.emit('commentUpdate', {
@@ -101,7 +133,7 @@ const commentController = (socket: FakeSOSocket) => {
   /**
    * Helper function to handle upvoting or downvoting a comment.
    *
-   * @param req The VoteRequest object containing the comment ID and the username.
+   * @param req The VoteRequest object containing the comment ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    * @param type The type of vote to perform (upvote or downvote).
    *
@@ -145,10 +177,10 @@ const commentController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Handles upvoting a comment. The request must contain the comment ID and the username.
+   * Handles upvoting a comment. The request must contain the comment ID and the uid.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
-   * @param req The VoteRequest object containing the comment ID and the username.
+   * @param req The VoteRequest object containing the comment ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    *
    * @returns A Promise that resolves to void.
@@ -158,10 +190,10 @@ const commentController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Handles downvoting a comment. The request must contain the comment ID and the username.
+   * Handles downvoting a comment. The request must contain the comment ID and the uid.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
-   * @param req The VoteRequest object containing the comment ID and the username.
+   * @param req The VoteRequest object containing the comment ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    *
    * @returns A Promise that resolves to void.

@@ -1,10 +1,18 @@
 import express, { Response } from 'express';
-import { Answer, AnswerRequest, AnswerResponse, FakeSOSocket, VoteRequest } from '../types';
+import {
+  Answer,
+  AnswerRequest,
+  AnswerResponse,
+  FakeSOSocket,
+  PostNotificationResponse,
+  VoteRequest,
+} from '../types';
 import {
   addAnswerToQuestion,
   addVoteToAnswer,
   populateDocument,
   saveAnswer,
+  postNotifications,
 } from '../models/application';
 
 const answerController = (socket: FakeSOSocket) => {
@@ -74,6 +82,21 @@ const answerController = (socket: FakeSOSocket) => {
         throw new Error(populatedAns.error as string);
       }
 
+      if (populatedAns._id) {
+        const newNotification: PostNotificationResponse = await postNotifications(
+          qid,
+          populatedAns._id.toString(),
+          'questionAnswered',
+          ansInfo.ansBy,
+        );
+
+        if (newNotification && !('error' in newNotification)) {
+          socket.emit('postNotificationUpdate', {
+            notification: newNotification,
+          });
+        }
+      }
+
       // Populates the fields of the answer that was added and emits the new object
       socket.emit('answerUpdate', {
         qid,
@@ -132,10 +155,10 @@ const answerController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Handles upvoting an answer. The request must contain the answer ID and the username.
+   * Handles upvoting an answer. The request must contain the answer ID and the uid.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
-   * @param req The VoteRequest object containing the answer ID and the username.
+   * @param req The VoteRequest object containing the answer ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    *
    * @returns A Promise that resolves to void.
@@ -145,10 +168,10 @@ const answerController = (socket: FakeSOSocket) => {
   };
 
   /**
-   * Handles downvoting an answer. The request must contain the answer ID and the username.
+   * Handles downvoting an answer. The request must contain the answer ID and the uid.
    * If the request is invalid or an error occurs, the appropriate HTTP response status and message are returned.
    *
-   * @param req The VoteRequest object containing the answer ID and the username.
+   * @param req The VoteRequest object containing the answer ID and the uid.
    * @param res The HTTP response object used to send back the result of the operation.
    *
    * @returns A Promise that resolves to void.

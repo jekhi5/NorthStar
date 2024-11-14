@@ -12,6 +12,8 @@ const answer1User: User = {
   username: 'Answer1User',
   email: 'answer1User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
+  reputation: 0,
 };
 
 const answer2User: User = {
@@ -19,6 +21,8 @@ const answer2User: User = {
   username: 'Answer2User',
   email: 'answer2User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
+  reputation: 0,
 };
 
 const answer3User: User = {
@@ -26,6 +30,8 @@ const answer3User: User = {
   username: 'Answer3User',
   email: 'answer3User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
+  reputation: 0,
 };
 
 const answer4User: User = {
@@ -33,6 +39,8 @@ const answer4User: User = {
   username: 'Answer4User',
   email: 'answer4User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
+  reputation: 0,
 };
 
 const question1User: User = {
@@ -40,6 +48,8 @@ const question1User: User = {
   username: 'Question1User',
   email: 'question1User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
+  reputation: 0,
 };
 
 const question2User: User = {
@@ -47,6 +57,8 @@ const question2User: User = {
   username: 'Question2User',
   email: 'question2User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
+  reputation: 0,
 };
 
 const question3User: User = {
@@ -54,17 +66,21 @@ const question3User: User = {
   username: 'Question3User',
   email: 'question3User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
+  reputation: 0,
 };
 
 const tag1: Tag = {
   _id: new mongoose.Types.ObjectId('507f191e810c19729de860ea'),
   name: 'tag1',
   description: 'tag1 description',
+  subscribers: [],
 };
 const tag2: Tag = {
   _id: new mongoose.Types.ObjectId('65e9a5c2b26199dbcc3e6dc8'),
   name: 'tag2',
   description: 'tag2 description',
+  subscribers: [],
 };
 
 const ans1: Answer = {

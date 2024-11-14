@@ -1,14 +1,17 @@
 import { ObjectId } from 'mongodb';
-import { QueryOptions } from 'mongoose';
+import mongoose, { QueryOptions } from 'mongoose';
 import {
   Answer,
   AnswerResponse,
   Comment,
   CommentResponse,
   OrderType,
+  PostNotification,
+  PostNotificationResponse,
   Question,
   QuestionResponse,
   Tag,
+  TagResponse,
   User,
   UserResponse,
   Message,
@@ -19,6 +22,7 @@ import TagModel from './tags';
 import CommentModel from './comments';
 import UserModel from './user';
 import MessageModel from './messages';
+import PostNotificationModel from './postNotifications';
 
 /**
  * Parses tags from a search string.
@@ -172,6 +176,33 @@ const sortQuestionsByMostViews = (qlist: Question[]): Question[] =>
   sortQuestionsByNewest(qlist).sort((a, b) => b.views.length - a.views.length);
 
 /**
+ * Updates the reputation of a user.
+ *
+ * @param uid The uid of the user to update
+ * @param reputationChange the amount to change the reputation by
+ * @returns a Promise that resolves to the updated user or an error message if the operation fails
+ */
+export const updateUserReputation = async (
+  uid: string,
+  reputationChange: number,
+): Promise<UserResponse> => {
+  try {
+    const user = await UserModel.findOneAndUpdate(
+      { uid },
+      { $inc: { reputation: reputationChange } },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  } catch (error) {
+    return { error: `Error updating user reputation` };
+  }
+};
+
+/**
  * Adds a tag to the database if it does not already exist.
  *
  * @param {Tag} tag - The tag to add
@@ -210,12 +241,15 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
     if (order === 'active') {
       qlist = await QuestionModel.find().populate([
         { path: 'tags', model: TagModel },
-        { path: 'answers', model: AnswerModel },
+        { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
         { path: 'askedBy', model: UserModel },
       ]);
       return sortQuestionsByActive(qlist);
     }
-    qlist = await QuestionModel.find().populate([{ path: 'tags', model: TagModel }]);
+    qlist = await QuestionModel.find().populate([
+      { path: 'tags', model: TagModel },
+      { path: 'askedBy', model: UserModel },
+    ]);
     if (order === 'unanswered') {
       return sortQuestionsByUnanswered(qlist);
     }
@@ -272,43 +306,66 @@ export const filterQuestionsBySearch = (qlist: Question[], search: string): Ques
 };
 
 /**
- * Fetches and populates a question or answer document based on the provided ID and type.
+ * Fetches and populates a question, answer, or tag document based on the provided ID and type.
  *
- * @param {string | undefined} id - The ID of the question or answer to fetch.
- * @param {'question' | 'answer'} type - Specifies whether to fetch a question or an answer.
+ * @param {string | undefined} id - The ID of the question, answer, or tag to fetch.
+ * @param {'question' | 'answer' | 'tag'} type - Specifies whether to fetch a question, an answer, or a tag.
  *
- * @returns {Promise<QuestionResponse | AnswerResponse>} - Promise that resolves to the
- *          populated question or answer, or an error message if the operation fails
+ * @returns {Promise<QuestionResponse | AnswerResponse | TagResponse>} - Promise that resolves to the
+ *          populated question, answer, or tag, or an error message if the operation fails
  */
 export const populateDocument = async (
   id: string | undefined,
-  type: 'question' | 'answer',
-): Promise<QuestionResponse | AnswerResponse> => {
+  type: 'question' | 'answer' | 'tag' | 'user',
+): Promise<QuestionResponse | AnswerResponse | TagResponse | UserResponse> => {
   try {
     if (!id) {
       throw new Error('Provided question ID is undefined.');
     }
-
     let result = null;
-
     if (type === 'question') {
       result = await QuestionModel.findOne({ _id: id }).populate([
         {
           path: 'tags',
           model: TagModel,
+          populate: { path: 'subscribers', model: UserModel },
         },
         {
           path: 'answers',
           model: AnswerModel,
-          populate: { path: 'comments', model: CommentModel },
+          populate: [
+            { path: 'ansBy', model: UserModel },
+            {
+              path: 'comments',
+              model: CommentModel,
+              populate: { path: 'commentBy', model: UserModel },
+            },
+          ],
         },
-        { path: 'comments', model: CommentModel },
+        {
+          path: 'comments',
+          model: CommentModel,
+          populate: { path: 'commentBy', model: UserModel },
+        },
         { path: 'askedBy', model: UserModel },
+        { path: 'subscribers', model: UserModel },
       ]);
     } else if (type === 'answer') {
       result = await AnswerModel.findOne({ _id: id }).populate([
-        { path: 'comments', model: CommentModel },
+        {
+          path: 'comments',
+          model: CommentModel,
+          populate: { path: 'commentBy', model: UserModel },
+        },
         { path: 'ansBy', model: UserModel },
+      ]);
+    } else if (type === 'tag') {
+      result = await TagModel.findOne({ _id: id }).populate([
+        { path: 'subscribers', model: UserModel },
+      ]);
+    } else if (type === 'user') {
+      result = await UserModel.findOne({ _id: id }).populate([
+        { path: 'postNotifications', model: PostNotificationModel },
       ]);
     }
     if (!result) {
@@ -339,17 +396,26 @@ export const fetchAndIncrementQuestionViewsById = async (
       { $addToSet: { views: uid } },
       { new: true },
     ).populate([
-      {
-        path: 'tags',
-        model: TagModel,
-      },
+      { path: 'tags', model: TagModel },
       {
         path: 'answers',
         model: AnswerModel,
-        populate: { path: 'comments', model: CommentModel },
+        populate: [
+          { path: 'ansBy', model: UserModel },
+          {
+            path: 'comments',
+            model: CommentModel,
+            populate: { path: 'commentBy', model: UserModel },
+          },
+        ],
       },
-      { path: 'comments', model: CommentModel },
+      {
+        path: 'comments',
+        model: CommentModel,
+        populate: { path: 'commentBy', model: UserModel },
+      },
       { path: 'askedBy', model: UserModel },
+      { path: 'subscribers', model: UserModel },
     ]);
     return q;
   } catch (error) {
@@ -383,9 +449,124 @@ export const saveQuestion = async (question: Question): Promise<QuestionResponse
 export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
   try {
     const result = await AnswerModel.create(answer);
+
+    // Every answer is worth 2 reputation points
+    await updateUserReputation(answer.ansBy.uid, 2);
+
     return result;
   } catch (error) {
     return { error: 'Error when saving an answer' };
+  }
+};
+
+/**
+ * Saves a new postNotification to the database.
+ *
+ * @param {PostNotification} postNotification - the notification to save
+ *
+ * @returns {Promise<PostNotificationResponse>} - the saved postNotification, or an error message if the save failed
+ */
+export const savePostNotification = async (
+  postNotification: PostNotification,
+): Promise<PostNotificationResponse> => {
+  try {
+    const result = await PostNotificationModel.create(postNotification);
+    return result;
+  } catch (error) {
+    return { error: 'Error when saving a postNotification' };
+  }
+};
+
+/**
+ * Populate notiications to all the subscribers to the question with the given ID.
+ * @param qid the qid of the question with action taken on it.
+ * @param associatedPostId the post id of the post that the action was taken on (like the ID of the answer or comment posted).
+ * @param type the kinda of notification, either 'questionAnswered', 'commentAdded', or 'questionPostedWithTag'.
+ * @param user the user who took the action.
+ * @returns a Promise that resolves to the postNotification that was posted, or an error message if the operation fails.
+ */
+export const postNotifications = async (
+  qid: string,
+  associatedPostId: string,
+  type: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag',
+  user: User,
+): Promise<PostNotificationResponse> => {
+  try {
+    const question: Question | null = await QuestionModel.findOne({ _id: qid }).populate({
+      path: 'askedBy',
+      model: UserModel,
+    });
+    if (!question || question._id === undefined) {
+      throw new Error('Could not find question that had action taken');
+    }
+
+    const notificationToPost: PostNotification = {
+      title: '',
+      text: '',
+      notificationType: 'questionAnswered',
+      postId: new ObjectId(),
+      fromUser: user,
+    };
+
+    if (type === 'questionAnswered') {
+      const answer: Answer | null = await AnswerModel.findOne({ _id: associatedPostId }).populate({
+        path: 'ansBy',
+        model: UserModel,
+      });
+
+      if (!answer || answer._id === undefined) {
+        throw new Error('Could not find answer that was posted');
+      }
+
+      notificationToPost.title = `Your question: "${question.title}" has a new answer!`;
+      notificationToPost.text = `${answer.ansBy.username} said: "${answer.text}"`;
+      notificationToPost.notificationType = 'questionAnswered';
+      notificationToPost.postId = answer._id;
+    } else if (type === 'commentAdded') {
+      const comment: Comment | null = await CommentModel.findOne({
+        _id: associatedPostId,
+      }).populate({ path: 'commentBy', model: UserModel });
+
+      if (!comment || comment._id === undefined) {
+        throw new Error('Could not find comment that was posted');
+      }
+
+      notificationToPost.title = 'A Comment Was Added to a Post You Subscribe to!';
+      notificationToPost.text = `${user.username} said: "${comment.text}"`;
+      notificationToPost.notificationType = 'commentAdded';
+      notificationToPost.postId = comment._id;
+    } else if (type === 'questionPostedWithTag') {
+      notificationToPost.title = 'A Question Was Posted With a Tag You Subscribe to!';
+      notificationToPost.text = `The question: "${question.title}" was asked by ${user.username}`;
+      notificationToPost.notificationType = 'questionPostedWithTag';
+      notificationToPost.postId = question._id;
+    } else {
+      throw new Error('Invalid notification type');
+    }
+
+    const postedNotification = await savePostNotification(notificationToPost);
+
+    if (!postedNotification || 'error' in postedNotification) {
+      throw new Error('Error when saving a postNotification');
+    }
+
+    question.subscribers.map(async subscriberId => {
+      // Don't sent notifications to users about their own actions
+      if (user._id?.toString() !== subscriberId.toString()) {
+        await UserModel.findOneAndUpdate(
+          { _id: subscriberId },
+          { $push: { postNotifications: postedNotification } },
+          { new: true },
+        );
+      }
+    });
+
+    return postedNotification;
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: `Error when posting notification: ${error.message}` };
+    }
+    return { error: 'Error when posting notification' };
   }
 };
 
@@ -399,6 +580,10 @@ export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
 export const saveComment = async (comment: Comment): Promise<CommentResponse> => {
   try {
     const result = await CommentModel.create(comment);
+
+    // All comments are worth 1 reputation point
+    await updateUserReputation(comment.commentBy.uid, 1);
+
     return result;
   } catch (error) {
     return { error: 'Error when saving a comment' };
@@ -837,31 +1022,55 @@ export const addComment = async (
  * Toggles a subscriber for a question.
  *
  * @param id The ID of the question to toggle the subscriber for
+ * @param type The type of the document to toggle the subscriber for, either 'Question' or 'Tag'
  * @param user The user to toggle as a subscriber
  *
  * @returns A Promise that resolves to the updated question or an error message if the operation fails
  */
-export const toggleSubscribe = async (id: string, user: User): Promise<QuestionResponse> => {
-  try {
-    if (!user || !user.uid || !user.username || !user.email) {
-      throw new Error('Invalid user');
-    }
+export const toggleSubscribe = async (
+  id: string,
+  type: 'question' | 'tag',
+  user: User,
+): Promise<QuestionResponse | TagResponse> => {
+  if (!user || !user._id) {
+    throw new Error('Invalid user');
+  }
 
-    const result: QuestionResponse | null = await QuestionModel.findOneAndUpdate(
-      { _id: id },
+  try {
+    const updateOp = [
       {
         $set: {
           subscribers: {
             $cond: [
-              { $in: [user.uid, '$subscribers'] },
-              { $filter: { input: '$subscribers', as: 's', cond: { $ne: ['$$s', user.uid] } } },
-              { $concatArrays: ['$subscribers', [user.uid]] },
+              { $in: [new mongoose.Types.ObjectId(user._id), '$subscribers'] },
+              {
+                $filter: {
+                  input: '$subscribers',
+                  as: 's',
+                  cond: { $ne: ['$$s', new mongoose.Types.ObjectId(user._id)] },
+                },
+              },
+              { $concatArrays: ['$subscribers', [new mongoose.Types.ObjectId(user._id)]] },
             ],
           },
         },
       },
-      { new: true },
-    );
+    ];
+
+    let result: QuestionResponse | TagResponse | null = null;
+
+    if (type === 'question') {
+      result = await QuestionModel.findOneAndUpdate({ _id: id }, updateOp, { new: true }).populate(
+        'subscribers',
+      );
+    } else if (type === 'tag') {
+      result = await TagModel.findOneAndUpdate({ _id: id }, updateOp, { new: true }).populate(
+        'subscribers',
+      );
+    } else {
+      throw new Error('Invalid type');
+    }
+
     if (result === null) {
       throw new Error('Failed to toggle subscriber');
     }

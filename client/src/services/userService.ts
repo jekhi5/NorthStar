@@ -18,22 +18,26 @@ const addUser = async (user: User): Promise<User> => {
 };
 
 /**
- * Checks if a username is available.
+ * Checks if a username and email is available.
  *
  * @param username - The username to check for availability.
- * @returns A boolean indicating whether the username is available (true) or taken (false).
- * @throws Error if there's an issue checking username availability.
+ * @param email - The email to check for availability.
+ * @returns An object containing a boolean indicating whether the username and email are both available (true) or taken (false) and the associated message to display to the user.
+ * @throws Error if there's an issue checking username or email availability.
  */
-const checkUsernameAvailability = async (username: string): Promise<boolean> => {
+const checkValidUser = async (
+  username: string,
+  email: string,
+): Promise<{ available: boolean; message: string }> => {
   const res = await api.get(
-    `${USER_API_URL}/checkUsernameAvailability/${encodeURIComponent(username)}`,
+    `${USER_API_URL}/checkValidUser/${encodeURIComponent(username)}/${encodeURIComponent(email)}`,
   );
   if (res.status === 500) {
-    throw new Error('Error while checking username availability');
+    throw new Error('Error while checking username and email availability');
   }
 
   // If we get here, it means the request was successful
-  return res.data.available;
+  return res.data;
 };
 
 /**
@@ -70,4 +74,4 @@ const updateUser = async (user: User): Promise<User> => {
   return res.data;
 };
 
-export { addUser, checkUsernameAvailability, getUserByUid, updateUser };
+export { addUser, checkValidUser, getUserByUid, updateUser };

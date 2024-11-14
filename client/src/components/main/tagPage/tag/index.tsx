@@ -2,6 +2,7 @@ import React from 'react';
 import './index.css';
 import { TagData } from '../../../../types';
 import useTagSelected from '../../../../hooks/useTagSelected';
+import SubscribeComponent from '../../../subscribeQuestion';
 
 /**
  * Props for the Tag component.
@@ -26,14 +27,16 @@ const TagView = ({ t, clickTag }: TagProps) => {
   const { tag } = useTagSelected(t);
 
   return (
-    <div
-      className='tagNode'
-      onClick={() => {
-        clickTag(t.name);
-      }}>
-      <div className='tagName'>{tag.name}</div>
-      <div className='tagDescription'>{tag.description}</div>
-      <div>{t.qcnt} questions</div>
+    <div className='tagNode'>
+      <SubscribeComponent item={tag} type={'tag'} />
+      <div
+        onClick={() => {
+          clickTag(t.name);
+        }}>
+        <div className='tagName'>{tag.name}</div>
+        <div className='tagDescription'>{tag.description}</div>
+        <div>{t.qcnt} questions</div>
+      </div>
     </div>
   );
 };

@@ -1,9 +1,8 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useUserContext from './useUserContext';
-import { Answer, OrderType, Question, User } from '../types';
+import { Answer, OrderType, Question } from '../types';
 import { getQuestionsByFilter } from '../services/questionService';
-import toggleSubscribe from '../services/subscriberService';
 
 /**
  * Custom hook for managing the question page state, filtering, and real-time updates.
@@ -23,7 +22,6 @@ const useQuestionPage = () => {
   const [questionOrder, setQuestionOrder] = useState<OrderType>('newest');
   const [qlist, setQlist] = useState<Question[]>([]);
   const [questionID, setQuestionID] = useState<string>(qidParam || '');
-  const [question, setQuestion] = useState<Question | null>(null);
 
   useEffect(() => {
     if (!qidParam) {
@@ -52,25 +50,6 @@ const useQuestionPage = () => {
     setTitleText(pageTitle);
     setSearch(searchString);
   }, [searchParams]);
-
-  /**
-   * Function to handle the toggling of a user as a subscriber to a question.
-   *
-   * @param user - The user object to be added.
-   * @param id - The ID of the question being subscribed to.
-   */
-  const handleToggleSubscriber = async (user: User, id: string | undefined) => {
-    try {
-      if (id === undefined) {
-        throw new Error('No ID provided.');
-      }
-
-      await toggleSubscribe(id, user);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error toggling subscriber:', error);
-    }
-  };
 
   useEffect(() => {
     /**
@@ -125,35 +104,20 @@ const useQuestionPage = () => {
       setQlist(prevQlist => prevQlist.map(q => (q._id === questionObj._id ? questionObj : q)));
     };
 
-    /**
-     * Function to handle updates to the subscribers of a question.
-     *
-     * @param result - The updated question object.
-     */
-    const handleSubscriberUpdate = ({ result }: { result: Question }) => {
-      const questionResult = result as Question;
-
-      if (questionResult._id === questionID) {
-        setQuestion(questionResult);
-      }
-    };
-
     fetchData();
 
     socket.on('questionUpdate', handleQuestionUpdate);
     socket.on('answerUpdate', handleAnswerUpdate);
     socket.on('viewsUpdate', handleViewsUpdate);
-    socket.on('subscriberUpdate', handleSubscriberUpdate);
 
     return () => {
       socket.off('questionUpdate', handleQuestionUpdate);
       socket.off('answerUpdate', handleAnswerUpdate);
       socket.off('viewsUpdate', handleViewsUpdate);
-      socket.off('subscriberUpdate', handleSubscriberUpdate);
     };
   }, [questionID, questionOrder, search, socket]);
 
-  return { titleText, qlist, setQuestionOrder, handleToggleSubscriber, question, questionID };
+  return { titleText, qlist, setQuestionOrder };
 };
 
 export default useQuestionPage;
