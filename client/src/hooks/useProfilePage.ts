@@ -72,6 +72,9 @@ const useProfilePage = () => {
     }
   };
 
+  // THIS CURRENTLY DOES NOT WORK!!! NEED TO CHANGE THE WAY FILES ARE STORED IN FIREBASE
+  // BUT I PROMISE IT WON'T MESS ANYTHING ELSE UP
+  // Could also just change it back to using URLs for pictures which is what I had before
   const handleProfilePictureUpload = async (file: File) => {
     const auth = getAuth();
     const user = auth.currentUser;
