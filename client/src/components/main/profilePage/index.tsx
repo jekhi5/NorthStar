@@ -77,7 +77,9 @@ const ProfilePage = () => {
             </h2>
             <p className='profile-username'>Username: {profile.username}</p>
             <p className='profile-email'>Email: {profile.email}</p>
-            <p className='profile-status'>Status: {profile.status}</p>
+            <p className='profile-status'>
+              Progress towards Endorsed: {calculateReputationPercentage(profile.reputation)}%
+            </p>{' '}
             <button onClick={toggleEditing}>Edit Profile</button>
           </div>
         )}

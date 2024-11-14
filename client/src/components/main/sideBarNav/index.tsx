@@ -28,16 +28,16 @@ const SideBarNav = () => (
       Profile
     </NavLink>
     <NavLink
-      to='/chatroom'
-      id='menu_chatroom'
-      className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-      Chatroom
-    </NavLink>
-    <NavLink
       to='/notifications'
       id='menu_notifications'
       className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
       Notifications
+    </NavLink>
+    <NavLink
+      to='/chatroom'
+      id='menu_chatroom'
+      className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
+      Chatroom
     </NavLink>
   </div>
 );

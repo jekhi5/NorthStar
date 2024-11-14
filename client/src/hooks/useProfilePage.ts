@@ -122,7 +122,6 @@ const useProfilePage = () => {
     handleProfilePictureUpload,
     calculateReputationPercentage,
   };
-
 };
 
 export default useProfilePage;

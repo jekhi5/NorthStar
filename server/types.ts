@@ -375,8 +375,8 @@ export interface ServerToClientEvents {
   voteUpdate: (vote: VoteUpdatePayload) => void;
   commentUpdate: (comment: CommentUpdatePayload) => void;
   subscriberUpdate: (payload: SubscriberUpdatePayload) => void;
-  postNotificationUpdate: (payload: PostNotificationUpdatePayload) => void;
   newMessage: (message: Message) => void;
   messageUpdate: (updatedMessage: Message) => void;
   messageDelete: (messageId: string) => void;
+  postNotificationUpdate: (payload: PostNotificationUpdatePayload) => void;
 }

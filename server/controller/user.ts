@@ -1,9 +1,7 @@
 import express, { Request, Response } from 'express';
 import UserModel from '../models/user';
-import { User } from '../types';
 import { editUser, saveUser } from '../models/application';
 import { PostNotification, User } from '../types';
-import { saveUser } from '../models/application';
 import PostNotificationModel from '../models/postNotifications';
 
 const userController = () => {
