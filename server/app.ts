@@ -77,8 +77,7 @@ app.use('/comment', commentController(socket));
 app.use('/user', userController());
 app.use('/subscribe', subscribeController(socket));
 app.use('/chat', messageController(socket));
-
-// app.use('/postNotification', notificationController());
+app.use('/postNotification', notificationController());
 
 // Export the app instance
 export { app, server, startServer };
