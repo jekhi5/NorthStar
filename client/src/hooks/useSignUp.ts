@@ -86,9 +86,9 @@ const useSignUp = () => {
 
     try {
       // Check if username and email is available
-      const isValidUser = await checkValidUser(formData.username, formData.email);
-      if (!isValidUser.available) {
-        setError(isValidUser.message);
+      const isUserValid = await checkValidUser(formData.username, formData.email);
+      if (!isUserValid.available) {
+        setError(isUserValid.message);
         return;
       }
 
@@ -132,7 +132,6 @@ const useSignUp = () => {
       } else {
         setError('An unexpected error occurred');
       }
-    }
     }
   };
 

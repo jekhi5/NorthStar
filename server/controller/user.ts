@@ -125,7 +125,7 @@ const userController = () => {
   };
 
   router.get('/getUserByUid/:uid', getUserByUid);
-  router.get('/isUserValid/:username/:email', checkValidUser);
+  router.get('/checkValidUser/:username/:email', checkValidUser);
   router.post('/addUser', addUser);
 
   return router;
