@@ -66,6 +66,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
  *
  * @param name The name of the tag.
  * @param description The description of the tag
+ * @param subscribers The users who have subscribed to the tag.
  * @returns A Promise that resolves to the created Tag document.
  * @throws An error if the name is empty.
  */
@@ -201,8 +202,8 @@ async function questionCreate(
     downVotes: [],
     comments: comments,
     subscribers: subscribersFromTags.includes(askedBy)
-      ? subscribersFromTags
-      : [askedBy, ...subscribersFromTags],
+      ? [...subscribers, ...subscribersFromTags]
+      : [...subscribers, askedBy, ...subscribersFromTags],
   };
   return await QuestionModel.create(questionDetail);
 }

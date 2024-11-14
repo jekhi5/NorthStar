@@ -274,13 +274,13 @@ export const filterQuestionsBySearch = (qlist: Question[], search: string): Ques
 };
 
 /**
- * Fetches and populates a question or answer document based on the provided ID and type.
+ * Fetches and populates a question, answer, or tag document based on the provided ID and type.
  *
  * @param {string | undefined} id - The ID of the question, answer, or tag to fetch.
  * @param {'question' | 'answer' | 'tag'} type - Specifies whether to fetch a question, an answer, or a tag.
  *
  * @returns {Promise<QuestionResponse | AnswerResponse | TagResponse>} - Promise that resolves to the
- *          populated question or answer, or an error message if the operation fails
+ *          populated question, answer, or tag, or an error message if the operation fails
  */
 export const populateDocument = async (
   id: string | undefined,

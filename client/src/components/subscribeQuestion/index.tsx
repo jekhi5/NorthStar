@@ -5,9 +5,9 @@ import { Question, Tag } from '../../types';
 import useUserContext from '../../hooks/useUserContext';
 
 /**
- * Interface represents the props for the VoteComponent.
+ * Interface represents the props for the SubscribeComponent.
  *
- * postObj - The question object containing voting information.
+ * postObj - The item being subscribed to.
  */
 interface SubscribeComponentProps {
   item: Question | Tag;
@@ -15,7 +15,7 @@ interface SubscribeComponentProps {
 }
 
 /**
- * A Vote component that allows users to upvote or downvote a question.
+ * A subscribe component that allows users to subscribe or unsubscribe to a question or tag.
  *
  * @param item - The document object containing voting information.
  */
