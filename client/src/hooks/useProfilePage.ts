@@ -16,6 +16,7 @@ import UserContext from '../contexts/UserContext';
  * @returns toggleEditing - Function to toggle edit mode.
  * @returns handleChange - Function to handle field changes.
  * @returns saveProfile - Function to save edited profile.
+ * @returns handleProfilePictureUpload - Function to upload profile picture.
  */
 const useProfilePage = () => {
   const [profile, setProfile] = useState<User | null>(null);
