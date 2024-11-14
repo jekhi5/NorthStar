@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express';
 import UserModel from '../models/user';
-import { User } from '../types';
+import { PostNotification, User } from '../types';
 import { saveUser } from '../models/application';
+import PostNotificationModel from '../models/postNotifications';
 
 const userController = () => {
   const router = express.Router();
@@ -23,7 +24,13 @@ const userController = () => {
     const { uid } = req.params;
 
     try {
-      const user = await UserModel.findOne({ uid });
+      const user = await UserModel.findOne({ uid }).populate([
+        {
+          path: 'postNotifications',
+          model: PostNotificationModel,
+          populate: { path: 'fromUser', model: UserModel },
+        },
+      ]);
 
       if (!user) {
         res.status(404).json({ message: 'User not found' });
@@ -89,6 +96,16 @@ const userController = () => {
     }
 
     try {
+      const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
+        title: 'Welcome to Fake Stack Overflow!',
+        text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+        notificationType: 'questionPostedWithTag',
+      });
+
+      if (welcomeNotification) {
+        user.postNotifications = [welcomeNotification];
+      }
+
       const result = await saveUser(user);
       if ('error' in result) {
         throw new Error(result.error);

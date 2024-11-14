@@ -12,6 +12,7 @@ const answer1User: User = {
   username: 'Answer1User',
   email: 'answer1User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
   reputation: 0,
 };
 
@@ -20,6 +21,7 @@ const answer2User: User = {
   username: 'Answer2User',
   email: 'answer2User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
   reputation: 0,
 };
 
@@ -28,6 +30,7 @@ const answer3User: User = {
   username: 'Answer3User',
   email: 'answer3User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
   reputation: 0,
 };
 
@@ -36,6 +39,7 @@ const answer4User: User = {
   username: 'Answer4User',
   email: 'answer4User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
   reputation: 0,
 };
 
@@ -44,6 +48,7 @@ const question1User: User = {
   username: 'Question1User',
   email: 'question1User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
   reputation: 0,
 };
 
@@ -52,6 +57,7 @@ const question2User: User = {
   username: 'Question2User',
   email: 'question2User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
   reputation: 0,
 };
 
@@ -60,6 +66,7 @@ const question3User: User = {
   username: 'Question3User',
   email: 'question3User@email.com',
   status: 'Not endorsed',
+  postNotifications: [],
   reputation: 0,
 };
 

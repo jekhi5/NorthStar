@@ -16,6 +16,7 @@ import commentController from './controller/comment';
 import { FakeSOSocket } from './types';
 import userController from './controller/user';
 import subscribeController from './controller/subscribe';
+import notificationController from './controller/postNotification';
 
 dotenv.config();
 
@@ -74,6 +75,7 @@ app.use('/answer', answerController(socket));
 app.use('/comment', commentController(socket));
 app.use('/user', userController());
 app.use('/subscribe', subscribeController(socket));
+// app.use('/postNotification', notificationController());
 
 // Export the app instance
 export { app, server, startServer };

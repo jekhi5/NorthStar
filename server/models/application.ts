@@ -6,6 +6,8 @@ import {
   Comment,
   CommentResponse,
   OrderType,
+  PostNotification,
+  PostNotificationResponse,
   Question,
   QuestionResponse,
   Tag,
@@ -18,6 +20,7 @@ import QuestionModel from './questions';
 import TagModel from './tags';
 import CommentModel from './comments';
 import UserModel from './user';
+import PostNotificationModel from './postNotifications';
 
 /**
  * Parses tags from a search string.
@@ -311,8 +314,8 @@ export const filterQuestionsBySearch = (qlist: Question[], search: string): Ques
  */
 export const populateDocument = async (
   id: string | undefined,
-  type: 'question' | 'answer' | 'tag',
-): Promise<QuestionResponse | AnswerResponse | TagResponse> => {
+  type: 'question' | 'answer' | 'tag' | 'user',
+): Promise<QuestionResponse | AnswerResponse | TagResponse | UserResponse> => {
   try {
     if (!id) {
       throw new Error('Provided question ID is undefined.');
@@ -357,6 +360,10 @@ export const populateDocument = async (
     } else if (type === 'tag') {
       result = await TagModel.findOne({ _id: id }).populate([
         { path: 'subscribers', model: UserModel },
+      ]);
+    } else if (type === 'user') {
+      result = await UserModel.findOne({ _id: id }).populate([
+        { path: 'postNotifications', model: PostNotificationModel },
       ]);
     }
     if (!result) {
@@ -447,6 +454,117 @@ export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
     return result;
   } catch (error) {
     return { error: 'Error when saving an answer' };
+  }
+};
+
+/**
+ * Saves a new postNotification to the database.
+ *
+ * @param {PostNotification} postNotification - the notification to save
+ *
+ * @returns {Promise<PostNotificationResponse>} - the saved postNotification, or an error message if the save failed
+ */
+export const savePostNotification = async (
+  postNotification: PostNotification,
+): Promise<PostNotificationResponse> => {
+  try {
+    const result = await PostNotificationModel.create(postNotification);
+    return result;
+  } catch (error) {
+    return { error: 'Error when saving a postNotification' };
+  }
+};
+
+/**
+ * Populate notiications to all the subscribers to the question with the given ID.
+ * @param qid the qid of the question with action taken on it.
+ * @param associatedPostId the post id of the post that the action was taken on (like the ID of the answer or comment posted).
+ * @param type the kinda of notification, either 'questionAnswered', 'commentAdded', or 'questionPostedWithTag'.
+ * @param user the user who took the action.
+ * @returns a Promise that resolves to the postNotification that was posted, or an error message if the operation fails.
+ */
+export const postNotifications = async (
+  qid: string,
+  associatedPostId: string,
+  type: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag',
+  user: User,
+): Promise<PostNotificationResponse> => {
+  try {
+    const question: Question | null = await QuestionModel.findOne({ _id: qid }).populate({
+      path: 'askedBy',
+      model: UserModel,
+    });
+    if (!question || question._id === undefined) {
+      throw new Error('Could not find question that had action taken');
+    }
+
+    const notificationToPost: PostNotification = {
+      title: '',
+      text: '',
+      notificationType: 'questionAnswered',
+      postId: new ObjectId(),
+      fromUser: user,
+    };
+
+    if (type === 'questionAnswered') {
+      const answer: Answer | null = await AnswerModel.findOne({ _id: associatedPostId }).populate({
+        path: 'ansBy',
+        model: UserModel,
+      });
+
+      if (!answer || answer._id === undefined) {
+        throw new Error('Could not find answer that was posted');
+      }
+
+      notificationToPost.title = `Your question: "${question.title}" has a new answer!`;
+      notificationToPost.text = `${answer.ansBy.username} said: "${answer.text}"`;
+      notificationToPost.notificationType = 'questionAnswered';
+      notificationToPost.postId = answer._id;
+    } else if (type === 'commentAdded') {
+      const comment: Comment | null = await CommentModel.findOne({
+        _id: associatedPostId,
+      }).populate({ path: 'commentBy', model: UserModel });
+
+      if (!comment || comment._id === undefined) {
+        throw new Error('Could not find comment that was posted');
+      }
+
+      notificationToPost.title = 'A Comment Was Added to a Post You Subscribe to!';
+      notificationToPost.text = `${user.username} said: "${comment.text}"`;
+      notificationToPost.notificationType = 'commentAdded';
+      notificationToPost.postId = comment._id;
+    } else if (type === 'questionPostedWithTag') {
+      notificationToPost.title = 'A Question Was Posted With a Tag You Subscribe to!';
+      notificationToPost.text = `The question: "${question.title}" was asked by ${user.username}`;
+      notificationToPost.notificationType = 'questionPostedWithTag';
+      notificationToPost.postId = question._id;
+    } else {
+      throw new Error('Invalid notification type');
+    }
+
+    const postedNotification = await savePostNotification(notificationToPost);
+
+    if (!postedNotification || 'error' in postedNotification) {
+      throw new Error('Error when saving a postNotification');
+    }
+
+    question.subscribers.map(async subscriberId => {
+      // Don't sent notifications to users about their own actions
+      if (user._id?.toString() !== subscriberId.toString()) {
+        await UserModel.findOneAndUpdate(
+          { _id: subscriberId },
+          { $push: { postNotifications: postedNotification } },
+          { new: true },
+        );
+      }
+    });
+
+    return postedNotification;
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: `Error when posting notification: ${error.message}` };
+    }
+    return { error: 'Error when posting notification' };
   }
 };
 

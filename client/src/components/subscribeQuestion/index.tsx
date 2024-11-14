@@ -7,7 +7,8 @@ import useUserContext from '../../hooks/useUserContext';
 /**
  * Interface represents the props for the SubscribeComponent.
  *
- * postObj - The item being subscribed to.
+ * item - The document object being subscribed to information.
+ * type - The type of the item (question or tag).
  */
 interface SubscribeComponentProps {
   item: Question | Tag;

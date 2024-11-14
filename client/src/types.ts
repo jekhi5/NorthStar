@@ -3,6 +3,24 @@ import { Socket } from 'socket.io-client';
 export type FakeSOSocket = Socket<ServerToClientEvents>;
 
 /**
+ * Interface representing a notification in the application, which contains:
+ * - _id - The unique identifier for the PostNotification. Optional field.
+ * - title - The title of the PostNotification.
+ * - text - The content of the PostNotification.
+ * - postType - The type of the post that the PostNotification is about.
+ * - postId - The unique identifier of the post that the PostNotification is about.
+ * - fromUser - The user who triggered the PostNotification.
+ */
+export interface PostNotification {
+  _id?: string;
+  title: string;
+  text: string;
+  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag';
+  postId: string;
+  fromUser: User;
+}
+
+/**
  * Represents a user in the application.
  */
 export interface User {
@@ -14,6 +32,7 @@ export interface User {
   lastName?: string;
   profilePicture?: string;
   status: 'Not endorsed' | 'Endorsed';
+  postNotifications: PostNotification[];
   reputation: number;
 }
 
@@ -189,6 +208,10 @@ export interface SubscriberUpdatePayload {
   type: 'question' | 'tag';
 }
 
+export interface PostNotificationUpdatePayload {
+  notification: PostNotification;
+}
+
 /**
  * Interface representing the possible events that the server can emit to the client.
  */
@@ -199,4 +222,5 @@ export interface ServerToClientEvents {
   voteUpdate: (vote: VoteUpdatePayload) => void;
   commentUpdate: (update: CommentUpdatePayload) => void;
   subscriberUpdate: (payload: SubscriberUpdatePayload) => void;
+  postNotificationUpdate: (payload: PostNotificationUpdatePayload) => void;
 }

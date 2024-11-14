@@ -1,9 +1,8 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import useUserContext from './useUserContext';
-import { Answer, OrderType, Question, User } from '../types';
+import { Answer, OrderType, Question } from '../types';
 import { getQuestionsByFilter } from '../services/questionService';
-import toggleSubscribe from '../services/subscriberService';
 
 /**
  * Custom hook for managing the question page state, filtering, and real-time updates.
@@ -23,7 +22,6 @@ const useQuestionPage = () => {
   const [questionOrder, setQuestionOrder] = useState<OrderType>('newest');
   const [qlist, setQlist] = useState<Question[]>([]);
   const [questionID, setQuestionID] = useState<string>(qidParam || '');
-  const [question] = useState<Question | null>(null);
 
   useEffect(() => {
     if (!qidParam) {
@@ -52,29 +50,6 @@ const useQuestionPage = () => {
     setTitleText(pageTitle);
     setSearch(searchString);
   }, [searchParams]);
-
-  /**
-   * Function to handle the toggling of a user as a subscriber to a question.
-   *
-   * @param user - The user object to be added.
-   * @param id - The ID of the question being subscribed to.
-   */
-  const handleToggleSubscriber = async (
-    user: User,
-    type: 'question' | 'tag',
-    id: string | undefined,
-  ) => {
-    try {
-      if (id === undefined) {
-        throw new Error('No ID provided.');
-      }
-
-      await toggleSubscribe(id, type, user);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error toggling subscriber:', error);
-    }
-  };
 
   useEffect(() => {
     /**
@@ -142,7 +117,7 @@ const useQuestionPage = () => {
     };
   }, [questionID, questionOrder, search, socket]);
 
-  return { titleText, qlist, setQuestionOrder, handleToggleSubscriber, question, questionID };
+  return { titleText, qlist, setQuestionOrder };
 };
 
 export default useQuestionPage;
