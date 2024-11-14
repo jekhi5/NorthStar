@@ -116,6 +116,7 @@ async function userCreate(
     username,
     email,
     status,
+    postNotifications,
     reputation,
     firstName,
     lastName,
@@ -258,7 +259,7 @@ const populate = async () => {
     const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed', [], 40);
     const u8 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed', [], 0);
     const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Not endorsed', [], 50);
-    
+
     // Add fake stack overflow team user for welcome notification
     const fakeStackOverflowTeamUser = await userCreate(
       'QyOuDOnKEfMX4vlARweFSGrj9ft1', // From Firebase
@@ -314,6 +315,7 @@ const populate = async () => {
       'elephantCDE',
       'elephantCDE@email.com',
       'Not endorsed',
+      [],
       4,
       'abaya',
       'khan',
@@ -428,7 +430,29 @@ const populate = async () => {
       '',
     );
 
-    
+    await userCreate(
+      'NZn2s5RwTvPn9VsmlgBRRswvy5J2',
+      'kenhen',
+      'kennethhenneth@gmail.com',
+      'Not endorsed',
+      [],
+      20,
+      'Kenneth',
+      'Borrero',
+      '',
+    );
+
+    await userCreate(
+      'Cd9OSb1sIlPaglmFqmzakxt6rV42',
+      'gracetheobald',
+      'gettheobald@gmail.com',
+      'Not endorsed',
+      [],
+      44,
+      'Gracelyn',
+      'Theobald',
+      '',
+    );
 
     if (fakeStackOverflowWelcomeQuestion._id === undefined) {
       throw new Error('Error creating welcome notification; question ID is undefined');
