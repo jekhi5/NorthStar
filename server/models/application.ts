@@ -499,14 +499,17 @@ export const postNotifications = async (
     };
 
     if (type === 'questionAnswered') {
-      const answer: Answer | null = await AnswerModel.findOne({ _id: associatedPostId });
+      const answer: Answer | null = await AnswerModel.findOne({ _id: associatedPostId }).populate({
+        path: 'ansBy',
+        model: UserModel,
+      });
 
       if (!answer || answer._id === undefined) {
         throw new Error('Could not find answer that was posted');
       }
 
       notificationToPost.title = `Your question: "${question.title}" has a new answer!`;
-      notificationToPost.text = `${answer.ansBy} said: "${answer.text}"`;
+      notificationToPost.text = `${answer.ansBy.username} said: "${answer.text}"`;
       notificationToPost.notificationType = 'questionAnswered';
       notificationToPost.postId = answer._id;
     } else if (type === 'commentAdded') {

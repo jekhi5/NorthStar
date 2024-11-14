@@ -115,7 +115,6 @@ const commentController = (socket: FakeSOSocket) => {
           if (newNotification && !('error' in newNotification)) {
             socket.emit('postNotificationUpdate', {
               notification: newNotification,
-              uid: comment.commentBy.uid,
             });
           }
         }

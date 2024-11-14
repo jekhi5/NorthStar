@@ -210,7 +210,6 @@ export interface SubscriberUpdatePayload {
 
 export interface PostNotificationUpdatePayload {
   notification: PostNotification;
-  uid: string;
 }
 
 /**

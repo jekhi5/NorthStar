@@ -179,7 +179,6 @@ const questionController = (socket: FakeSOSocket) => {
         if (newNotification && !('error' in newNotification)) {
           socket.emit('postNotificationUpdate', {
             notification: newNotification,
-            uid: askedBy.uid,
           });
         }
       }

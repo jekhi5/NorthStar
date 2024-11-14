@@ -343,7 +343,6 @@ export interface AnswerUpdatePayload {
 }
 
 export interface PostNotificationUpdatePayload {
-  uid: string;
   notification: PostNotification;
 }
 
