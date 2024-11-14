@@ -475,6 +475,14 @@ export const savePostNotification = async (
   }
 };
 
+/**
+ * Populate notiications to all the subscribers to the question with the given ID.
+ * @param qid the qid of the question with action taken on it.
+ * @param associatedPostId the post id of the post that the action was taken on (like the ID of the answer or comment posted).
+ * @param type the kinda of notification, either 'questionAnswered', 'commentAdded', or 'questionPostedWithTag'.
+ * @param user the user who took the action.
+ * @returns a Promise that resolves to the postNotification that was posted, or an error message if the operation fails.
+ */
 export const postNotifications = async (
   qid: string,
   associatedPostId: string,
