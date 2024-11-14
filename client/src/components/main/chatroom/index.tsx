@@ -1,4 +1,5 @@
 import useChatroom from '../../../hooks/useChatroom';
+import './index.css';
 
 /**
  * Chatroom component displays a list of chat messages in real-time and provides an input for users to add new messages.
@@ -43,6 +44,7 @@ const Chatroom = () => {
           onChange={e => setNewMessageContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder='Type a message...'
+          style={{ width: '50%', height: '2.5rem', padding: '0.5rem' }}
         />
         <button onClick={sendMessage}>Send</button>
       </div>
