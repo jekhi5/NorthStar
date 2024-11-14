@@ -78,36 +78,17 @@ const userController = () => {
     }
 
     try {
-      const fakeStackOverflowUser: User | null = await UserModel.findOne({
-        username: 'FakeStackOverflowTeam',
-      });
+      // ! Rather than adding the notification to the user before creation,
+      // ! just send the user the notification after creation
 
-      const fakeStackOverflowWelcomeQuestion: Question | null = await QuestionModel.findOne({
+      const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
         title: 'Welcome to Fake Stack Overflow!',
+        text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+        postType: 'Question',
       });
 
-      // If we can find the fake stack overflow user and welcome question,
-      // we attempt to add the notification to the database.
-      // If that is successful, then we add that notification to the user
-      if (
-        fakeStackOverflowUser &&
-        fakeStackOverflowWelcomeQuestion &&
-        fakeStackOverflowWelcomeQuestion._id instanceof ObjectId
-      ) {
-        const welcomeNotificationObject: PostNotification = {
-          title: 'Welcome to Fake Stack Overflow!',
-          text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-          postType: 'Question',
-          postId: fakeStackOverflowWelcomeQuestion._id,
-          fromUser: fakeStackOverflowUser,
-        };
-
-        const welcomeNotification: PostNotification =
-          await PostNotificationModel.create(welcomeNotificationObject);
-
-        if (welcomeNotification) {
-          user.postNotifications = [welcomeNotification];
-        }
+      if (welcomeNotification) {
+        user.postNotifications = [welcomeNotification];
       }
 
       const result = await saveUser(user);

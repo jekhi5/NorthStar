@@ -7,6 +7,7 @@ import {
   QuestionResponse,
   AnswerResponse,
   TagResponse,
+  UserResponse,
 } from '../types';
 import { populateDocument, toggleSubscribe } from '../models/application';
 
@@ -47,7 +48,7 @@ const subscribeController = (socket: FakeSOSocket) => {
    * @returns `true` if the document is a valid QuestionResponse, otherwise `false`.
    */
   function isQuestionResponse(
-    doc: QuestionResponse | AnswerResponse | TagResponse | null,
+    doc: QuestionResponse | AnswerResponse | TagResponse | UserResponse | null,
   ): doc is QuestionResponse {
     return doc === null || (doc && 'title' in doc && 'tags' in doc && 'askedBy' in doc);
   }
@@ -60,7 +61,7 @@ const subscribeController = (socket: FakeSOSocket) => {
    * @returns `true` if the document is a valid TagResponse, otherwise `false`.
    */
   function isTagResponse(
-    doc: QuestionResponse | AnswerResponse | TagResponse | null,
+    doc: QuestionResponse | AnswerResponse | TagResponse | UserResponse | null,
   ): doc is TagResponse {
     return doc === null || (doc && 'name' in doc && 'description' in doc);
   }

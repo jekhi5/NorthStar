@@ -1,8 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
-import { PostNotification, PostNotificationUpdatePayload, User } from '../types';
+import { useEffect, useState } from 'react';
+import { PostNotification, PostNotificationUpdatePayload } from '../types';
 import { getUserByUid } from '../services/userService';
 import useUserContext from './useUserContext';
-import UserContext from '../contexts/UserContext';
 
 /**
  * Custom hook to manage the state and logic for the notification page.
@@ -45,9 +44,7 @@ const useNotificationPage = () => {
       setNotifications(notifications ? [...notifications, notification] : [notification]);
     };
 
-    if (uid) {
-      fetchData();
-    }
+    fetchData();
 
     socket.on('postNotificationUpdate', handleNotificationUpdate);
 

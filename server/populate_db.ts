@@ -343,6 +343,48 @@ const populate = async () => {
 
     await userCreate('12', 'mackson3332', 'mackson3332@email.com', 'Endorsed', [pn3]);
 
+    // Adding Jacob as a user
+    await userCreate(
+      'LSF2vgdlbyVFpDd6KmbBs7Fwa5O2', // From Firebase
+      'jekhi5',
+      'jacobk513@gmail.com',
+      'Not endorsed',
+      [],
+    );
+
+    // Add fake stack overflow team user for welcome notification
+    const fakeStackOverflowTeamUser = await userCreate(
+      'QyOuDOnKEfMX4vlARweFSGrj9ft1', // From Firebase
+      'FakeStackOverflowTeam',
+      'FakeStackOverflowTeam@gmail.com',
+      'Endorsed',
+      [],
+    );
+
+    // Bogus question posted to the database that is pointed to by the welcome notification
+    const fakeStackOverflowWelcomeQuestion = await questionCreate(
+      'Welcome to Fake Stack Overflow!',
+      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+      [t1],
+      [],
+      fakeStackOverflowTeamUser,
+      new Date(),
+      [],
+      [],
+      [],
+    );
+
+    if (fakeStackOverflowWelcomeQuestion._id === undefined) {
+      throw new Error('Error creating welcome notification; question ID is undefined');
+    }
+
+    await postNotificationCreate(
+      'Welcome to Fake Stack Overflow!',
+      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+      'Question',
+      fakeStackOverflowWelcomeQuestion._id,
+      fakeStackOverflowTeamUser,
+    );
     console.log('Database populated');
   } catch (err) {
     console.log('ERROR: ' + err);

@@ -18,6 +18,7 @@ import QuestionModel from './questions';
 import TagModel from './tags';
 import CommentModel from './comments';
 import UserModel from './user';
+import PostNotificationModel from './postNotifications';
 
 /**
  * Parses tags from a search string.
@@ -284,8 +285,8 @@ export const filterQuestionsBySearch = (qlist: Question[], search: string): Ques
  */
 export const populateDocument = async (
   id: string | undefined,
-  type: 'question' | 'answer' | 'tag',
-): Promise<QuestionResponse | AnswerResponse | TagResponse> => {
+  type: 'question' | 'answer' | 'tag' | 'user',
+): Promise<QuestionResponse | AnswerResponse | TagResponse | UserResponse> => {
   try {
     if (!id) {
       throw new Error('Provided question ID is undefined.');
@@ -330,6 +331,10 @@ export const populateDocument = async (
     } else if (type === 'tag') {
       result = await TagModel.findOne({ _id: id }).populate([
         { path: 'subscribers', model: UserModel },
+      ]);
+    } else if (type === 'user') {
+      result = await UserModel.findOne({ _id: id }).populate([
+        { path: 'postNotifications', model: PostNotificationModel },
       ]);
     }
     if (!result) {
