@@ -1,5 +1,4 @@
 import './index.css';
-import React from 'react';
 import Form from '../baseComponents/form';
 import TextArea from '../baseComponents/textarea';
 import useAnswerForm from '../../../hooks/useAnswerForm';

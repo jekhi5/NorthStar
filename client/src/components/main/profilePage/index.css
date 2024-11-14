@@ -1,0 +1,117 @@
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f7f8fa;
+    min-height: 100vh;
+  }
+  
+  .profile-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1.5rem;
+  }
+  
+  .profile-details {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+  }
+  
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .profile-picture {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-name {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .profile-username,
+  .profile-email,
+  .profile-status {
+    font-size: 1rem;
+    color: #666;
+    margin: 0.5rem 0;
+  }
+  
+  /* Styling for the edit form */
+  .profile-edit-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .profile-edit-form input[type='text'],
+  .profile-edit-form input[type='email'],
+  .profile-edit-form input[type='file'] {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .profile-edit-form button {
+    background-color: #4a90e2;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 0.5rem;
+    transition: background-color 0.3s;
+  }
+  
+  .profile-edit-form button:hover {
+    background-color: #357ab9;
+  }
+  
+  .profile-info button,
+  .profile-edit-form button {
+    margin-top: 1rem;
+  }
+  
+  .profile-info button {
+    background-color: #4a90e2;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .profile-info button:hover {
+    background-color: #357ab9;
+  }
+  
+  .profile-edit-form p,
+  .profile-info p {
+    color: #d9534f;
+    font-size: 0.9rem;
+  }
+  

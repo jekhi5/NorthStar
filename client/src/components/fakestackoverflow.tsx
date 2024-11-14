@@ -13,6 +13,7 @@ import NewAnswerPage from './main/newAnswer';
 import AnswerPage from './main/answerPage';
 import ProfilePage from './main/profilePage';
 import NotificationPage from './main/notificationPage';
+import Chatroom from './main/chatroom';
 
 const ProtectedRoute = ({
   user,
@@ -67,6 +68,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             <Route path='/new/answer/:qid' element={<NewAnswerPage />} />
             <Route path='/profile' element={<ProfilePage />} />
             <Route path='/notifications' element={<NotificationPage />} />
+            <Route path='/chatroom' element={<Chatroom />} />
           </Route>
         }
       </Routes>

@@ -232,6 +232,25 @@ export interface Message {
 }
 
 /**
+ * Interface extending the request body when adding or updating a message.
+ *
+ * - content - The content of the message.
+ * - sentBy - The user who is sending or updating the message.
+ */
+export interface MessageRequest extends Request {
+  body: {
+    content: string;
+    sentBy: User;
+  };
+}
+
+
+/**
+ * Type representing the possible responses for a Message-related operation.
+ */
+export type MessageResponse = Message | { error: string };
+
+/**
  * Interface extending the request body when adding a subscriber to a question, which contains:
  * - id - The unique identifier of the question.
  * - type - The type being subscribed to, either 'Question' or 'Tag'.
@@ -356,5 +375,8 @@ export interface ServerToClientEvents {
   voteUpdate: (vote: VoteUpdatePayload) => void;
   commentUpdate: (comment: CommentUpdatePayload) => void;
   subscriberUpdate: (payload: SubscriberUpdatePayload) => void;
+  newMessage: (message: Message) => void;
+  messageUpdate: (updatedMessage: Message) => void;
+  messageDelete: (messageId: string) => void;
   postNotificationUpdate: (payload: PostNotificationUpdatePayload) => void;
 }
