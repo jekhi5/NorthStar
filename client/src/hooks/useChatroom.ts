@@ -32,7 +32,8 @@ const useChatroom = () => {
     const fetchMessages = async () => {
       setLoading(true);
       try {
-        const initialMessages = await getMessages();
+        // Set message limit in param
+        const initialMessages = await getMessages(10);
         setMessages(initialMessages);
       } catch (err) {
         setError('Failed to load messages');
