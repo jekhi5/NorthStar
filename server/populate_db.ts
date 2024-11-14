@@ -1,9 +1,8 @@
 import mongoose from 'mongoose';
-import { ObjectId } from 'mongodb';
 import AnswerModel from './models/answers';
 import QuestionModel from './models/questions';
 import TagModel from './models/tags';
-import { Answer, Comment, PostNotification, Question, Tag, User } from './types';
+import { Answer, Comment, Question, Tag, User } from './types';
 import {
   Q1_DESC,
   Q1_TXT,
@@ -48,7 +47,6 @@ import {
 } from './data/posts_strings';
 import CommentModel from './models/comments';
 import UserModel from './models/user';
-import PostNotificationModel from './models/postNotifications';
 
 // Pass URL of your mongoDB instance as first argument(e.g., mongodb://127.0.0.1:27017/fake_so)
 const userArgs = process.argv.slice(2);
@@ -68,26 +66,14 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
  *
  * @param name The name of the tag.
  * @param description The description of the tag
+ * @param subscribers The users who have subscribed to the tag.
  * @returns A Promise that resolves to the created Tag document.
  * @throws An error if the name is empty.
  */
-async function tagCreate(name: string, description: string): Promise<Tag> {
+async function tagCreate(name: string, description: string, subscribers: User[]): Promise<Tag> {
   if (name === '') throw new Error('Invalid Tag Format');
-  const tag: Tag = { name: name, description: description };
+  const tag: Tag = { name: name, description: description, subscribers: subscribers };
   return await TagModel.create(tag);
-}
-
-async function postNotificationCreate(
-  title: string,
-  text: string,
-  postType: 'Question' | 'Answer' | 'Comment',
-  postId: ObjectId,
-  fromUser: User,
-): Promise<PostNotification> {
-  if (title === '' || text === '' || fromUser.uid === '')
-    throw new Error('Invalid PostNotification Format');
-  const postNotification: PostNotification = { title, text, postType, postId, fromUser };
-  return await PostNotificationModel.create(postNotification);
 }
 
 async function userCreate(
@@ -95,7 +81,6 @@ async function userCreate(
   username: string,
   email: string,
   status: 'Not endorsed' | 'Endorsed',
-  postNotifications: PostNotification[],
   reputation: number,
   firstName?: string,
   lastName?: string,
@@ -109,7 +94,6 @@ async function userCreate(
     username,
     email,
     status,
-    postNotifications,
     reputation,
     firstName,
     lastName,
@@ -196,6 +180,7 @@ async function questionCreate(
   askDateTime: Date,
   views: string[],
   comments: Comment[],
+  subscribers: User[],
 ): Promise<Question> {
   if (
     title === '' ||
@@ -206,6 +191,18 @@ async function questionCreate(
     comments == null
   )
     throw new Error('Invalid Question Format');
+
+  const subscribersFromTags = [
+    ...new Set<User>(
+      tags
+        .map(tag => tag.subscribers)
+        .flat()
+        .filter(
+          (subscriber): subscriber is User =>
+            typeof subscriber !== 'string' && subscriber instanceof Object,
+        ),
+    ),
+  ];
   const questionDetail: Question = {
     title: title,
     text: text,
@@ -217,7 +214,9 @@ async function questionCreate(
     upVotes: [],
     downVotes: [],
     comments: comments,
-    subscribers: [],
+    subscribers: subscribersFromTags.includes(askedBy)
+      ? [...subscribers, ...subscribersFromTags]
+      : [...subscribers, askedBy, ...subscribersFromTags],
   };
   return await QuestionModel.create(questionDetail);
 }
@@ -228,19 +227,18 @@ async function questionCreate(
  */
 const populate = async () => {
   try {
-    const t1 = await tagCreate(T1_NAME, T1_DESC);
-    const t2 = await tagCreate(T2_NAME, T2_DESC);
-    const t3 = await tagCreate(T3_NAME, T3_DESC);
-    const t4 = await tagCreate(T4_NAME, T4_DESC);
-    const t5 = await tagCreate(T5_NAME, T5_DESC);
-    const t6 = await tagCreate(T6_NAME, T6_DESC);
+    const t1 = await tagCreate(T1_NAME, T1_DESC, []);
+    const t2 = await tagCreate(T2_NAME, T2_DESC, []);
+    const t3 = await tagCreate(T3_NAME, T3_DESC, []);
+    const t4 = await tagCreate(T4_NAME, T4_DESC, []);
+    const t5 = await tagCreate(T5_NAME, T5_DESC, []);
+    const t6 = await tagCreate(T6_NAME, T6_DESC, []);
 
     const u1 = await userCreate(
       '1',
       'sana',
       'sana@email.com',
       'Endorsed',
-      [],
       250,
       'sana',
       'khan',
@@ -251,7 +249,6 @@ const populate = async () => {
       'ihba001',
       'ihba001@email.com',
       'Not endorsed',
-      [],
       10,
       'iban',
       'zuko',
@@ -262,7 +259,6 @@ const populate = async () => {
       'saltyPeter',
       'saltyPeter@email.com',
       'Endorsed',
-      [],
       35,
       'peter',
       'rabbit',
@@ -273,7 +269,6 @@ const populate = async () => {
       'monkeyABC',
       'monkeyABC@email.com',
       'Not endorsed',
-      [],
       24,
       'monkey',
       'king',
@@ -284,7 +279,6 @@ const populate = async () => {
       'hamkalo',
       'hamkalo@email.com',
       'Endorsed',
-      [],
       35,
       'ham',
       'kalo',
@@ -295,7 +289,6 @@ const populate = async () => {
       'azad',
       'azad@email.com',
       'Not endorsed',
-      [],
       1,
       'azad',
       'khan',
@@ -306,7 +299,6 @@ const populate = async () => {
       'alia',
       'alia@email.com',
       'Endorsed',
-      [],
       40,
       'alia',
       'bhatt',
@@ -317,7 +309,6 @@ const populate = async () => {
       'abhi3241',
       'abhi3241@email.com',
       'Not endorsed',
-      [],
       0,
       'abhi',
       'kumar',
@@ -328,7 +319,6 @@ const populate = async () => {
       'abaya',
       'abaya@email.com',
       'Not endorsed',
-      [],
       50,
       'Joji',
       'John',
@@ -341,7 +331,6 @@ const populate = async () => {
       'ashleyydaviis',
       'ashley921davis@gmail.com',
       'Not endorsed',
-      [],
       29,
       'Ashley',
       'Davis',
@@ -361,19 +350,11 @@ const populate = async () => {
     const c11 = await commentCreate(C11_TEXT, u4, new Date('2023-03-18T01:02:15'));
     const c12 = await commentCreate(C12_TEXT, u7, new Date('2023-04-10T14:28:01'));
 
-    const pn1 = await postNotificationCreate(
-      'New Comment',
-      'New comment added',
-      'Comment',
-      c4._id ?? new ObjectId(),
-      u3,
-    );
     const u10 = await userCreate(
       '10',
       'elephantCDE',
       'elephantCDE@email.com',
       'Not endorsed',
-      [pn1],
       4,
       'abaya',
       'khan',
@@ -382,31 +363,14 @@ const populate = async () => {
 
     const a1 = await answerCreate(A1_TXT, u5, new Date('2023-11-20T03:24:42'), [c1]);
     const a2 = await answerCreate(A2_TXT, u6, new Date('2023-11-23T08:24:00'), [c2]);
-    const a3 = await answerCreate(A3_TXT, u10, new Date('2023-11-18T09:24:00'), [c3]);
+    const a3 = await answerCreate(A3_TXT, u11, new Date('2023-11-18T09:24:00'), [c3]);
     const a4 = await answerCreate(A4_TXT, u8, new Date('2023-11-12T03:30:00'), [c4]);
     const a5 = await answerCreate(A5_TXT, u1, new Date('2023-11-01T15:24:19'), [c5]);
     const a6 = await answerCreate(A6_TXT, u9, new Date('2023-02-19T18:20:59'), [c6]);
-    const a7 = await answerCreate(A7_TXT, u9, new Date('2023-02-22T17:19:00'), [c7]);
+    const a7 = await answerCreate(A7_TXT, u12, new Date('2023-02-22T17:19:00'), [c7]);
     const a8 = await answerCreate(A8_TXT, u2, new Date('2023-03-22T21:17:53'), [c8]);
 
-    const pn2 = await postNotificationCreate(
-      'New Answer',
-      'New answer added',
-      'Answer',
-      a4._id ?? new ObjectId(),
-      u2,
-    );
-    const u11 = await userCreate(
-      '11',
-      'Joji John',
-      'Joji_John@email.com',
-      'Endorsed',
-      [pn2],
-      500,
-      'mackson',
-      'jackson',
-      '',
-    );
+    const u11 = await userCreate('11', 'Joji John', 'Joji_John@email.com', 'Endorsed', 500);
 
     const q1 = await questionCreate(
       Q1_DESC,
@@ -417,6 +381,7 @@ const populate = async () => {
       new Date('2022-01-20T03:00:00'),
       ['sana', 'abaya', 'alia'],
       [c9],
+      [u2, u4],
     );
     await questionCreate(
       Q2_DESC,
@@ -427,6 +392,7 @@ const populate = async () => {
       new Date('2023-01-10T11:24:30'),
       ['mackson3332'],
       [c10],
+      [],
     );
     await questionCreate(
       Q3_DESC,
@@ -437,37 +403,21 @@ const populate = async () => {
       new Date('2023-02-18T01:02:15'),
       ['monkeyABC', 'elephantCDE'],
       [c11],
+      [u8, u5],
     );
     await questionCreate(
       Q4_DESC,
       Q4_TXT,
       [t3, t4, t5],
       [a8],
-      u11,
+      u13,
       new Date('2023-03-10T14:28:01'),
       [],
       [c12],
+      [u9, u11],
     );
 
-    const pn3 = await postNotificationCreate(
-      'New question',
-      'New question added',
-      'Question',
-      q1._id ?? new ObjectId(),
-      u1,
-    );
-
-    await userCreate(
-      '12',
-      'mackson3332',
-      'mackson3332@email.com',
-      'Endorsed',
-      [pn3],
-      4,
-      'dumbo',
-      'elephant',
-      '',
-    );
+    await userCreate('12', 'mackson3332', 'mackson3332@email.com', 'Endorsed', 4);
 
     console.log('Database populated');
   } catch (err) {

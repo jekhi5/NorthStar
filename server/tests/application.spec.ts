@@ -17,11 +17,10 @@ import {
   addVoteToQuestion,
   addVoteToAnswer,
   addVoteToComment,
-  fetchNotificationsByUid,
   saveUser,
   updateUserReputation,
 } from '../models/application';
-import { Answer, Question, Tag, Comment, User, PostNotification } from '../types';
+import { Answer, Question, Tag, Comment, User } from '../types';
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
 import AnswerModel from '../models/answers';
 import CommentModel from '../models/comments';
@@ -36,7 +35,6 @@ const user1: User = {
   username: 'User1',
   email: 'user1@email.com',
   status: 'Not endorsed',
-  postNotifications: [],
   reputation: 0,
 };
 
@@ -46,7 +44,6 @@ const user2: User = {
   username: 'User2',
   email: 'user4@email.com',
   status: 'Not endorsed',
-  postNotifications: [],
   reputation: 0,
 };
 
@@ -56,7 +53,6 @@ const user3: User = {
   username: 'User3',
   email: 'user4@email.com',
   status: 'Not endorsed',
-  postNotifications: [],
   reputation: 0,
 };
 
@@ -66,7 +62,6 @@ const user4: User = {
   username: 'User4',
   email: 'user4@email.com',
   status: 'Not endorsed',
-  postNotifications: [],
   reputation: 0,
 };
 
@@ -74,18 +69,21 @@ const tag1: Tag = {
   _id: new ObjectId('507f191e810c19729de860ea'),
   name: 'react',
   description: T1_DESC,
+  subscribers: [],
 };
 
 const tag2: Tag = {
   _id: new ObjectId('65e9a5c2b26199dbcc3e6dc8'),
   name: 'javascript',
   description: T2_DESC,
+  subscribers: [],
 };
 
 const tag3: Tag = {
   _id: new ObjectId('65e9b4b1766fca9451cba653'),
   name: 'android',
   description: T3_DESC,
+  subscribers: [],
 };
 
 const com1: Comment = {
@@ -196,60 +194,10 @@ const QUESTIONS: Question[] = [
   },
 ];
 
-const answerNotification: PostNotification = {
-  _id: new ObjectId('65e9b716ff0e892116b2de01'),
-  title: 'New Answer',
-  text: 'User1 answered your question',
-  postType: 'Answer',
-  postId: ans1._id ?? new ObjectId(),
-  fromUser: user1,
-};
-
-const commentNotification: PostNotification = {
-  _id: new ObjectId('65e9b716ff0e892116b2de02'),
-  title: 'New Comment',
-  text: 'User2 commented on your answer',
-  postType: 'Comment',
-  postId: com1._id ?? new ObjectId(),
-  fromUser: user2,
-};
-
 describe('application module', () => {
   beforeEach(() => {
     mockingoose.resetAll();
   });
-
-  describe('PostNotification model', () => {
-    beforeEach(() => {
-      user1.postNotifications = [];
-      user2.postNotifications = [];
-      user3.postNotifications = [];
-      user4.postNotifications = [];
-    });
-
-    describe('fetchNotificationsByUid', () => {
-      test('fetchNotificationsByUid should return all notifications for a user', async () => {
-        user1.postNotifications = [answerNotification, commentNotification];
-
-        mockingoose(UserModel).toReturn(user1, 'findOne');
-
-        const result = (await fetchNotificationsByUid(user1.uid)) as PostNotification[];
-
-        expect(result.length).toEqual(2);
-        expect(result[0]._id).toEqual(user1.postNotifications[0]._id);
-        expect(result[1]._id).toEqual(user1.postNotifications[1]._id);
-      });
-
-      test('fetchNotificationsByUid should return error if user cannot be found', async () => {
-        mockingoose(UserModel).toReturn(new Error('Could not fund user'), 'findOne');
-
-        const result = (await fetchNotificationsByUid('nonExistentUser')) as { error: string };
-
-        expect(result.error).toEqual('Error while fetching notifications');
-      });
-    });
-  });
-
   describe('Question model', () => {
     beforeEach(() => {
       mockingoose.resetAll();
@@ -943,7 +891,11 @@ describe('application module', () => {
       test('addTag return tag if the tag already exists', async () => {
         mockingoose(Tags).toReturn(tag1, 'findOne');
 
-        const result = await addTag({ name: tag1.name, description: tag1.description });
+        const result = await addTag({
+          name: tag1.name,
+          description: tag1.description,
+          subscribers: [],
+        });
 
         expect(result?._id).toEqual(tag1._id);
       });
@@ -951,7 +903,11 @@ describe('application module', () => {
       test('addTag return tag id of new tag if does not exist in database', async () => {
         mockingoose(Tags).toReturn(null, 'findOne');
 
-        const result = await addTag({ name: tag2.name, description: tag2.description });
+        const result = await addTag({
+          name: tag2.name,
+          description: tag2.description,
+          subscribers: [],
+        });
 
         expect(result).toBeDefined();
       });
@@ -959,7 +915,11 @@ describe('application module', () => {
       test('addTag returns null if findOne throws an error', async () => {
         mockingoose(Tags).toReturn(new Error('error'), 'findOne');
 
-        const result = await addTag({ name: tag1.name, description: tag1.description });
+        const result = await addTag({
+          name: tag1.name,
+          description: tag1.description,
+          subscribers: [],
+        });
 
         expect(result).toBeNull();
       });
@@ -968,7 +928,11 @@ describe('application module', () => {
         mockingoose(Tags).toReturn(null, 'findOne');
         mockingoose(Tags).toReturn(new Error('error'), 'save');
 
-        const result = await addTag({ name: tag2.name, description: tag2.description });
+        const result = await addTag({
+          name: tag2.name,
+          description: tag2.description,
+          subscribers: [],
+        });
 
         expect(result).toBeNull();
       });
@@ -1328,7 +1292,6 @@ describe('application module', () => {
           firstName: 'Test',
           lastName: 'User',
           status: 'Not endorsed',
-          postNotifications: [],
           reputation: 0,
         };
 
@@ -1350,7 +1313,6 @@ describe('application module', () => {
           email: 'user@gmail.com',
           username: 'user123',
           status: 'Not endorsed',
-          postNotifications: [],
           reputation: 0,
         };
 
@@ -1359,7 +1321,6 @@ describe('application module', () => {
           email: 'user@gmail.com',
           username: 'user123',
           status: 'Not endorsed',
-          postNotifications: [],
           reputation: 10,
         };
 

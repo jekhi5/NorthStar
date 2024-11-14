@@ -12,7 +12,6 @@ const user1: User = {
   username: 'user1',
   email: 'user1@email.com',
   status: 'Not endorsed',
-  postNotifications: [],
   reputation: 0,
 };
 
@@ -21,7 +20,6 @@ const user2: User = {
   username: 'user2',
   email: 'user2@email.com',
   status: 'Not endorsed',
-  postNotifications: [],
   reputation: 0,
 };
 
@@ -38,6 +36,7 @@ describe('POST /toggleSubscribe', () => {
     const validQid = new mongoose.Types.ObjectId();
     const mockReqBody = {
       id: validQid.toString(),
+      type: 'question',
       user: user2,
     };
 
