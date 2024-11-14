@@ -38,7 +38,7 @@ const AnswerView = ({ text, ansBy, meta, comments, handleAddComment }: AnswerPro
     </div>
     <div className='answerAuthor'>
       <div className='answer_author'>{ansBy.username}</div>
-      <div className='question_author_status'>{ansBy.status === 'Endorsed' ? 'Endorsed' : ''}</div>
+      <div className='question_author_status'>{ansBy.status !== 'Not endorsed' ? ansBy.status : ''}</div>
       <div className='answer_question_meta'>{meta}</div>
     </div>
     <CommentSection comments={comments} handleAddComment={handleAddComment} />

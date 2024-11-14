@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Not endorsed', 'Endorsed'],
+      enum: ['Not endorsed', 'Endorsed', 'Super Smarty Pants', 'Mentor', 'Grandmaster'],
       default: 'Not endorsed', // All users start out in the application as not endorsed
       required: true,
     },
@@ -69,10 +69,17 @@ const userSchema = new mongoose.Schema(
  */
 userSchema
   .post('findOneAndUpdate', async doc => {
-    if (doc.reputation >= 30 && doc.status !== 'Endorsed') {
+    // Update status based on points
+    if (doc.points >= 30 && doc.points < 100 && doc.status !== 'Endorsed') {
       doc.status = 'Endorsed';
-      await doc.save();
+    } else if (doc.points >= 100 && doc.points < 500 && doc.status !== 'Super Smarty Pants') {
+      doc.status = 'Super Smarty Pants';
+    } else if (doc.points >= 500 && doc.points < 1000 && doc.status !== 'Mentor') {
+      doc.status = 'Mentor';
+    } else if (doc.points >= 1000 && doc.status !== 'Grandmaster') {
+      doc.status = 'Grandmaster';
     }
+    await doc.save();
   })
   .post('save', async doc => {
     const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({

@@ -31,7 +31,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   profilePicture?: string;
-  status: 'Not endorsed' | 'Endorsed';
+  status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster';
   postNotifications: PostNotification[];
   reputation: number;
 }
