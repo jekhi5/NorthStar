@@ -1,4 +1,5 @@
 import useProfilePage from '../../../hooks/useProfilePage';
+import './index.css';
 
 const ProfilePage = () => {
   const {
