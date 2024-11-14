@@ -474,12 +474,12 @@ const populate = async () => {
     );
 
     await userCreate(
-      'Cd9OSb1sIlPaglmFqmzakxt6rV42',
-      'gracetheobald',
-      'gettheobald@gmail.com',
+      '1LHJdANB6bXmgh1aDks2o8pWCJ22',
+      'grace',
+      'gracelyntheobald@gmail.com',
       'Not endorsed',
       [],
-      44,
+      100,
       'Gracelyn',
       'Theobald',
       '',
