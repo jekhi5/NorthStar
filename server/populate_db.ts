@@ -123,16 +123,19 @@ async function userCreate(
     profilePicture,
   };
 
+  // Find the welcome notification in the database
   const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
     title: 'Welcome to Fake Stack Overflow!',
     text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
     notificationType: 'questionPostedWithTag',
   });
 
+  // If the welcome notification exists, add it to the user's postNotifications prior to creation
   if (welcomeNotification) {
-    user.postNotifications = [welcomeNotification];
+    user.postNotifications = [...postNotifications, welcomeNotification];
   }
 
+  // Create the user
   return await UserModel.create(user);
 }
 
@@ -263,6 +266,7 @@ const populate = async () => {
   try {
     // Put the code for the welcome notification at the top so that all
     // subsequent user creations will be populated with the welcome notification
+
     // Add fake stack overflow team user for welcome notification
     const fakeStackOverflowTeamUser = await userCreate(
       'QyOuDOnKEfMX4vlARweFSGrj9ft1', // From Firebase
@@ -273,6 +277,7 @@ const populate = async () => {
       0,
     );
 
+    // Add tag for bogus question that is pointed to by the welcome notification
     const t1 = await tagCreate(T1_NAME, T1_DESC, []);
 
     // Bogus question posted to the database that is pointed to by the welcome notification
