@@ -18,6 +18,7 @@ interface ToggleSubscriberRequestBody {
  * Toggles a user as a subscriber to a specific question.
  *
  * @param id - The ID of the question to which the comment is being added.
+ * @param type - The type of the post being subscribed to, either 'question' or 'tag'.
  * @param user - The user object containing the user details.
  * @throws Error Throws an error if the request fails or the response status is not 200.
  */
