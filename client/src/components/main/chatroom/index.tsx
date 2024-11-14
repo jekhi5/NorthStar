@@ -35,7 +35,8 @@ const Chatroom = () => {
   return (
     <div className='chatroom'>
       <h2>Chatroom</h2>
-      <div className='input-area'>
+      {/* TODO need to make CSS file but for now added margin for readability */}
+      <div className='input-area' style={{ marginBottom: '1rem' }}>
         <input
           type='text'
           value={newMessageContent}
