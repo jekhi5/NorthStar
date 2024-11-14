@@ -1,4 +1,3 @@
-// services/chatService.ts
 import { Message } from '../types';
 import api from './config';
 
@@ -28,10 +27,13 @@ const getMessages = async (): Promise<Message[]> => {
 const sendMessageToDatabase = async (message: Message): Promise<Message> => {
   const res = await api.post(`${CHAT_API_URL}/sendMessage`, message);
   if (res.status !== 200) {
+    // might need to change this to 201?
     throw new Error('Error while sending message');
   }
   return res.data;
 };
+
+// might delete this - don't think we actually want people to be able to delete messages
 
 /**
  * Deletes a message from the chatroom.

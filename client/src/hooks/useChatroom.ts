@@ -1,7 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { Message } from '../types';
-import UserContext from '../contexts/UserContext';
 import { getMessages, sendMessageToDatabase } from '../services/chatService';
+import useUserContext from './useUserContext';
 
 /**
  * Custom hook for managing chatroom state and logic.
@@ -19,17 +19,22 @@ const useChatroom = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get user from UserContext
-  const context = useContext(UserContext);
-  const currentUser = context?.user;
+  // Get user
+  const { user, socket } = useUserContext();
+  const currentUser = user;
 
+  // Using two useEffects to separate logic
+  // This one handles initial data retrieval
   useEffect(() => {
+    /**
+     * Fetches messages when the component mounts.
+     */
     const fetchMessages = async () => {
       setLoading(true);
       try {
         const initialMessages = await getMessages();
         setMessages(initialMessages);
-      } catch (e) {
+      } catch (err) {
         setError('Failed to load messages');
       } finally {
         setLoading(false);
@@ -39,6 +44,30 @@ const useChatroom = () => {
     fetchMessages();
   }, []);
 
+  useEffect(() => {
+    if (socket) {
+      /**
+       * Function to handle new messages.
+       *
+       * @param message - The new message object.
+       */
+      const handleNewMessage = (message: Message) => {
+        setMessages(prevMessages => [...prevMessages, message]);
+      };
+      socket.on('newMessage', handleNewMessage);
+      // Clean up listener when the component unmounts
+      return () => {
+        socket.off('newMessage', handleNewMessage);
+      };
+    }
+
+    // Return an empty cleanup function if socket is not available
+    return () => {};
+  }, [socket]);
+
+  /**
+   * Function to handle sending messages.
+   */
   const sendMessage = async () => {
     if (!currentUser || newMessageContent.trim() === '') return;
 
@@ -52,7 +81,7 @@ const useChatroom = () => {
       await sendMessageToDatabase(newMessage);
       setMessages(prevMessages => [...prevMessages, newMessage]);
       setNewMessageContent('');
-    } catch (e) {
+    } catch (err) {
       setError('Failed to send message');
     }
   };

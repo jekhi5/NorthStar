@@ -186,4 +186,8 @@ export interface ServerToClientEvents {
   voteUpdate: (vote: VoteUpdatePayload) => void;
   commentUpdate: (update: CommentUpdatePayload) => void;
   subscriberUpdate: (payload: SubscriberUpdatePayload) => void;
+  // New for chatroom functionality
+  newMessage: (message: Message) => void;
+  messageUpdate: (updatedMessage: Message) => void;
+  messageDelete: (messageId: string) => void;
 }

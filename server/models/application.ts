@@ -11,12 +11,14 @@ import {
   Tag,
   User,
   UserResponse,
+  Message,
 } from '../types';
 import AnswerModel from './answers';
 import QuestionModel from './questions';
 import TagModel from './tags';
 import CommentModel from './comments';
 import UserModel from './user';
+import MessageModel from './messages';
 
 /**
  * Parses tags from a search string.
@@ -442,6 +444,80 @@ export const editUser = async (user: User): Promise<UserResponse> => {
     return result;
   } catch (error) {
     return { error: 'Error when updating user.' };
+  }
+};
+
+/**
+ * Fetches all messages from the database, sorted by their sending date in ascending order.
+ *
+ * @returns {Promise<Message[] | { error: string }>} - The list of messages or an error message if fetching fails.
+ */
+export const getMessages = async (): Promise<Message[] | { error: string }> => {
+  try {
+    const messages = await MessageModel.find().sort({ sentDateTime: 1 });
+    return messages;
+  } catch (error) {
+    return { error: `Error fetching messages` };
+  }
+};
+
+/**
+ * Saves a new message to the database.
+ *
+ * @param {Message} message - The message to save.
+ *
+ * @returns {Promise<Message | { error: string }>} - The saved message, or an error message if saving fails.
+ */
+export const saveMessage = async (message: Message): Promise<Message | { error: string }> => {
+  try {
+    const savedMessage = await MessageModel.create(message);
+    return savedMessage;
+  } catch (error) {
+    return { error: 'Error saving a message' };
+  }
+};
+
+/**
+ * Updates an existing message in the database.
+ *
+ * @param {string} id - The ID of the message to update.
+ * @param {Partial<Message>} updatedData - The updated message data.
+ *
+ * @returns {Promise<Message | { error: string }>} - The updated message or an error message if updating fails.
+ */
+export const updateMessage = async (
+  id: string,
+  updatedData: Partial<Message>,
+): Promise<Message | { error: string }> => {
+  try {
+    const updatedMessage = await MessageModel.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedMessage) {
+      throw new Error('Message not found');
+    }
+    return updatedMessage;
+  } catch (error) {
+    return { error: `Error updating a message` };
+  }
+};
+
+/**
+ * Deletes a message from the database.
+ *
+ * @param {string} id - The ID of the message to delete.
+ *
+ * @returns {Promise<{ success: boolean } | { error: string }>} - An object indicating success, or an error message if deletion fails.
+ */
+export const deleteMessage = async (
+  id: string,
+): Promise<{ success: boolean } | { error: string }> => {
+  try {
+    const result = await MessageModel.findByIdAndDelete(id);
+    if (!result) {
+      throw new Error('Message not found');
+    }
+    return { success: true };
+  } catch (error) {
+    return { error: `Error deleting a message` };
   }
 };
 
