@@ -487,6 +487,7 @@ export const saveUser = async (user: User): Promise<UserResponse> => {
     const result = await UserModel.create(user);
     return result;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('Error: ', error);
     return { error: 'Error when saving a User' };
   }

@@ -17,7 +17,6 @@ import {
   addVoteToQuestion,
   addVoteToAnswer,
   addVoteToComment,
-  fetchNotificationsByUid,
   saveUser,
   updateUserReputation,
 } from '../models/application';

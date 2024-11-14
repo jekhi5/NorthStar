@@ -1,9 +1,7 @@
 import express, { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
 import UserModel from '../models/user';
-import { PostNotification, Question, User } from '../types';
+import { PostNotification, User } from '../types';
 import { saveUser } from '../models/application';
-import QuestionModel from '../models/questions';
 import PostNotificationModel from '../models/postNotifications';
 
 const userController = () => {
