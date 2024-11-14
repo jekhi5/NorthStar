@@ -79,7 +79,7 @@ const useChatroom = () => {
 
     try {
       await sendMessageToDatabase(newMessage);
-      setMessages(prevMessages => [...prevMessages, newMessage]);
+      // setMessages(prevMessages => [...prevMessages, newMessage]);
       setNewMessageContent('');
     } catch (err) {
       setError('Failed to send message');
@@ -93,6 +93,7 @@ const useChatroom = () => {
     sendMessage,
     loading,
     error,
+    currentUser,
   };
 };
 

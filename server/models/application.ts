@@ -454,7 +454,9 @@ export const editUser = async (user: User): Promise<UserResponse> => {
  */
 export const getMessages = async (): Promise<Message[] | { error: string }> => {
   try {
-    const messages = await MessageModel.find().sort({ sentDateTime: 1 });
+    const messages = await MessageModel.find()
+      .sort({ sentDateTime: 1 })
+      .populate('sentBy', 'username');
     return messages;
   } catch (error) {
     return { error: `Error fetching messages` };

@@ -5,8 +5,15 @@ import useChatroom from '../../../hooks/useChatroom';
  * It also manages loading and error states when fetching messages from the server.
  */
 const Chatroom = () => {
-  const { messages, newMessageContent, setNewMessageContent, sendMessage, loading, error } =
-    useChatroom();
+  const {
+    messages,
+    newMessageContent,
+    setNewMessageContent,
+    sendMessage,
+    loading,
+    error,
+    currentUser,
+  } = useChatroom();
 
   if (loading) {
     return <p>Loading messages...</p>;
@@ -23,8 +30,10 @@ const Chatroom = () => {
         {messages.map((msg, index) => (
           <div key={index} className='message'>
             <span className='user'>
-              {msg.sentBy?.username ? msg.sentBy.username : 'Unknown User'}
-            </span>{' '}
+              {msg.sentBy && msg.sentBy.username
+                ? msg.sentBy.username
+                : `${currentUser.username} (me)`}
+            </span>
             : {msg.content}
             <span className='timestamp'>{new Date(msg.sentDateTime).toLocaleTimeString()}</span>
           </div>
