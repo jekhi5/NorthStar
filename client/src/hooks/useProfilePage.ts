@@ -93,9 +93,8 @@ const useProfilePage = () => {
 
       // Update the user's profile with the new photo URL
       await updateProfile(user, { photoURL });
-
-      console.log('Profile picture updated successfully:', photoURL);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Error uploading profile picture:', err);
     }
   };
