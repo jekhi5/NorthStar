@@ -36,15 +36,13 @@ const Chatroom = () => {
   return (
     <div className='chatroom'>
       <h2>Chatroom</h2>
-      {/* TODO need to make CSS file but for now added margin for readability */}
-      <div className='input-area' style={{ marginBottom: '1rem' }}>
+      <div className='input-area'>
         <input
           type='text'
           value={newMessageContent}
           onChange={e => setNewMessageContent(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder='Type a message...'
-          style={{ width: '50%', height: '2.5rem', padding: '0.5rem' }}
         />
         <button onClick={sendMessage}>Send</button>
       </div>
