@@ -350,19 +350,11 @@ const populate = async () => {
     const c11 = await commentCreate(C11_TEXT, u4, new Date('2023-03-18T01:02:15'));
     const c12 = await commentCreate(C12_TEXT, u7, new Date('2023-04-10T14:28:01'));
 
-    const pn1 = await postNotificationCreate(
-      'New Comment',
-      'New comment added',
-      'Comment',
-      c4._id ?? new ObjectId(),
-      u3,
-    );
     const u10 = await userCreate(
       '10',
       'elephantCDE',
       'elephantCDE@email.com',
       'Not endorsed',
-      [pn1],
       4,
       'abaya',
       'khan',
