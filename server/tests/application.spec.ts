@@ -17,6 +17,8 @@ import {
   addVoteToQuestion,
   addVoteToAnswer,
   addVoteToComment,
+  saveUser,
+  updateUserReputation,
 } from '../models/application';
 import { Answer, Question, Tag, Comment, User } from '../types';
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
@@ -32,6 +34,7 @@ const user1: User = {
   username: 'User1',
   email: 'user1@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const user2: User = {
@@ -40,6 +43,7 @@ const user2: User = {
   username: 'User2',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const user3: User = {
@@ -48,6 +52,7 @@ const user3: User = {
   username: 'User3',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const user4: User = {
@@ -56,6 +61,7 @@ const user4: User = {
   username: 'User4',
   email: 'user4@email.com',
   status: 'Not endorsed',
+  reputation: 0,
 };
 
 const tag1: Tag = {
@@ -469,7 +475,6 @@ describe('application module', () => {
         };
 
         const result = (await saveQuestion(mockQn)) as Question;
-
         expect(result._id).toBeDefined();
         expect(result.title).toEqual(mockQn.title);
         expect(result.text).toEqual(mockQn.text);
@@ -1272,6 +1277,91 @@ describe('application module', () => {
         const result = await addVoteToComment('someCommentId', 'testUser', 'downvote');
 
         expect(result).toEqual({ error: 'Error when adding downvote to comment' });
+      });
+    });
+  });
+
+  describe('User Model', () => {
+    describe('saveUser', () => {
+      test('saveUser should return the saved user', async () => {
+        const mockUser: User = {
+          uid: '1',
+          email: 'test@gmail.com',
+          username: 'testuser',
+          firstName: 'Test',
+          lastName: 'User',
+          status: 'Not endorsed',
+          postNotifications: [],
+          reputation: 0,
+        };
+
+        const result = (await saveUser(mockUser)) as User;
+        expect(result._id).toBeDefined();
+        expect(result.uid).toEqual(mockUser.uid);
+        expect(result.email).toEqual(mockUser.email);
+        expect(result.firstName).toEqual(mockUser.firstName);
+        expect(result.lastName).toEqual(mockUser.lastName);
+        expect(result.status).toEqual('Not endorsed');
+        expect(result.reputation).toEqual(0);
+      });
+    });
+
+    describe('updateUserReputation', () => {
+      test('updateUserReputation should return the given user with updated reputation', async () => {
+        const user: User = {
+          uid: '1',
+          email: 'user@gmail.com',
+          username: 'user123',
+          status: 'Not endorsed',
+          postNotifications: [],
+          reputation: 0,
+        };
+
+        const updatedUser: User = {
+          uid: '1',
+          email: 'user@gmail.com',
+          username: 'user123',
+          status: 'Not endorsed',
+          postNotifications: [],
+          reputation: 10,
+        };
+
+        mockingoose(UserModel).toReturn(updatedUser, 'findOneAndUpdate');
+
+        const result = (await updateUserReputation(user.uid, 10)) as User;
+        expect(result.reputation).toEqual(10);
+      });
+
+      test('updateUserReputation should decrease user reputation, when given a negative value', async () => {
+        const mockUser = {
+          uid: '1',
+          email: 'user@gmail.com',
+          username: 'user123',
+          status: 'Not endorsed',
+          reputation: 10,
+        };
+
+        mockingoose(UserModel).toReturn({ ...mockUser, reputation: 5 }, 'findOneAndUpdate');
+
+        const result = await updateUserReputation('1', -5);
+
+        expect(result).toHaveProperty('reputation', 5);
+        expect(result).toHaveProperty('uid', '1');
+      });
+
+      test('updateUserReputation should throw error if user uid not found', async () => {
+        mockingoose(UserModel).toReturn(null, 'findOneAndUpdate');
+        const result = await updateUserReputation('nonExistentUid', 5);
+
+        expect(result).toEqual({ error: 'Error updating user reputation' });
+      });
+
+      test('should return error when database operation fails', async () => {
+        mockingoose(UserModel).toReturn(new Error('Database error'), 'findOneAndUpdate');
+
+        const result = await updateUserReputation('testUid', 5);
+
+        expect(result).toEqual({ error: 'Error updating user reputation' });
       });
     });
   });

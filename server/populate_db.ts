@@ -81,11 +81,24 @@ async function userCreate(
   username: string,
   email: string,
   status: 'Not endorsed' | 'Endorsed',
+  reputation: number,
+  firstName?: string,
+  lastName?: string,
+  profilePicture?: string,
 ): Promise<User> {
   if (uid === '') throw new Error('Invalid User Format');
   if (username === '') throw new Error('Invalid username Format');
   if (email === '') throw new Error('Invalid email Format');
-  const user: User = { uid, username, email, status };
+  const user: User = {
+    uid,
+    username,
+    email,
+    status,
+    reputation,
+    firstName,
+    lastName,
+    profilePicture,
+  };
   return await UserModel.create(user);
 }
 
@@ -214,25 +227,115 @@ async function questionCreate(
  */
 const populate = async () => {
   try {
-    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Endorsed');
-    const u2 = await userCreate('2', 'ihba001', 'ihba001@email.com', 'Not endorsed');
-    const u3 = await userCreate('3', 'saltyPeter', 'saltyPeter@email.com', 'Endorsed');
-    const u4 = await userCreate('4', 'monkeyABC', 'monkeyABC@email.com', 'Not endorsed');
-    const u5 = await userCreate('5', 'hamkalo', 'hamkalo@email.com', 'Endorsed');
-    const u6 = await userCreate('6', 'azad', 'azad@email.com', 'Not endorsed');
-    const u8 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed');
-    const u9 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed');
-    const u10 = await userCreate('9', 'Joji John', 'Joji_John@email.com', 'Endorsed');
-    const u11 = await userCreate('10', 'abaya', 'abaya@email.com', 'Not endorsed');
-    const u12 = await userCreate('11', 'mackson3332', 'mackson3332@email.com', 'Endorsed');
-    const u13 = await userCreate('12', 'elephantCDE', 'elephantCDE@email.com', 'Not endorsed');
-
-    const t1 = await tagCreate(T1_NAME, T1_DESC, [u1, u2, u3]);
+    const t1 = await tagCreate(T1_NAME, T1_DESC, []);
     const t2 = await tagCreate(T2_NAME, T2_DESC, []);
-    const t3 = await tagCreate(T3_NAME, T3_DESC, [u4, u5]);
-    const t4 = await tagCreate(T4_NAME, T4_DESC, [u6, u8]);
+    const t3 = await tagCreate(T3_NAME, T3_DESC, []);
+    const t4 = await tagCreate(T4_NAME, T4_DESC, []);
     const t5 = await tagCreate(T5_NAME, T5_DESC, []);
     const t6 = await tagCreate(T6_NAME, T6_DESC, []);
+
+    const u1 = await userCreate(
+      '1',
+      'sana',
+      'sana@email.com',
+      'Endorsed',
+      250,
+      'sana',
+      'khan',
+      '',
+    );
+    const u2 = await userCreate(
+      '2',
+      'ihba001',
+      'ihba001@email.com',
+      'Not endorsed',
+      10,
+      'iban',
+      'zuko',
+      '',
+    );
+    const u3 = await userCreate(
+      '3',
+      'saltyPeter',
+      'saltyPeter@email.com',
+      'Endorsed',
+      35,
+      'peter',
+      'rabbit',
+      '',
+    );
+    const u4 = await userCreate(
+      '4',
+      'monkeyABC',
+      'monkeyABC@email.com',
+      'Not endorsed',
+      24,
+      'monkey',
+      'king',
+      '',
+    );
+    const u5 = await userCreate(
+      '5',
+      'hamkalo',
+      'hamkalo@email.com',
+      'Endorsed',
+      35,
+      'ham',
+      'kalo',
+      '',
+    );
+    const u6 = await userCreate(
+      '6',
+      'azad',
+      'azad@email.com',
+      'Not endorsed',
+      1,
+      'azad',
+      'khan',
+      '',
+    );
+    const u7 = await userCreate(
+      '7',
+      'alia',
+      'alia@email.com',
+      'Endorsed',
+      40,
+      'alia',
+      'bhatt',
+      '',
+    );
+    const u8 = await userCreate(
+      '8',
+      'abhi3241',
+      'abhi3241@email.com',
+      'Not endorsed',
+      0,
+      'abhi',
+      'kumar',
+      '',
+    );
+    const u9 = await userCreate(
+      '9',
+      'abaya',
+      'abaya@email.com',
+      'Not endorsed',
+      50,
+      'Joji',
+      'John',
+      '',
+    );
+
+    // Adding us as users
+    const ashleyUser = await userCreate(
+      'Fm5O8RAHjqcxmNrip3luw0JF6mz1',
+      'ashleyydaviis',
+      'ashley921davis@gmail.com',
+      'Not endorsed',
+      29,
+      'Ashley',
+      'Davis',
+      '',
+    );
 
     const c1 = await commentCreate(C1_TEXT, u1, new Date('2023-12-12T03:30:00'));
     const c2 = await commentCreate(C2_TEXT, u2, new Date('2023-12-01T15:24:19'));
@@ -244,8 +347,27 @@ const populate = async () => {
     const c8 = await commentCreate(C8_TEXT, u8, new Date('2023-12-19T18:20:59'));
     const c9 = await commentCreate(C9_TEXT, u2, new Date('2022-02-20T03:00:00'));
     const c10 = await commentCreate(C10_TEXT, u9, new Date('2023-02-10T11:24:30'));
-    const c11 = await commentCreate(C11_TEXT, u10, new Date('2023-03-18T01:02:15'));
-    const c12 = await commentCreate(C12_TEXT, u11, new Date('2023-04-10T14:28:01'));
+    const c11 = await commentCreate(C11_TEXT, u4, new Date('2023-03-18T01:02:15'));
+    const c12 = await commentCreate(C12_TEXT, u7, new Date('2023-04-10T14:28:01'));
+
+    const pn1 = await postNotificationCreate(
+      'New Comment',
+      'New comment added',
+      'Comment',
+      c4._id ?? new ObjectId(),
+      u3,
+    );
+    const u10 = await userCreate(
+      '10',
+      'elephantCDE',
+      'elephantCDE@email.com',
+      'Not endorsed',
+      [pn1],
+      4,
+      'abaya',
+      'khan',
+      '',
+    );
 
     const a1 = await answerCreate(A1_TXT, u5, new Date('2023-11-20T03:24:42'), [c1]);
     const a2 = await answerCreate(A2_TXT, u6, new Date('2023-11-23T08:24:00'), [c2]);
@@ -256,7 +378,9 @@ const populate = async () => {
     const a7 = await answerCreate(A7_TXT, u12, new Date('2023-02-22T17:19:00'), [c7]);
     const a8 = await answerCreate(A8_TXT, u2, new Date('2023-03-22T21:17:53'), [c8]);
 
-    await questionCreate(
+    const u11 = await userCreate('11', 'Joji John', 'Joji_John@email.com', 'Endorsed', 500);
+
+    const q1 = await questionCreate(
       Q1_DESC,
       Q1_TXT,
       [t1, t2],
@@ -300,6 +424,8 @@ const populate = async () => {
       [c12],
       [u9, u11],
     );
+
+    await userCreate('12', 'mackson3332', 'mackson3332@email.com', 'Endorsed', 4);
 
     console.log('Database populated');
   } catch (err) {
