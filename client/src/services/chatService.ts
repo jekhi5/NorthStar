@@ -33,8 +33,9 @@ const sendMessageToDatabase = async (message: Message): Promise<Message> => {
   return res.data;
 };
 
-// might delete this - don't think we actually want people to be able to delete messages
-
+// TODO might delete this - don't think we actually want people to be able to delete messages
+// There's also no current button/way for users to delete,
+// just added this and update for potential convenience
 /**
  * Deletes a message from the chatroom.
  *
