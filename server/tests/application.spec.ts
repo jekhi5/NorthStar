@@ -1296,7 +1296,6 @@ describe('application module', () => {
           firstName: 'Test',
           lastName: 'User',
           status: 'Not endorsed',
-          postNotifications: [],
           reputation: 0,
         };
 
@@ -1318,7 +1317,6 @@ describe('application module', () => {
           email: 'user@gmail.com',
           username: 'user123',
           status: 'Not endorsed',
-          postNotifications: [],
           reputation: 0,
         };
 
@@ -1327,7 +1325,6 @@ describe('application module', () => {
           email: 'user@gmail.com',
           username: 'user123',
           status: 'Not endorsed',
-          postNotifications: [],
           reputation: 10,
         };
 

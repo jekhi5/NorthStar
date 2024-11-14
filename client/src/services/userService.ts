@@ -18,7 +18,7 @@ const addUser = async (user: User): Promise<User> => {
 };
 
 /**
- * Checks if a username is available.
+ * Checks if a username and email is available.
  *
  * @param username - The username to check for availability.
  * @param email - The email to check for availability.

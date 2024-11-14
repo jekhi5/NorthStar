@@ -68,6 +68,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
  *
  * @param name The name of the tag.
  * @param description The description of the tag
+ * @param subscribers The users who have subscribed to the tag.
  * @returns A Promise that resolves to the created Tag document.
  * @throws An error if the name is empty.
  */
@@ -115,7 +116,6 @@ async function userCreate(
     username,
     email,
     status,
-    postNotifications,
     reputation,
     firstName,
     lastName,
@@ -237,8 +237,8 @@ async function questionCreate(
     downVotes: [],
     comments: comments,
     subscribers: subscribersFromTags.includes(askedBy)
-      ? subscribersFromTags
-      : [askedBy, ...subscribersFromTags],
+      ? [...subscribers, ...subscribersFromTags]
+      : [...subscribers, askedBy, ...subscribersFromTags],
   };
   return await QuestionModel.create(questionDetail);
 }
@@ -271,8 +271,8 @@ const populate = async () => {
 
     const t1 = await tagCreate(T1_NAME, T1_DESC, [u1, u2, u3]);
     const t2 = await tagCreate(T2_NAME, T2_DESC, []);
-    const t3 = await tagCreate(T3_NAME, T3_DESC, [u4, u5]);
-    const t4 = await tagCreate(T4_NAME, T4_DESC, [u6, u8]);
+    const t3 = await tagCreate(T3_NAME, T3_DESC, []);
+    const t4 = await tagCreate(T4_NAME, T4_DESC, []);
     const t5 = await tagCreate(T5_NAME, T5_DESC, []);
     const t6 = await tagCreate(T6_NAME, T6_DESC, []);
 
@@ -288,7 +288,6 @@ const populate = async () => {
       [],
       [],
     );
-
 
     const c1 = await commentCreate(C1_TEXT, u1, new Date('2023-12-12T03:30:00'));
     const c2 = await commentCreate(C2_TEXT, u2, new Date('2023-12-01T15:24:19'));
@@ -315,7 +314,6 @@ const populate = async () => {
       'elephantCDE',
       'elephantCDE@email.com',
       'Not endorsed',
-      [pn1],
       4,
       'abaya',
       'khan',
