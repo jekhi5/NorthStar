@@ -113,6 +113,7 @@ const useSignUp = () => {
         email: formData.email,
         status: 'Not endorsed',
         notifications: [],
+        reputation: 0,
       };
 
       await addUser(newUser);

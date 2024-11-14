@@ -49,6 +49,7 @@ export interface User {
   profilePicture?: string;
   status: 'Not endorsed' | 'Endorsed';
   postNotifications: PostNotification[];
+  reputation: number;
 }
 
 /**

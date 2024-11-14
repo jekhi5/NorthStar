@@ -19,6 +19,7 @@ const answerSchema: Schema = new Schema(
     ansBy: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
     ansDateTime: {
       type: Date,

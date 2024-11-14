@@ -172,6 +172,33 @@ const sortQuestionsByMostViews = (qlist: Question[]): Question[] =>
   sortQuestionsByNewest(qlist).sort((a, b) => b.views.length - a.views.length);
 
 /**
+ * Updates the reputation of a user.
+ *
+ * @param uid The uid of the user to update
+ * @param reputationChange the amount to change the reputation by
+ * @returns a Promise that resolves to the updated user or an error message if the operation fails
+ */
+export const updateUserReputation = async (
+  uid: string,
+  reputationChange: number,
+): Promise<UserResponse> => {
+  try {
+    const user = await UserModel.findOneAndUpdate(
+      { uid },
+      { $inc: { reputation: reputationChange } },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user;
+  } catch (error) {
+    return { error: `Error updating user reputation` };
+  }
+};
+
+/**
  * Adds a tag to the database if it does not already exist.
  *
  * @param {Tag} tag - The tag to add
@@ -418,6 +445,10 @@ export const saveQuestion = async (question: Question): Promise<QuestionResponse
 export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
   try {
     const result = await AnswerModel.create(answer);
+
+    // Every answer is worth 2 reputation points
+    await updateUserReputation(answer.ansBy.uid, 2);
+
     return result;
   } catch (error) {
     return { error: 'Error when saving an answer' };
@@ -434,6 +465,10 @@ export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
 export const saveComment = async (comment: Comment): Promise<CommentResponse> => {
   try {
     const result = await CommentModel.create(comment);
+
+    // All comments are worth 1 reputation point
+    await updateUserReputation(comment.commentBy.uid, 1);
+
     return result;
   } catch (error) {
     return { error: 'Error when saving a comment' };
