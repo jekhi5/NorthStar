@@ -6,6 +6,8 @@ import {
   Comment,
   CommentResponse,
   OrderType,
+  PostNotification,
+  PostNotificationResponse,
   Question,
   QuestionResponse,
   Tag,
@@ -456,6 +458,106 @@ export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
 };
 
 /**
+ * Saves a new postNotification to the database.
+ *
+ * @param {PostNotification} postNotification - the notification to save
+ *
+ * @returns {Promise<PostNotificationResponse>} - the saved postNotification, or an error message if the save failed
+ */
+export const savePostNotification = async (
+  postNotification: PostNotification,
+): Promise<PostNotificationResponse> => {
+  try {
+    const result = await PostNotificationModel.create(postNotification);
+    return result;
+  } catch (error) {
+    return { error: 'Error when saving a postNotification' };
+  }
+};
+
+export const postNotifications = async (
+  qid: string,
+  associatedPostId: string,
+  type: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag',
+  user: User,
+): Promise<PostNotificationResponse> => {
+  try {
+    const question: Question | null = await QuestionModel.findOne({ _id: qid }).populate({
+      path: 'askedBy',
+      model: UserModel,
+    });
+    if (!question || question._id === undefined) {
+      throw new Error('Could not find question that had action taken');
+    }
+
+    const notificationToPost: PostNotification = {
+      title: '',
+      text: '',
+      notificationType: 'questionAnswered',
+      postId: new ObjectId(),
+      fromUser: user,
+    };
+
+    if (type === 'questionAnswered') {
+      const answer: Answer | null = await AnswerModel.findOne({ _id: associatedPostId });
+
+      if (!answer || answer._id === undefined) {
+        throw new Error('Could not find answer that was posted');
+      }
+
+      notificationToPost.title = `Your question: "${question.title}" has a new answer!`;
+      notificationToPost.text = `${answer.ansBy} said: "${answer.text}"`;
+      notificationToPost.notificationType = 'questionAnswered';
+      notificationToPost.postId = answer._id;
+    } else if (type === 'commentAdded') {
+      const comment: Comment | null = await CommentModel.findOne({
+        _id: associatedPostId,
+      }).populate({ path: 'commentBy', model: UserModel });
+
+      if (!comment || comment._id === undefined) {
+        throw new Error('Could not find comment that was posted');
+      }
+
+      notificationToPost.title = 'A Comment Was Added to a Post You Subscribe to!';
+      notificationToPost.text = `${user.username} said: "${comment.text}"`;
+      notificationToPost.notificationType = 'commentAdded';
+      notificationToPost.postId = comment._id;
+    } else if (type === 'questionPostedWithTag') {
+      notificationToPost.title = 'A Question Was Posted With a Tag You Subscribe to!';
+      notificationToPost.text = `The question: "${question.title}" was asked by ${user.username}`;
+      notificationToPost.notificationType = 'questionPostedWithTag';
+      notificationToPost.postId = question._id;
+    } else {
+      throw new Error('Invalid notification type');
+    }
+
+    const postedNotification = await savePostNotification(notificationToPost);
+
+    if (!postedNotification || 'error' in postedNotification) {
+      throw new Error('Error when saving a postNotification');
+    }
+
+    question.subscribers.map(async subscriberId => {
+      // Don't sent notifications to users about their own actions
+      if (user._id?.toString() !== subscriberId.toString()) {
+        await UserModel.findOneAndUpdate(
+          { _id: subscriberId },
+          { $push: { postNotifications: postedNotification } },
+          { new: true },
+        );
+      }
+    });
+
+    return postedNotification;
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: `Error when posting notification: ${error.message}` };
+    }
+    return { error: 'Error when posting notification' };
+  }
+};
+
+/**
  * Saves a new comment to the database.
  *
  * @param {Comment} comment - The comment to save
@@ -487,8 +589,6 @@ export const saveUser = async (user: User): Promise<UserResponse> => {
     const result = await UserModel.create(user);
     return result;
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log('Error: ', error);
     return { error: 'Error when saving a User' };
   }
 };

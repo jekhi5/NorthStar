@@ -78,7 +78,7 @@ userSchema
     const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
       title: 'Welcome to Fake Stack Overflow!',
       text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      postType: 'Question',
+      notificationType: 'Question',
     });
 
     if (welcomeNotification && welcomeNotification._id) {

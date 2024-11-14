@@ -80,13 +80,19 @@ async function tagCreate(name: string, description: string, subscribers: User[])
 async function postNotificationCreate(
   title: string,
   text: string,
-  postType: 'Question' | 'Answer' | 'Comment',
+  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag',
   postId: ObjectId,
   fromUser: User,
 ): Promise<PostNotification> {
   if (title === '' || text === '' || fromUser.uid === '')
     throw new Error('Invalid PostNotification Format');
-  const postNotification: PostNotification = { title, text, postType, postId, fromUser };
+  const postNotification: PostNotification = {
+    title,
+    text,
+    notificationType,
+    postId,
+    fromUser,
+  };
   return await PostNotificationModel.create(postNotification);
 }
 
@@ -252,6 +258,16 @@ const populate = async () => {
     const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed', [], 40);
     const u8 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed', [], 0);
     const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Not endorsed', [], 50);
+    
+    // Add fake stack overflow team user for welcome notification
+    const fakeStackOverflowTeamUser = await userCreate(
+      'QyOuDOnKEfMX4vlARweFSGrj9ft1', // From Firebase
+      'FakeStackOverflowTeam',
+      'FakeStackOverflowTeam@gmail.com',
+      'Endorsed',
+      [],
+      0,
+    );
 
     const t1 = await tagCreate(T1_NAME, T1_DESC, [u1, u2, u3]);
     const t2 = await tagCreate(T2_NAME, T2_DESC, []);
@@ -259,6 +275,20 @@ const populate = async () => {
     const t4 = await tagCreate(T4_NAME, T4_DESC, [u6, u8]);
     const t5 = await tagCreate(T5_NAME, T5_DESC, []);
     const t6 = await tagCreate(T6_NAME, T6_DESC, []);
+
+    // Bogus question posted to the database that is pointed to by the welcome notification
+    const fakeStackOverflowWelcomeQuestion = await questionCreate(
+      'Welcome to Fake Stack Overflow!',
+      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+      [t1],
+      [],
+      fakeStackOverflowTeamUser,
+      new Date('1776-04-07T03:30:00'),
+      [],
+      [],
+      [],
+    );
+
 
     const c1 = await commentCreate(C1_TEXT, u1, new Date('2023-12-12T03:30:00'));
     const c2 = await commentCreate(C2_TEXT, u2, new Date('2023-12-01T15:24:19'));
@@ -276,7 +306,7 @@ const populate = async () => {
     const pn1 = await postNotificationCreate(
       'New Comment',
       'New comment added',
-      'Comment',
+      'commentAdded',
       c4._id ?? new ObjectId(),
       u3,
     );
@@ -304,7 +334,7 @@ const populate = async () => {
     const pn2 = await postNotificationCreate(
       'New Answer',
       'New answer added',
-      'Answer',
+      'questionAnswered',
       a4._id ?? new ObjectId(),
       u2,
     );
@@ -368,7 +398,7 @@ const populate = async () => {
     const pn3 = await postNotificationCreate(
       'New question',
       'New question added',
-      'Question',
+      'questionPostedWithTag',
       q1._id ?? new ObjectId(),
       u1,
     );
@@ -400,28 +430,7 @@ const populate = async () => {
       '',
     );
 
-    // Add fake stack overflow team user for welcome notification
-    const fakeStackOverflowTeamUser = await userCreate(
-      'QyOuDOnKEfMX4vlARweFSGrj9ft1', // From Firebase
-      'FakeStackOverflowTeam',
-      'FakeStackOverflowTeam@gmail.com',
-      'Endorsed',
-      [],
-      0,
-    );
-
-    // Bogus question posted to the database that is pointed to by the welcome notification
-    const fakeStackOverflowWelcomeQuestion = await questionCreate(
-      'Welcome to Fake Stack Overflow!',
-      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      [t1],
-      [],
-      fakeStackOverflowTeamUser,
-      new Date(),
-      [],
-      [],
-      [],
-    );
+    
 
     if (fakeStackOverflowWelcomeQuestion._id === undefined) {
       throw new Error('Error creating welcome notification; question ID is undefined');
@@ -430,7 +439,7 @@ const populate = async () => {
     await postNotificationCreate(
       'Welcome to Fake Stack Overflow!',
       'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      'Question',
+      'questionPostedWithTag',
       fakeStackOverflowWelcomeQuestion._id,
       fakeStackOverflowTeamUser,
     );

@@ -35,7 +35,10 @@ const useNotificationPage = () => {
       }
     };
 
-    const handleNotificationUpdate = async ({ notification }: PostNotificationUpdatePayload) => {
+    const handleNotificationUpdate = async ({
+      notification,
+      uid,
+    }: PostNotificationUpdatePayload) => {
       if (!uid) {
         setError('UID is undefined');
         return;

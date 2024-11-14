@@ -22,9 +22,9 @@ const postNotificationSchema: Schema = new Schema(
       type: String,
       required: true,
     },
-    postType: {
+    notificationType: {
       type: String,
-      enum: ['Question', 'Answer', 'Comment'],
+      enum: ['questionAnswered', 'commentAdded', 'questionPostedWithTag'],
       required: true,
     },
     // No ref is given here because the post could be a question, answer, or comment

@@ -7,8 +7,15 @@ import {
   VoteRequest,
   QuestionResponse,
   AnswerResponse,
+  PostNotificationResponse,
 } from '../types';
-import { addComment, addVoteToComment, populateDocument, saveComment } from '../models/application';
+import {
+  addComment,
+  addVoteToComment,
+  populateDocument,
+  postNotifications,
+  saveComment,
+} from '../models/application';
 
 const commentController = (socket: FakeSOSocket) => {
   const router = express.Router();
@@ -93,6 +100,22 @@ const commentController = (socket: FakeSOSocket) => {
 
       if (populatedDoc && 'error' in populatedDoc) {
         throw new Error(populatedDoc.error);
+      }
+
+      if (type === 'question' && comFromDb._id) {
+        const newNotification: PostNotificationResponse = await postNotifications(
+          id,
+          comFromDb._id?.toString(),
+          'commentAdded',
+          comFromDb.commentBy,
+        );
+
+        if (newNotification && !('error' in newNotification)) {
+          socket.emit('postNotificationUpdate', {
+            notification: newNotification,
+            uid: comment.commentBy.uid,
+          });
+        }
       }
 
       socket.emit('commentUpdate', {

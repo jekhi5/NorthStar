@@ -17,7 +17,7 @@ export interface PostNotification {
   _id?: ObjectId;
   title: string;
   text: string;
-  postType: 'Question' | 'Answer' | 'Comment';
+  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag';
   postId: ObjectId;
   fromUser: User;
 }
@@ -135,6 +135,11 @@ export interface Question {
  * Type representing the possible responses for a Question-related operation.
  */
 export type QuestionResponse = Question | { error: string };
+
+/**
+ * Type representing the possible responses for a PostNotification-related operation.
+ */
+export type PostNotificationResponse = PostNotification | { error: string };
 
 /**
  * Interface for the request query to find questions using a search string, which contains:
@@ -338,6 +343,7 @@ export interface AnswerUpdatePayload {
 }
 
 export interface PostNotificationUpdatePayload {
+  uid: string;
   notification: PostNotification;
 }
 

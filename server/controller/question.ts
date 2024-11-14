@@ -8,6 +8,7 @@ import {
   VoteRequest,
   FakeSOSocket,
   User,
+  PostNotificationResponse,
 } from '../types';
 import {
   addVoteToQuestion,
@@ -18,6 +19,7 @@ import {
   processTags,
   populateDocument,
   saveQuestion,
+  postNotifications,
 } from '../models/application';
 
 const questionController = (socket: FakeSOSocket) => {
@@ -164,6 +166,22 @@ const questionController = (socket: FakeSOSocket) => {
 
       if (populatedQuestion && 'error' in populatedQuestion) {
         throw new Error(populatedQuestion.error);
+      }
+
+      if (populatedQuestion._id) {
+        const newNotification: PostNotificationResponse = await postNotifications(
+          populatedQuestion._id?.toString(),
+          populatedQuestion._id?.toString(),
+          'questionPostedWithTag',
+          askedBy,
+        );
+
+        if (newNotification && !('error' in newNotification)) {
+          socket.emit('postNotificationUpdate', {
+            notification: newNotification,
+            uid: askedBy.uid,
+          });
+        }
       }
 
       socket.emit('questionUpdate', populatedQuestion as Question);

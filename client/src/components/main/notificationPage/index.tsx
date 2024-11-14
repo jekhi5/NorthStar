@@ -19,15 +19,18 @@ const NotificationPage = () => {
       {!error && notifications && notifications.length === 0 && <h4>No notifications</h4>}
       {!error && notifications && notifications.length > 0 && (
         <ul>
-          {notifications.map((notification, i) => (
-            <li key={i} className='notification'>
-              <hr />
-              <h3>{notification.title}</h3>
-              <p>{notification.text}</p>
-              <p>{notification.postType}</p>
-              <p>From: {notification.fromUser.username}</p>
-            </li>
-          ))}
+          {notifications
+            .slice()
+            .reverse()
+            .map((notification, i) => (
+              <li key={i} className='notification'>
+                <hr />
+                <h3>{notification.title}</h3>
+                <p>{notification.text}</p>
+                <p>{notification.notificationType}</p>
+                <p>From: {notification.fromUser.username}</p>
+              </li>
+            ))}
         </ul>
       )}
     </div>

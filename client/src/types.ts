@@ -15,7 +15,7 @@ export interface PostNotification {
   _id?: string;
   title: string;
   text: string;
-  postType: 'Question' | 'Answer' | 'Comment';
+  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag';
   postId: string;
   fromUser: User;
 }
@@ -210,6 +210,7 @@ export interface SubscriberUpdatePayload {
 
 export interface PostNotificationUpdatePayload {
   notification: PostNotification;
+  uid: string;
 }
 
 /**
