@@ -26,7 +26,13 @@ const userController = () => {
     const { uid } = req.params;
 
     try {
-      const user = await UserModel.findOne({ uid });
+      const user = await UserModel.findOne({ uid }).populate([
+        {
+          path: 'postNotifications',
+          model: PostNotificationModel,
+          populate: { path: 'fromUser', model: UserModel },
+        },
+      ]);
 
       if (!user) {
         res.status(404).json({ message: 'User not found' });

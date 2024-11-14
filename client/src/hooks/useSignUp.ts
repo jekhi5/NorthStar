@@ -112,7 +112,7 @@ const useSignUp = () => {
         username: formData.username,
         email: formData.email,
         status: 'Not endorsed',
-        notifications: [],
+        postNotifications: [],
         reputation: 0,
       };
 

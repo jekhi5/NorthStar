@@ -29,7 +29,7 @@ const useNotificationPage = () => {
 
       try {
         const res = await getUserByUid(uid);
-        setNotifications(!res ? [] : res.notifications);
+        setNotifications(!res ? [] : res.postNotifications);
       } catch (e) {
         setError(`Error fetching notifications: ${e}`);
       }

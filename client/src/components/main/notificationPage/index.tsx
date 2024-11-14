@@ -22,10 +22,10 @@ const NotificationPage = () => {
           {notifications.map((notification, i) => (
             <li key={i} className='notification'>
               <hr />
-              <p>{notification.title}</p>
+              <h3>{notification.title}</h3>
               <p>{notification.text}</p>
               <p>{notification.postType}</p>
-              <p>{notification.fromUser.username}</p>
+              <p>From: {notification.fromUser.username}</p>
             </li>
           ))}
         </ul>

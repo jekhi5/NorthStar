@@ -1,6 +1,6 @@
-import { ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
-import { User } from '../../types';
+import { PostNotification } from '../../types';
+import PostNotificationModel from '../postNotifications';
 
 /**
  * Mongoose schema for the User collection.
@@ -65,13 +65,25 @@ const userSchema = new mongoose.Schema(
 /**
  * Mongo equivalent of a MYSQL trigger.
  * Updates the status of a user to 'Endorsed' if their reputation is 30 or higher.
+ * Adds the welcome notification to the user's postNotifications array.
  */
-// eslint-disable-next-line func-names
-userSchema.post('findOneAndUpdate', async doc => {
-  if (doc.reputation >= 30 && doc.status !== 'Endorsed') {
-    doc.status = 'Endorsed';
-    await doc.save();
-  }
-});
+userSchema
+  .post('findOneAndUpdate', async doc => {
+    if (doc.reputation >= 30 && doc.status !== 'Endorsed') {
+      doc.status = 'Endorsed';
+      await doc.save();
+    }
+  })
+  .post('save', async doc => {
+    const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
+      title: 'Welcome to Fake Stack Overflow!',
+      text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+      postType: 'Question',
+    });
+
+    if (welcomeNotification && welcomeNotification._id) {
+      await doc.populate('postNotifications');
+    }
+  });
 
 export default userSchema;
