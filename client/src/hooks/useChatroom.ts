@@ -3,6 +3,12 @@ import { Message } from '../types';
 import { getMessages, sendMessageToDatabase } from '../services/chatService';
 import useUserContext from './useUserContext';
 
+/*
+ * Constant that determines how many of the most recent messages will display.
+ * Change this value to change how many messages show.
+ */
+const MESSAGE_LIMIT: number = 20;
+
 /**
  * Custom hook for managing chatroom state and logic.
  *
@@ -33,7 +39,7 @@ const useChatroom = () => {
       setLoading(true);
       try {
         // Set message limit in param
-        const initialMessages = await getMessages(10);
+        const initialMessages = await getMessages(MESSAGE_LIMIT);
         setMessages(initialMessages);
       } catch (err) {
         setError('Failed to load messages');
@@ -53,7 +59,7 @@ const useChatroom = () => {
        * @param message - The new message object.
        */
       const handleNewMessage = (message: Message) => {
-        setMessages(prevMessages => [...prevMessages, message]);
+        setMessages(prevMessages => [message, ...prevMessages]);
       };
       socket.on('newMessage', handleNewMessage);
       // Clean up listener when the component unmounts
@@ -80,7 +86,6 @@ const useChatroom = () => {
 
     try {
       await sendMessageToDatabase(newMessage);
-      // setMessages(prevMessages => [...prevMessages, newMessage]);
       setNewMessageContent('');
     } catch (err) {
       setError('Failed to send message');
