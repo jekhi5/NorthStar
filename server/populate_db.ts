@@ -122,6 +122,20 @@ async function userCreate(
     lastName,
     profilePicture,
   };
+
+  // Find the welcome notification in the database
+  const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
+    title: 'Welcome to Fake Stack Overflow!',
+    text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+    notificationType: 'questionPostedWithTag',
+  });
+
+  // If the welcome notification exists, add it to the user's postNotifications prior to creation
+  if (welcomeNotification) {
+    user.postNotifications = [...postNotifications, welcomeNotification];
+  }
+
+  // Create the user
   return await UserModel.create(user);
 }
 
@@ -250,15 +264,8 @@ async function questionCreate(
  */
 const populate = async () => {
   try {
-    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Endorsed', [], 250);
-    const u2 = await userCreate('2', 'ihba001', 'ihba001@email.com', 'Not endorsed', [], 10);
-    const u3 = await userCreate('3', 'saltyPeter', 'saltyPeter@email.com', 'Endorsed', [], 35);
-    const u4 = await userCreate('4', 'monkeyABC', 'monkeyABC@email.com', 'Not endorsed', [], 24);
-    const u5 = await userCreate('5', 'hamkalo', 'hamkalo@email.com', 'Endorsed', [], 35);
-    const u6 = await userCreate('6', 'azad', 'azad@email.com', 'Not endorsed', [], 1);
-    const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed', [], 40);
-    const u8 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed', [], 0);
-    const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Not endorsed', [], 50);
+    // Put the code for the welcome notification at the top so that all
+    // subsequent user creations will be populated with the welcome notification
 
     // Add fake stack overflow team user for welcome notification
     const fakeStackOverflowTeamUser = await userCreate(
@@ -270,12 +277,8 @@ const populate = async () => {
       0,
     );
 
-    const t1 = await tagCreate(T1_NAME, T1_DESC, [u1, u2, u3]);
-    const t2 = await tagCreate(T2_NAME, T2_DESC, []);
-    const t3 = await tagCreate(T3_NAME, T3_DESC, []);
-    const t4 = await tagCreate(T4_NAME, T4_DESC, []);
-    const t5 = await tagCreate(T5_NAME, T5_DESC, []);
-    const t6 = await tagCreate(T6_NAME, T6_DESC, []);
+    // Add tag for bogus question that is pointed to by the welcome notification
+    const t1 = await tagCreate(T1_NAME, T1_DESC, []);
 
     // Bogus question posted to the database that is pointed to by the welcome notification
     const fakeStackOverflowWelcomeQuestion = await questionCreate(
@@ -289,6 +292,34 @@ const populate = async () => {
       [],
       [],
     );
+
+    if (fakeStackOverflowWelcomeQuestion._id === undefined) {
+      throw new Error('Error creating welcome notification; question ID is undefined');
+    }
+
+    await postNotificationCreate(
+      'Welcome to Fake Stack Overflow!',
+      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+      'questionPostedWithTag',
+      fakeStackOverflowWelcomeQuestion._id,
+      fakeStackOverflowTeamUser,
+    );
+
+    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Endorsed', [], 250);
+    const u2 = await userCreate('2', 'ihba001', 'ihba001@email.com', 'Not endorsed', [], 10);
+    const u3 = await userCreate('3', 'saltyPeter', 'saltyPeter@email.com', 'Endorsed', [], 35);
+    const u4 = await userCreate('4', 'monkeyABC', 'monkeyABC@email.com', 'Not endorsed', [], 24);
+    const u5 = await userCreate('5', 'hamkalo', 'hamkalo@email.com', 'Endorsed', [], 35);
+    const u6 = await userCreate('6', 'azad', 'azad@email.com', 'Not endorsed', [], 1);
+    const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed', [], 40);
+    const u8 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed', [], 0);
+    const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Not endorsed', [], 50);
+
+    const t2 = await tagCreate(T2_NAME, T2_DESC, [u1, u2, u3]);
+    const t3 = await tagCreate(T3_NAME, T3_DESC, []);
+    const t4 = await tagCreate(T4_NAME, T4_DESC, []);
+    const t5 = await tagCreate(T5_NAME, T5_DESC, []);
+    const t6 = await tagCreate(T6_NAME, T6_DESC, []);
 
     const c1 = await commentCreate(C1_TEXT, u1, new Date('2023-12-12T03:30:00'));
     const c2 = await commentCreate(C2_TEXT, u2, new Date('2023-12-01T15:24:19'));
@@ -443,27 +474,15 @@ const populate = async () => {
     );
 
     await userCreate(
-      'Cd9OSb1sIlPaglmFqmzakxt6rV42',
-      'gracetheobald',
-      'gettheobald@gmail.com',
+      '1LHJdANB6bXmgh1aDks2o8pWCJ22',
+      'grace',
+      'gracelyntheobald@gmail.com',
       'Not endorsed',
       [],
-      44,
+      100,
       'Gracelyn',
       'Theobald',
       '',
-    );
-
-    if (fakeStackOverflowWelcomeQuestion._id === undefined) {
-      throw new Error('Error creating welcome notification; question ID is undefined');
-    }
-
-    await postNotificationCreate(
-      'Welcome to Fake Stack Overflow!',
-      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      'questionPostedWithTag',
-      fakeStackOverflowWelcomeQuestion._id,
-      fakeStackOverflowTeamUser,
     );
     console.log('Database populated');
   } catch (err) {
