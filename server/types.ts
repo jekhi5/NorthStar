@@ -137,11 +137,11 @@ export interface Question {
 export type QuestionResponse = Question | { error: string };
 
 /**
-
  * Type representing the possible responses for a multiple Question-related operation.
  */
 export type QuestionsResponse = Question[] | { error: string };
 
+/**
  * Type representing the possible responses for a PostNotification-related operation.
  */
 export type PostNotificationResponse = PostNotification | { error: string };
