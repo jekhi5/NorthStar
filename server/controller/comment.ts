@@ -1,7 +1,21 @@
 import express, { Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { Comment, AddCommentRequest, FakeSOSocket, VoteRequest } from '../types';
-import { addComment, addVoteToComment, populateDocument, saveComment } from '../models/application';
+import {
+  Comment,
+  AddCommentRequest,
+  FakeSOSocket,
+  VoteRequest,
+  QuestionResponse,
+  AnswerResponse,
+  PostNotificationResponse,
+} from '../types';
+import {
+  addComment,
+  addVoteToComment,
+  populateDocument,
+  postNotifications,
+  saveComment,
+} from '../models/application';
 
 const commentController = (socket: FakeSOSocket) => {
   const router = express.Router();
@@ -82,10 +96,28 @@ const commentController = (socket: FakeSOSocket) => {
 
       // Populates the fields of the question or answer that this comment
       // was added to, and emits the updated object
-      const populatedDoc = await populateDocument(id, type);
+      const populatedDoc = (await populateDocument(id, type)) as QuestionResponse | AnswerResponse;
 
       if (populatedDoc && 'error' in populatedDoc) {
         throw new Error(populatedDoc.error);
+      }
+
+      if (type === 'question' && comFromDb._id) {
+        const { commentBy } = populatedDoc.comments.at(-1) as Comment;
+        if (commentBy._id) {
+          const newNotification: PostNotificationResponse = await postNotifications(
+            id,
+            comFromDb._id?.toString(),
+            'commentAdded',
+            commentBy,
+          );
+
+          if (newNotification && !('error' in newNotification)) {
+            socket.emit('postNotificationUpdate', {
+              notification: newNotification,
+            });
+          }
+        }
       }
 
       socket.emit('commentUpdate', {

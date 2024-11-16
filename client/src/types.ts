@@ -3,6 +3,24 @@ import { Socket } from 'socket.io-client';
 export type FakeSOSocket = Socket<ServerToClientEvents>;
 
 /**
+ * Interface representing a notification in the application, which contains:
+ * - _id - The unique identifier for the PostNotification. Optional field.
+ * - title - The title of the PostNotification.
+ * - text - The content of the PostNotification.
+ * - postType - The type of the post that the PostNotification is about.
+ * - postId - The unique identifier of the post that the PostNotification is about.
+ * - fromUser - The user who triggered the PostNotification.
+ */
+export interface PostNotification {
+  _id?: string;
+  title: string;
+  text: string;
+  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag';
+  postId: string;
+  fromUser: User;
+}
+
+/**
  * Represents a user in the application.
  */
 export interface User {
@@ -14,6 +32,8 @@ export interface User {
   lastName?: string;
   profilePicture?: string;
   status: 'Not endorsed' | 'Endorsed';
+  postNotifications: PostNotification[];
+  reputation: number;
 }
 
 /**
@@ -61,6 +81,7 @@ export interface Tag {
   _id?: string;
   name: string;
   description: string;
+  subscribers: User[];
 }
 
 /**
@@ -85,6 +106,16 @@ export interface VoteData {
   upVotes: string[];
   downVotes: string[];
   type: 'Question' | 'Answer' | 'Comment';
+}
+
+/**
+ * Interface representing the subscriber data for a question, which contains:
+ * - id - The ID of the question being voted on
+ * - subscribers - An array of user IDs who are subscribed the question
+ */
+export interface SubscribeData {
+  id: string;
+  subscribers: string[];
 }
 
 /**
@@ -173,7 +204,12 @@ export interface CommentUpdatePayload {
 }
 
 export interface SubscriberUpdatePayload {
-  result: Question;
+  result: Question | Tag;
+  type: 'question' | 'tag';
+}
+
+export interface PostNotificationUpdatePayload {
+  notification: PostNotification;
 }
 
 /**
@@ -186,4 +222,8 @@ export interface ServerToClientEvents {
   voteUpdate: (vote: VoteUpdatePayload) => void;
   commentUpdate: (update: CommentUpdatePayload) => void;
   subscriberUpdate: (payload: SubscriberUpdatePayload) => void;
+  newMessage: (message: Message) => void;
+  messageUpdate: (updatedMessage: Message) => void;
+  messageDelete: (messageId: string) => void;
+  postNotificationUpdate: (payload: PostNotificationUpdatePayload) => void;
 }

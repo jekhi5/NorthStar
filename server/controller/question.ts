@@ -8,6 +8,8 @@ import {
   AddQuestionRequest,
   VoteRequest,
   FakeSOSocket,
+  User,
+  PostNotificationResponse,
 } from '../types';
 import {
   addVoteToQuestion,
@@ -20,6 +22,7 @@ import {
   saveQuestion,
   getQuestionsByAskedUid,
   getQuestionsByAnsweredUid,
+  postNotifications,
 } from '../models/application';
 
 const questionController = (socket: FakeSOSocket) => {
@@ -211,9 +214,25 @@ const questionController = (socket: FakeSOSocket) => {
     }
     const question: Question = req.body;
     try {
+      const processedTags = await processTags(question.tags);
+      const subscribersFromTags: User[] = processedTags
+        .map(tag => tag.subscribers)
+        .flat()
+        .filter(
+          (subscriber): subscriber is User =>
+            typeof subscriber !== 'string' && subscriber instanceof Object,
+        )
+        .filter(
+          (subscriber, index, self) => index === self.findIndex(s => s.uid === subscriber.uid),
+        );
+
+      const { askedBy } = question;
       const questionswithtags: Question = {
         ...question,
-        tags: await processTags(question.tags),
+        tags: processedTags,
+        subscribers: subscribersFromTags.includes(askedBy)
+          ? subscribersFromTags
+          : [askedBy, ...subscribersFromTags],
       };
       if (questionswithtags.tags.length === 0) {
         throw new Error('Invalid tags');
@@ -228,6 +247,21 @@ const questionController = (socket: FakeSOSocket) => {
 
       if (populatedQuestion && 'error' in populatedQuestion) {
         throw new Error(populatedQuestion.error);
+      }
+
+      if (populatedQuestion._id) {
+        const newNotification: PostNotificationResponse = await postNotifications(
+          populatedQuestion._id?.toString(),
+          populatedQuestion._id?.toString(),
+          'questionPostedWithTag',
+          askedBy,
+        );
+
+        if (newNotification && !('error' in newNotification)) {
+          socket.emit('postNotificationUpdate', {
+            notification: newNotification,
+          });
+        }
       }
 
       socket.emit('questionUpdate', populatedQuestion as Question);

@@ -1,4 +1,3 @@
-import React from 'react';
 import { handleHyperlink } from '../../../../tool';
 import CommentSection from '../../commentSection';
 import './index.css';
@@ -38,6 +37,7 @@ const AnswerView = ({ text, ansBy, meta, comments, handleAddComment }: AnswerPro
     </div>
     <div className='answerAuthor'>
       <div className='answer_author'>{ansBy.username}</div>
+      <div className='question_author_status'>{ansBy.status === 'Endorsed' ? 'Endorsed' : ''}</div>
       <div className='answer_question_meta'>{meta}</div>
     </div>
     <CommentSection comments={comments} handleAddComment={handleAddComment} />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getTagByName } from '../services/tagService';
-import { Tag, TagData } from '../types';
+import { Question, Tag, TagData } from '../types';
+import useUserContext from './useUserContext';
 
 /**
  * Custom hook to handle fetching tag details by tag name.
@@ -14,7 +15,10 @@ const useTagSelected = (t: TagData) => {
   const [tag, setTag] = useState<Tag>({
     name: '',
     description: '',
+    subscribers: [],
   });
+
+  const { socket } = useUserContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +31,30 @@ const useTagSelected = (t: TagData) => {
       }
     };
     fetchData();
-  }, [t.name]);
+
+    /**
+     * Function to handle updates to the subscribers of a question.
+     *
+     * @param result - The updated question object.
+     */
+    const handleSubscriberUpdate = ({
+      result,
+      type,
+    }: {
+      result: Question | Tag;
+      type: 'question' | 'tag';
+    }) => {
+      if (type === 'tag' && result._id === tag._id) {
+        setTag(result as Tag);
+      }
+    };
+
+    socket.on('subscriberUpdate', handleSubscriberUpdate);
+
+    return () => {
+      socket.off('subscriberUpdate', handleSubscriberUpdate);
+    };
+  }, [socket, t.name, tag._id]);
 
   return {
     tag,

@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express';
 import UserModel from '../models/user';
-import { User } from '../types';
-import { saveUser } from '../models/application';
+import { editUser, saveUser } from '../models/application';
+import { PostNotification, User } from '../types';
+import PostNotificationModel from '../models/postNotifications';
 
 const userController = () => {
   const router = express.Router();
@@ -13,6 +14,7 @@ const userController = () => {
     user.username !== '' &&
     user.email !== undefined &&
     user.email !== '';
+
   /**
    * Retrieves a user by their UID.
    *
@@ -23,7 +25,13 @@ const userController = () => {
     const { uid } = req.params;
 
     try {
-      const user = await UserModel.findOne({ uid });
+      const user = await UserModel.findOne({ uid }).populate([
+        {
+          path: 'postNotifications',
+          model: PostNotificationModel,
+          populate: { path: 'fromUser', model: UserModel },
+        },
+      ]);
 
       if (!user) {
         res.status(404).json({ message: 'User not found' });
@@ -89,6 +97,16 @@ const userController = () => {
     }
 
     try {
+      const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
+        title: 'Welcome to Fake Stack Overflow!',
+        text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+        notificationType: 'questionPostedWithTag',
+      });
+
+      if (welcomeNotification) {
+        user.postNotifications = [welcomeNotification];
+      }
+
       const result = await saveUser(user);
       if ('error' in result) {
         throw new Error(result.error);
@@ -104,9 +122,40 @@ const userController = () => {
     }
   };
 
+  /**
+   * Updates a user's information in the database.
+   *
+   * @param req The request object containing the user details.
+   * @param res The response object to send the result.
+   */
+  const updateUser = async (req: Request, res: Response): Promise<void> => {
+    const user: User = req.body;
+
+    if (!isUserValid(user)) {
+      res.status(400).send('Invalid user data');
+      return;
+    }
+
+    try {
+      const result = await editUser(user);
+      if ('error' in result) {
+        throw new Error(result.error);
+      }
+
+      res.status(201).json(result);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        res.status(500).send(`Error when updating user: ${err.message}`);
+      } else {
+        res.status(500).send('Error when updating user');
+      }
+    }
+  };
+
   router.get('/getUserByUid/:uid', getUserByUid);
   router.get('/checkValidUser/:username/:email', checkValidUser);
   router.post('/addUser', addUser);
+  router.put('/updateUser', updateUser);
 
   return router;
 };

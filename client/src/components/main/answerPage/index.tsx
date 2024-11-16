@@ -8,6 +8,7 @@ import QuestionBody from './questionBody';
 import VoteComponent from '../voteComponent';
 import CommentSection from '../commentSection';
 import useAnswerPage from '../../../hooks/useAnswerPage';
+import SubscribeComponent from '../../subscribeQuestion';
 
 /**
  * AnswerPage component that displays the full content of a question along with its answers.
@@ -22,6 +23,7 @@ const AnswerPage = () => {
 
   return (
     <>
+      <SubscribeComponent item={question} type={'question'} />
       <VoteComponent post={question} postType='Question' />
       <AnswerHeader ansCount={question.answers.length} title={question.title} />
       <QuestionBody
