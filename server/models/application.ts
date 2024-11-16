@@ -8,7 +8,6 @@ import {
   OrderType,
   Question,
   QuestionResponse,
-  QuestionsResponse,
   Tag,
   User,
   UserResponse,
@@ -248,7 +247,7 @@ export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Questi
  *
  * @returns {Promise<Question[]>} - Promise that resolves to a list of ordered questions
  */
-export const getQuestionsByUid = async (uid: string): Promise<Question[]> => {
+export const getQuestionsByAskedUid = async (uid: string): Promise<Question[]> => {
   try {
     const qlist = await QuestionModel.find().populate([
       { path: 'tags', model: TagModel },
@@ -427,23 +426,6 @@ export const fetchAndIncrementQuestionViewsById = async (
     return { error: 'Error when fetching and updating a question' };
   }
 };
-
-// /**
-//  * Fetches a list of question by their UID.
-//  *
-//  * @param {string} uid - The uid of the user who asked the questions being queried.
-//  *
-//  * @returns {Promise<QuestionResponse | null>} - Promise that resolves to the fetched question
-//  *          with incremented views, null if the question is not found, or an error message.
-//  */
-// export const fetchQuestionByUid = async (uid: string): Promise<QuestionsResponse | null> => {
-//   try {
-//     const qs = await QuestionModel.find({ askedBy: new ObjectId(uid) });
-//     return qs;
-//   } catch (error) {
-//     return { error: 'Error when fetching matching questions' };
-//   }
-// };
 
 /**
  * Saves a new question to the database.

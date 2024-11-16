@@ -18,7 +18,7 @@ import {
   processTags,
   populateDocument,
   saveQuestion,
-  getQuestionsByUid,
+  getQuestionsByAskedUid,
   getQuestionsByAnsweredUid,
 } from '../models/application';
 
@@ -119,7 +119,7 @@ const questionController = (socket: FakeSOSocket) => {
     }
 
     try {
-      const q = await getQuestionsByUid(uid);
+      const q = await getQuestionsByAskedUid(uid);
 
       if (q && !('error' in q)) {
         socket.emit('questionsUpdate', q);
@@ -316,7 +316,7 @@ const questionController = (socket: FakeSOSocket) => {
   // add appropriate HTTP verbs and their endpoints to the router
   router.get('/getQuestion', getQuestionsByFilter);
   router.get('/getQuestionById/:qid', getQuestionById);
-  router.get('/getQuestionsByUid', getQuestionsByAskedBy);
+  router.get('/getQuestionsByAskedUid', getQuestionsByAskedBy);
   router.get('/getQuestionsByAnsweredUid', getQuestionsByAnsBy);
   router.post('/addQuestion', addQuestion);
   router.post('/upvoteQuestion', upvoteQuestion);

@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Question, User } from '../types';
 import { getUserByUid } from '../services/userService';
 import UserContext from '../contexts/UserContext';
-import { getQuestionsByAnsweredUid, getQuestionsByUid } from '../services/questionService';
+import { getQuestionsByAnsweredUid, getQuestionsByAskedUid } from '../services/questionService';
 
 /**
  * Custom hook to manage the state and logic for the profile page.
@@ -30,7 +30,7 @@ const useProfilePage = () => {
       try {
         const profileData = await getUserByUid(uid);
         setProfile(profileData);
-        const qlist = await getQuestionsByUid(uid);
+        const qlist = await getQuestionsByAskedUid(uid);
         setUserQuestions(qlist || []);
         const alist = await getQuestionsByAnsweredUid(uid);
         setUserAnswers(alist || []);

@@ -50,8 +50,8 @@ const getQuestionById = async (qid: string, uid: string): Promise<Question> => {
  * @param uid - The user ID of the question poster.
  * @throws Error if there is an issue fetching the question by UID.
  */
-const getQuestionsByUid = async (uid: string): Promise<Question[]> => {
-  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByUid/?uid=${uid}`);
+const getQuestionsByAskedUid = async (uid: string): Promise<Question[]> => {
+  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByAskedUid/?uid=${uid}`);
   if (res.status !== 200) {
     throw new Error('Error when fetching questions by uid');
   }
@@ -125,7 +125,7 @@ const downvoteQuestion = async (qid: string, uid: string) => {
 export {
   getQuestionsByFilter,
   getQuestionById,
-  getQuestionsByUid,
+  getQuestionsByAskedUid,
   getQuestionsByAnsweredUid,
   addQuestion,
   upvoteQuestion,
