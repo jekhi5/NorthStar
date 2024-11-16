@@ -8,7 +8,7 @@ const ProfilePage = () => {
     editedProfile,
     error,
     userquestions,
-    useranswers
+    useranswers,
     updateError,
     isEditing,
     toggleEditing,
@@ -86,15 +86,7 @@ const ProfilePage = () => {
             <button onClick={toggleEditing}>Edit Profile</button>
           </div>
         )}
-        <div className='profile-info'>
-          <h2 className='profile-name'>
-            {profile.firstName} {profile.lastName}
-          </h2>
-          <p className='profile-username'>Username: {profile.username}</p>
-          <p className='profile-email'>Email: {profile.email}</p>
-          <p className='profile-status'>Status: {profile.status}</p>
-          <h2 className='profile-questionsasked'>Questions Asked</h2>
-        </div>
+        <h2 className='profile-questionsasked'>Questions Asked</h2>
         {userquestions.length > 0 ? (
           userquestions.map((q, index) => (
             <li key={index} className='question-item'>

@@ -45,6 +45,7 @@ const useProfilePage = () => {
         const qlist = await getQuestionsByAskedUid(uid);
         setUserQuestions(qlist || []);
         const alist = await getQuestionsByAnsweredUid(uid);
+        setUserAnswers(alist || []);
         setEditedProfile(profileData); // Initialize editedProfile with fetched data
       } catch (err) {
         setError('Failed to load profile.');
