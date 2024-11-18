@@ -34,7 +34,9 @@ const QuestionBody = ({ views, text, askby, meta }: QuestionBodyProps) => (
     <div className='answer_question_text'>{handleHyperlink(text)}</div>
     <div className='answer_question_right'>
       <div className='question_author'>{askby.username}</div>
-      <div className='question_author_status'>{askby.status === 'Endorsed' ? 'Endorsed' : ''}</div>
+      <div className='question_author_status'>
+        {askby.status !== 'Not endorsed' ? askby.status : ''}
+      </div>
       <div className='answer_question_meta'>asked {meta}</div>
     </div>
   </div>

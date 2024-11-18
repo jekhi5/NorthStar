@@ -113,11 +113,13 @@ const useProfilePage = () => {
   /**
    * Helper function to calculate the reputation percentage towards endorsed based on the user's reputation.
    * @param reputation the user's reputation
-   * @returns the reputation percentage towards endorsed, as a whole number
+   * @param range the range of reputation required to be endorsed
+   *
+   * @returns the reputation percentage towards a given status, as a whole number
    */
-  const calculateReputationPercentage = (reputation: number) => {
-    if (reputation >= 30) return 100;
-    return ((reputation / 30) * 100).toFixed(0);
+  const calculateReputationPercentage = (reputation: number, range: number) => {
+    if (reputation >= range) return 100;
+    return ((reputation / range) * 100).toFixed(0);
   };
 
   return {

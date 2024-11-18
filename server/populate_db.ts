@@ -101,7 +101,7 @@ async function userCreate(
   uid: string,
   username: string,
   email: string,
-  status: 'Not endorsed' | 'Endorsed',
+  status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster',
   postNotifications: PostNotification[],
   reputation: number,
   firstName?: string,
@@ -305,15 +305,15 @@ const populate = async () => {
       fakeStackOverflowTeamUser,
     );
 
-    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Endorsed', [], 250);
+    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Super Smarty Pants', [], 250);
     const u2 = await userCreate('2', 'ihba001', 'ihba001@email.com', 'Not endorsed', [], 10);
     const u3 = await userCreate('3', 'saltyPeter', 'saltyPeter@email.com', 'Endorsed', [], 35);
     const u4 = await userCreate('4', 'monkeyABC', 'monkeyABC@email.com', 'Not endorsed', [], 24);
     const u5 = await userCreate('5', 'hamkalo', 'hamkalo@email.com', 'Endorsed', [], 35);
     const u6 = await userCreate('6', 'azad', 'azad@email.com', 'Not endorsed', [], 1);
-    const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Endorsed', [], 40);
+    const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Mentor', [], 560);
     const u8 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed', [], 0);
-    const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Not endorsed', [], 50);
+    const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Grandmaster', [], 10000);
 
     const t2 = await tagCreate(T2_NAME, T2_DESC, [u1, u2, u3]);
     const t3 = await tagCreate(T3_NAME, T3_DESC, []);
@@ -434,7 +434,7 @@ const populate = async () => {
       u1,
     );
 
-    await userCreate('12', 'mackson3332', 'mackson3332@email.com', 'Endorsed', [pn3], 4);
+    await userCreate('12', 'mackson3332', 'mackson3332@email.com', 'Endorsed', [pn3], 40);
 
     // Adding us as a users
     await userCreate(
@@ -453,9 +453,9 @@ const populate = async () => {
       'Fm5O8RAHjqcxmNrip3luw0JF6mz1',
       'ashleyydaviis',
       'ashley921davis@gmail.com',
-      'Not endorsed',
+      'Grandmaster',
       [],
-      29,
+      15000,
       'Ashley',
       'Davis',
       '',
