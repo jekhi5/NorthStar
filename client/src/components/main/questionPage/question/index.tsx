@@ -75,7 +75,7 @@ const QuestionView = ({ q }: QuestionProps) => {
       <div className='lastActivity'>
         <div className='question_author'>{q.askedBy?.username || 'Unknown Author'}</div>
         <div className='question_author_status'>
-          {q.askedBy.status === 'Endorsed' ? 'Endorsed' : ''}
+          {q.askedBy.status !== 'Not endorsed' ? q.askedBy.status : ''}
         </div>
         <div>&nbsp;</div>
         <div className='question_meta'>asked {getMetaData(new Date(q.askDateTime))}</div>
