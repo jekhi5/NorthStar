@@ -12,7 +12,7 @@
 .profile-title {
   font-size: 2.5rem;
   font-weight: bold;
-  color: var(--primary-blue);
+  color: var(--primary-purple);
   margin-bottom: 1.5rem;
 }
 
@@ -51,11 +51,13 @@
   border: 1px solid var(--border-gray);
   border-radius: 4px;
   font-size: 1rem;
+  background-color: var(--background-light);
+  color: var(--text-dark);
 }
 
 .profile-edit-form button,
 .profile-info button {
-  background-color: var(--primary-blue);
+  background-color: var(--primary-purple);
   color: #fff;
   padding: 0.5rem 1rem;
   border: none;
@@ -67,5 +69,5 @@
 
 .profile-edit-form button:hover,
 .profile-info button:hover {
-  background-color: var(--hover-blue);
+  background-color: var(--hover-purple);
 }

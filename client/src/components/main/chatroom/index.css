@@ -13,7 +13,7 @@
 .chatroom h2 {
   font-size: 2rem;
   font-weight: bold;
-  color: var(--primary-blue);
+  color: var(--primary-purple);
   text-align: center;
   margin-bottom: 1rem;
 }
@@ -32,10 +32,12 @@
   border: 1px solid var(--border-gray);
   border-radius: 4px;
   margin-right: 0.5rem;
+  background-color: var(--background-light);
+  color: var(--text-dark);
 }
 
 .input-area button {
-  background-color: var(--primary-blue);
+  background-color: var(--primary-purple);
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -45,7 +47,7 @@
 }
 
 .input-area button:hover {
-  background-color: var(--hover-blue);
+  background-color: var(--hover-purple);
 }
 
 .messages .message {
@@ -58,7 +60,7 @@
 
 .messages .message .user {
   font-weight: bold;
-  color: var(--primary-blue);
+  color: var(--primary-purple);
 }
 
 .messages .message .timestamp {

@@ -11,9 +11,17 @@
 
 .container h2,
 .container h4 {
-  color: var(--primary-blue);
+  color: var(--primary-purple);
   text-align: center;
   margin-bottom: 1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .input-text {
@@ -21,20 +29,28 @@
   font-size: 1rem;
   width: 100%;
   max-width: 300px;
-  margin-bottom: 1rem;
   border: 1px solid var(--border-gray);
   border-radius: 4px;
+  background-color: var(--background-white);
+  color: var(--text-dark);
 }
 
 .input-text:focus {
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  border-color: var(--primary-purple);
+  box-shadow: 0 0 5px rgba(50, 42, 136, 0.5);
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .login-button {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
-  background-color: var(--secondary-green);
+  background-color: var(--primary-purple);
   color: white;
   border: none;
   border-radius: 4px;
@@ -43,7 +59,7 @@
 }
 
 .login-button:hover {
-  background-color: var(--hover-green);
+  background-color: var(--hover-purple);
 }
 
 .error-text {

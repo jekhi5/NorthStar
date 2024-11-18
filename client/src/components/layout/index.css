@@ -40,7 +40,7 @@
 .btn_indicator_container {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* This will push child elements to the extremes of the container */
+  justify-content: space-between;
   width: 100%;
 }
 

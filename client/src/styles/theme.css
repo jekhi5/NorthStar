@@ -1,16 +1,16 @@
 :root {
-    --primary-blue: #007bff;
-    --secondary-green: #28a745;
-    --background-light: #f7f9fc;
-    --background-white: #ffffff;
-    --text-dark: #333333;
-    --text-gray: #666666;
-    --text-light-gray: #999999;
-    --border-gray: #ddd;
-    --hover-blue: #0056b3;
-    --hover-green: #218838;
-  }
-  
+  --primary-purple: #322a88; /* Dark purple for main elements */
+  --accent-yellow: #efe8ca; /* Light yellow for accents */
+  --background-light: #f7f9fc; /* Light background */
+  --background-white: #ffffff; /* White for containers */
+  --text-dark: #333333; /* Dark text for readability */
+  --text-gray: #666666; /* Gray text for lower emphasis */
+  --text-light-gray: #999999; /* Lighter gray for Even lower emphasis! */
+  --border-gray: #ddd; /* Border color */
+  --hover-purple: #5e4fa2; /* Hover effect for dark purple elements */
+  --hover-yellow: #efe8ca; /* Hover effect for accents */
+}
+
   body {
     font-family: 'Inter', sans-serif;
     color: var(--text-dark);
