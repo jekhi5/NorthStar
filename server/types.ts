@@ -137,9 +137,15 @@ export interface Question {
 export type QuestionResponse = Question | { error: string };
 
 /**
+ * Type representing the possible responses for a multiple Question-related operation.
+ */
+export type QuestionsResponse = Question[] | { error: string };
+
+/**
  * Type representing the possible responses for a PostNotification-related operation.
  */
 export type PostNotificationResponse = PostNotification | { error: string };
+
 
 /**
  * Interface for the request query to find questions using a search string, which contains:
@@ -165,6 +171,16 @@ export interface FindQuestionByIdRequest extends Request {
   };
   query: {
     uid: string;
+  };
+}
+
+/**
+ * Interface for the request parameters when finding a list of questions by their poster's/answerer's id.
+ * - user id - The id of the user to filter the questions by.
+ */
+export interface FindQuestionsByUserIdRequest extends Request {
+  query: {
+    userId: string;
   };
 }
 
@@ -370,6 +386,7 @@ export interface PostNotificationUpdatePayload {
  */
 export interface ServerToClientEvents {
   questionUpdate: (question: QuestionResponse) => void;
+  questionsUpdate: (questions: QuestionsResponse) => void;
   answerUpdate: (result: AnswerUpdatePayload) => void;
   viewsUpdate: (question: QuestionResponse) => void;
   voteUpdate: (vote: VoteUpdatePayload) => void;
