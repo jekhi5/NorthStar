@@ -57,7 +57,7 @@ const useProfilePage = () => {
     };
 
     fetchProfile();
-  }, [uid]);
+  }, [uid, userId]);
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
