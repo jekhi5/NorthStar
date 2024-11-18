@@ -1,0 +1,21 @@
+:root {
+    --primary-blue: #007bff;
+    --secondary-green: #28a745;
+    --background-light: #f7f9fc;
+    --background-white: #ffffff;
+    --text-dark: #333333;
+    --text-gray: #666666;
+    --text-light-gray: #999999;
+    --border-gray: #ddd;
+    --hover-blue: #0056b3;
+    --hover-green: #218838;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+    background-color: var(--background-light);
+    margin: 0;
+    padding: 0;
+  }
+  
