@@ -80,9 +80,25 @@ const ProfilePage = () => {
             </h2>
             <p className='profile-username'>Username: {profile.username}</p>
             <p className='profile-email'>Email: {profile.email}</p>
-            <p className='profile-status'>
-              Progress towards Endorsed: {calculateReputationPercentage(profile.reputation)}%
-            </p>{' '}
+            <div className='profile-status'>
+              <ul>
+                <li>
+                  Progress towards Endorsed: {calculateReputationPercentage(profile.reputation, 30)}
+                  %
+                </li>
+                <li>
+                  Progress towards Super Smarty Pants:{' '}
+                  {calculateReputationPercentage(profile.reputation, 100)}%
+                </li>
+                <li>
+                  Progress towards Mentor: {calculateReputationPercentage(profile.reputation, 500)}%
+                </li>
+                <li>
+                  Progress towards Grandmaster:{' '}
+                  {calculateReputationPercentage(profile.reputation, 1000)}%
+                </li>
+              </ul>
+            </div>
             <button onClick={toggleEditing}>Edit Profile</button>
           </div>
         )}
