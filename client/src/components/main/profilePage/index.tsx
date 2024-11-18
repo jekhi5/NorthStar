@@ -7,8 +7,8 @@ const ProfilePage = () => {
     profile,
     editedProfile,
     error,
-    userquestions,
-    useranswers,
+    userQuestions,
+    userAnswers,
     updateError,
     isEditing,
     toggleEditing,
@@ -87,8 +87,8 @@ const ProfilePage = () => {
           </div>
         )}
         <h2 className='profile-questionsasked'>Questions Asked</h2>
-        {userquestions.length > 0 ? (
-          userquestions.map((q, index) => (
+        {userQuestions.length > 0 ? (
+          userQuestions.map((q, index) => (
             <li key={index} className='question-item'>
               <NavLink
                 to={`/question/${q._id}`}
@@ -104,8 +104,8 @@ const ProfilePage = () => {
           <p className='no-questions'>No questions yet.</p>
         )}
         <h2 className='profile-questionsanswered'>Questions Answered</h2>
-        {useranswers.length > 0 ? (
-          useranswers.map((a, index) => (
+        {userAnswers.length > 0 ? (
+          userAnswers.map((a, index) => (
             <li key={index} className='question-item'>
               <NavLink
                 to={`/question/${a._id}`}

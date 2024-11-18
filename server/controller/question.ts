@@ -4,7 +4,7 @@ import {
   Question,
   FindQuestionRequest,
   FindQuestionByIdRequest,
-  FindQuestionsByUidRequest,
+  FindQuestionsByUserIdRequest,
   AddQuestionRequest,
   VoteRequest,
   FakeSOSocket,
@@ -20,8 +20,8 @@ import {
   processTags,
   populateDocument,
   saveQuestion,
-  getQuestionsByAskedUid,
-  getQuestionsByAnsweredUid,
+  getQuestionsByAskedByUserId,
+  getQuestionsByAnsweredByUserId,
   postNotifications,
 } from '../models/application';
 
@@ -111,70 +111,70 @@ const questionController = (socket: FakeSOSocket) => {
    * @returns A Promise that resolves to void.
    */
   const getQuestionsByAskedBy = async (
-    req: FindQuestionsByUidRequest,
+    req: FindQuestionsByUserIdRequest,
     res: Response,
   ): Promise<void> => {
-    const { uid } = req.query;
+    const { userId } = req.query;
 
-    if (uid === undefined || uid === '') {
-      res.status(400).send('Invalid user id.');
+    if (userId === undefined || userId === '') {
+      res.status(400).send('Invalid id.');
       return;
     }
 
     try {
-      const q = await getQuestionsByAskedUid(uid);
+      const questions = await getQuestionsByAskedByUserId(userId);
 
-      if (q && !('error' in q)) {
-        socket.emit('questionsUpdate', q);
-        res.json(q);
+      if (questions && !('error' in questions)) {
+        socket.emit('questionsUpdate', questions);
+        res.json(questions);
         return;
       }
 
-      throw new Error('Error while fetching questions by uid');
+      throw new Error('Error while fetching questions by user id');
     } catch (err: unknown) {
       if (err instanceof Error) {
-        res.status(500).send(`Error when fetching questions by uid: ${err.message}`);
+        res.status(500).send(`Error when fetching questions by user id: ${err.message}`);
       } else {
-        res.status(500).send(`Error when fetching questions by uid`);
+        res.status(500).send(`Error when fetching questions by user id`);
       }
     }
   };
 
   /**
-   * Retrieves a list of questions by the given user uid correlating to a potential answerer of said questions.
+   * Retrieves a list of questions by the given user id correlating to a potential answerer of said questions.
    * If there is an error, the HTTP response's status is updated.
    *
-   * @param req The FindQuestionByIdRequest object containing the user uid as a parameter.
+   * @param req The FindQuestionsByUserIdRequest object containing the user id as a parameter.
    * @param res The HTTP response object used to send back the question details.
    *
    * @returns A Promise that resolves to void.
    */
   const getQuestionsByAnsBy = async (
-    req: FindQuestionsByUidRequest,
+    req: FindQuestionsByUserIdRequest,
     res: Response,
   ): Promise<void> => {
-    const { uid } = req.query;
+    const { userId } = req.query;
 
-    if (uid === undefined || uid === '') {
+    if (userId === undefined || userId === '') {
       res.status(400).send('Invalid user id.');
       return;
     }
 
     try {
-      const q = await getQuestionsByAnsweredUid(uid);
+      const questions = await getQuestionsByAnsweredByUserId(userId);
 
-      if (q && !('error' in q)) {
-        socket.emit('questionsUpdate', q);
-        res.json(q);
+      if (questions && !('error' in questions)) {
+        socket.emit('questionsUpdate', questions);
+        res.json(questions);
         return;
       }
 
-      throw new Error('Error while fetching questions by uid');
+      throw new Error('Error while fetching questions by user id');
     } catch (err: unknown) {
       if (err instanceof Error) {
-        res.status(500).send(`Error when fetching questions by uid: ${err.message}`);
+        res.status(500).send(`Error when fetching questions by user id: ${err.message}`);
       } else {
-        res.status(500).send(`Error when fetching questions by uid`);
+        res.status(500).send(`Error when fetching questions by user id`);
       }
     }
   };
@@ -350,8 +350,8 @@ const questionController = (socket: FakeSOSocket) => {
   // add appropriate HTTP verbs and their endpoints to the router
   router.get('/getQuestion', getQuestionsByFilter);
   router.get('/getQuestionById/:qid', getQuestionById);
-  router.get('/getQuestionsByAskedUid', getQuestionsByAskedBy);
-  router.get('/getQuestionsByAnsweredUid', getQuestionsByAnsBy);
+  router.get('/getQuestionsByAskedByUserId', getQuestionsByAskedBy);
+  router.get('/getQuestionsByAnsweredByUserId', getQuestionsByAnsBy);
   router.post('/addQuestion', addQuestion);
   router.post('/upvoteQuestion', upvoteQuestion);
   router.post('/downvoteQuestion', downvoteQuestion);

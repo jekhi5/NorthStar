@@ -175,12 +175,12 @@ export interface FindQuestionByIdRequest extends Request {
 }
 
 /**
- * Interface for the request parameters when finding a question by its UID.
- * - uid - The askedby uid of the question.
+ * Interface for the request parameters when finding a list of questions by their poster's/answerer's id.
+ * - user id - The id of the user to filter the questions by.
  */
-export interface FindQuestionsByUidRequest extends Request {
+export interface FindQuestionsByUserIdRequest extends Request {
   query: {
-    uid: string;
+    userId: string;
   };
 }
 

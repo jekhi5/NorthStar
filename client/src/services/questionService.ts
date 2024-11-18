@@ -45,13 +45,13 @@ const getQuestionById = async (qid: string, uid: string): Promise<Question> => {
 };
 
 /**
- * Retrieves questions from the database if they were posted by the user with the provided uid.
+ * Retrieves questions from the database if they were posted by the user with the provided id.
  *
- * @param uid - The user ID of the question poster.
- * @throws Error if there is an issue fetching the question by UID.
+ * @param userId - The id of the question poster's user.
+ * @throws Error if there is an issue fetching the question by user id.
  */
-const getQuestionsByAskedUid = async (uid: string): Promise<Question[]> => {
-  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByAskedUid/?uid=${uid}`);
+const getQuestionsByAskedByUserId = async (userId: string): Promise<Question[]> => {
+  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByAskedByUserId/?userId=${userId}`);
   if (res.status !== 200) {
     throw new Error('Error when fetching questions by uid');
   }
@@ -59,15 +59,15 @@ const getQuestionsByAskedUid = async (uid: string): Promise<Question[]> => {
 };
 
 /**
- * Retrieves questions from the database if they were answered by the user with the provided uid.
+ * Retrieves questions from the database if they were answered by the user with the provided id.
  *
- * @param uid - The user ID of the answer poster.
- * @throws Error if there is an issue fetching the question by UID.
+ * @param userId - The id of the answer poster user.
+ * @throws Error if there is an issue fetching the question by user id.
  */
-const getQuestionsByAnsweredUid = async (uid: string): Promise<Question[]> => {
-  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByAnsweredUid/?uid=${uid}`);
+const getQuestionsByAnsweredByUserId = async (userId: string): Promise<Question[]> => {
+  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByAnsweredByUserId/?userId=${userId}`);
   if (res.status !== 200) {
-    throw new Error('Error when fetching questions by answer uid');
+    throw new Error('Error when fetching questions by answer user id');
   }
   return res.data;
 };
@@ -125,8 +125,8 @@ const downvoteQuestion = async (qid: string, uid: string) => {
 export {
   getQuestionsByFilter,
   getQuestionById,
-  getQuestionsByAskedUid,
-  getQuestionsByAnsweredUid,
+  getQuestionsByAskedByUserId,
+  getQuestionsByAnsweredByUserId,
   addQuestion,
   upvoteQuestion,
   downvoteQuestion,
