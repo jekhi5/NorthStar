@@ -300,8 +300,8 @@ export const getQuestionsByAskedByUserId = async (userId: string): Promise<Quest
  *
  * @returns Filtered Question objects.
  */
-export const filterQuestionsByAnsBy = (qlist: Question[], uid: string): Question[] =>
-  qlist.filter(q => q.answers.some(a => (a as Answer).ansBy.uid === uid));
+export const filterQuestionsByAnsBy = (qlist: Question[], userId: string): Question[] =>
+  qlist.filter(q => q.answers.some(a => (a as Answer).ansBy._id?.toString() === userId));
 
 /**
  * Retrieves certain questions from the database, depending on if the given user's id matches a question's answerer's
@@ -312,11 +312,12 @@ export const filterQuestionsByAnsBy = (qlist: Question[], uid: string): Question
  */
 export const getQuestionsByAnsweredByUserId = async (userId: string): Promise<Question[]> => {
   try {
-    return await QuestionModel.find({ askedBy: userId }).populate([
+    const qlist = await QuestionModel.find().populate([
       { path: 'tags', model: TagModel },
       { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
       { path: 'askedBy', model: UserModel },
     ]);
+    return filterQuestionsByAnsBy(qlist, userId);
   } catch (error) {
     return [];
   }
