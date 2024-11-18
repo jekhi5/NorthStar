@@ -12,13 +12,16 @@ const messageSchema: Schema = new Schema(
   {
     content: {
       type: String,
+      required: true,
     },
     sentBy: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
     sentDateTime: {
       type: Date,
+      default: Date.now,
     },
   },
   { collection: 'Message' },

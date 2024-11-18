@@ -14,12 +14,14 @@ import {
   TagResponse,
   User,
   UserResponse,
+  Message,
 } from '../types';
 import AnswerModel from './answers';
 import QuestionModel from './questions';
 import TagModel from './tags';
 import CommentModel from './comments';
 import UserModel from './user';
+import MessageModel from './messages';
 import PostNotificationModel from './postNotifications';
 
 /**
@@ -264,12 +266,61 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
  * Filters a list of questions by the user who asked them.
  *
  * @param qlist The array of Question objects to be filtered.
- * @param askedBy The uid of the user who asked the questions.
+ * @param uid The uid of the user who asked the questions.
  *
  * @returns Filtered Question objects.
  */
 export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Question[] =>
   qlist.filter(q => q.askedBy.uid === uid);
+
+/**
+ * Retrieves questions from the database, depending on if the user asked them or not
+ *
+ * @param userId - The id of the user who asked the questions.
+ *
+ * @returns {Promise<Question[]>} - Promise that resolves to a list of asked questions
+ */
+export const getQuestionsByAskedByUserId = async (userId: string): Promise<Question[]> => {
+  try {
+    return await QuestionModel.find({ askedBy: userId }).populate([
+      { path: 'tags', model: TagModel },
+      { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
+      { path: 'askedBy', model: UserModel },
+    ]);
+  } catch (error) {
+    return [];
+  }
+};
+
+/**
+ * Filters a list of questions by a user who answered them.
+ *
+ * @param qlist The array of Question objects to be filtered.
+ * @param uid The uid of the user who answered the questions.
+ *
+ * @returns Filtered Question objects.
+ */
+export const filterQuestionsByAnsBy = (qlist: Question[], uid: string): Question[] =>
+  qlist.filter(q => q.answers.some(a => (a as Answer).ansBy.uid === uid));
+
+/**
+ * Retrieves certain questions from the database, depending on if the given user's id matches a question's answerer's
+ *
+ * @param userId - The id of the user who answered certain questions.
+ *
+ * @returns {Promise<Question[]>} - Promise that resolves to a list of questions
+ */
+export const getQuestionsByAnsweredByUserId = async (userId: string): Promise<Question[]> => {
+  try {
+    return await QuestionModel.find({ askedBy: userId }).populate([
+      { path: 'tags', model: TagModel },
+      { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
+      { path: 'askedBy', model: UserModel },
+    ]);
+  } catch (error) {
+    return [];
+  }
+};
 
 /**
  * Filters questions based on a search string containing tags and/or keywords.
@@ -589,7 +640,7 @@ export const saveComment = async (comment: Comment): Promise<CommentResponse> =>
 };
 
 /**
- * Saves a new comment to the database.
+ * Saves a new user to the database.
  *
  * @param {User} user - The user to save
  *
@@ -601,6 +652,108 @@ export const saveUser = async (user: User): Promise<UserResponse> => {
     return result;
   } catch (error) {
     return { error: 'Error when saving a User' };
+  }
+};
+
+/**
+ * Updates a user's profile information.
+ *
+ * @param {User} user - The user whose info is being changed.
+ *
+ * @returns Promise<UserResponse> - The updated user or an error message.
+ */
+export const editUser = async (user: User): Promise<UserResponse> => {
+  try {
+    if (!user.uid || !user.username || !user.email) {
+      throw new Error('Invalid user');
+    }
+    const result = await UserModel.findOneAndUpdate(
+      { uid: user.uid },
+      { $set: { ...user } },
+      { new: true },
+    );
+    if (result === null) {
+      throw new Error('Error when updating user.');
+    }
+    return result;
+  } catch (error) {
+    return { error: 'Error when updating user.' };
+  }
+};
+
+/**
+ * Fetches all messages from the database, sorted by their sending date in ascending order.
+ *
+ * @returns {Promise<Message[] | { error: string }>} - The list of messages or an error message if fetching fails.
+ */
+export const getMessages = async (): Promise<Message[] | { error: string }> => {
+  try {
+    const messages = await MessageModel.find()
+      .sort({ sentDateTime: 1 })
+      .populate('sentBy', 'username');
+    return messages;
+  } catch (error) {
+    return { error: `Error fetching messages` };
+  }
+};
+
+/**
+ * Saves a new message to the database.
+ *
+ * @param {Message} message - The message to save.
+ *
+ * @returns {Promise<Message | { error: string }>} - The saved message, or an error message if saving fails.
+ */
+export const saveMessage = async (message: Message): Promise<Message | { error: string }> => {
+  try {
+    const savedMessage = await MessageModel.create(message);
+    return savedMessage;
+  } catch (error) {
+    return { error: 'Error saving a message' };
+  }
+};
+
+/**
+ * Updates an existing message in the database.
+ *
+ * @param {string} id - The ID of the message to update.
+ * @param {Partial<Message>} updatedData - The updated message data.
+ *
+ * @returns {Promise<Message | { error: string }>} - The updated message or an error message if updating fails.
+ */
+export const updateMessage = async (
+  id: string,
+  updatedData: Partial<Message>,
+): Promise<Message | { error: string }> => {
+  try {
+    const updatedMessage = await MessageModel.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedMessage) {
+      throw new Error('Message not found');
+    }
+    return updatedMessage;
+  } catch (error) {
+    return { error: `Error updating a message` };
+  }
+};
+
+/**
+ * Deletes a message from the database.
+ *
+ * @param {string} id - The ID of the message to delete.
+ *
+ * @returns {Promise<{ success: boolean } | { error: string }>} - An object indicating success, or an error message if deletion fails.
+ */
+export const deleteMessage = async (
+  id: string,
+): Promise<{ success: boolean } | { error: string }> => {
+  try {
+    const result = await MessageModel.findByIdAndDelete(id);
+    if (!result) {
+      throw new Error('Message not found');
+    }
+    return { success: true };
+  } catch (error) {
+    return { error: `Error deleting a message` };
   }
 };
 

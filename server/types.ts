@@ -137,9 +137,15 @@ export interface Question {
 export type QuestionResponse = Question | { error: string };
 
 /**
+ * Type representing the possible responses for a multiple Question-related operation.
+ */
+export type QuestionsResponse = Question[] | { error: string };
+
+/**
  * Type representing the possible responses for a PostNotification-related operation.
  */
 export type PostNotificationResponse = PostNotification | { error: string };
+
 
 /**
  * Interface for the request query to find questions using a search string, which contains:
@@ -165,6 +171,16 @@ export interface FindQuestionByIdRequest extends Request {
   };
   query: {
     uid: string;
+  };
+}
+
+/**
+ * Interface for the request parameters when finding a list of questions by their poster's/answerer's id.
+ * - user id - The id of the user to filter the questions by.
+ */
+export interface FindQuestionsByUserIdRequest extends Request {
+  query: {
+    userId: string;
   };
 }
 
@@ -230,6 +246,25 @@ export interface Message {
   sentBy: User;
   sentDateTime: Date;
 }
+
+/**
+ * Interface extending the request body when adding or updating a message.
+ *
+ * - content - The content of the message.
+ * - sentBy - The user who is sending or updating the message.
+ */
+export interface MessageRequest extends Request {
+  body: {
+    content: string;
+    sentBy: User;
+  };
+}
+
+
+/**
+ * Type representing the possible responses for a Message-related operation.
+ */
+export type MessageResponse = Message | { error: string };
 
 /**
  * Interface extending the request body when adding a subscriber to a question, which contains:
@@ -351,10 +386,14 @@ export interface PostNotificationUpdatePayload {
  */
 export interface ServerToClientEvents {
   questionUpdate: (question: QuestionResponse) => void;
+  questionsUpdate: (questions: QuestionsResponse) => void;
   answerUpdate: (result: AnswerUpdatePayload) => void;
   viewsUpdate: (question: QuestionResponse) => void;
   voteUpdate: (vote: VoteUpdatePayload) => void;
   commentUpdate: (comment: CommentUpdatePayload) => void;
   subscriberUpdate: (payload: SubscriberUpdatePayload) => void;
+  newMessage: (message: Message) => void;
+  messageUpdate: (updatedMessage: Message) => void;
+  messageDelete: (messageId: string) => void;
   postNotificationUpdate: (payload: PostNotificationUpdatePayload) => void;
 }
