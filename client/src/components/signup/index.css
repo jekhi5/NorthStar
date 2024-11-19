@@ -1,7 +1,7 @@
 .container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
     background: radial-gradient(circle, rgba(60,30,90,1) 0%, rgba(20,10,30,1) 100%);
@@ -9,7 +9,7 @@
     color: #ddd;
     box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
     position: relative;
-    padding: 2rem 2rem 6rem 2rem;
+    padding: 2rem 2rem 2rem 2rem;
   }
   
   .sign-up-form {
@@ -18,7 +18,7 @@
     align-items: center;
     width: 100%;
     max-width: 1000px;
-    margin: 2rem 0;
+    margin: 1rem 0;
   }
   
   .form-group-container {
@@ -26,12 +26,12 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     width: 100%;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
   
   .form-group {
     width: 100%;
-    min-width: 0; /* Prevents input overflow */
+    min-width: 0;
   }
   
   .input-text {
@@ -44,7 +44,7 @@
     color: #ddd;
     box-shadow: 0 0 5px rgba(50, 42, 136, 0.5);
     transition: all 0.3s ease;
-    box-sizing: border-box; /* Ensures padding doesn't affect width */
+    box-sizing: border-box;
   }
   
   .input-text:focus {
@@ -58,7 +58,7 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
     width: 100%;
   }
   
@@ -76,17 +76,16 @@
   }
   
   .footer {
-    position: fixed; /* Changed from absolute to fixed */
+    position: fixed;
     bottom: 2rem;
     left: 0;
     width: 100%;
     text-align: center;
     color: #e0c3fc;
     padding: 1rem;
-    background: transparent; /* Ensures footer doesn't block content */
+    background: transparent;
   }
   
-
   .footer .sign-up-button {
     display: inline-block;
     margin-left: 1rem;
@@ -94,7 +93,7 @@
   
   @media (max-height: 700px) {
     .container {
-      padding-bottom: 8rem; /* Increase padding for smaller screens */
+      padding-bottom: 8rem;
     }
     
     .form-group-container {
