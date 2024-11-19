@@ -1,65 +1,116 @@
-@import '../../../styles/theme.css';
-
 .profile-page {
   display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 2rem;
-  background-color: var(--background-light);
+  background: radial-gradient(circle, rgba(60,30,90,1) 0%, rgba(20,10,30,1) 100%);
   min-height: 100vh;
+  color: #c5c2f0;
 }
 
 .profile-title {
   font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--primary-purple);
-  margin-bottom: 1.5rem;
-}
-
-.profile-details {
-  background-color: var(--background-white);
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
+  color: #e0c3fc;
+  margin-bottom: 2rem;
   text-align: center;
 }
 
+.profile-container {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profile-left {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(50, 42, 136, 0.2);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(50, 42, 136, 0.5);
+}
+
 .profile-picture {
-  width: 120px;
-  height: 120px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid #322A88;
+  margin-bottom: 1.5rem;
+}
+
+.profile-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.progress-bars {
+  background: rgba(50, 42, 136, 0.2);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(50, 42, 136, 0.5);
+}
+
+.progress-item {
   margin-bottom: 1rem;
 }
 
-.profile-username,
-.profile-email,
-.profile-status {
-  font-size: 1rem;
-  color: var(--text-gray);
-  margin: 0.5rem 0;
-}
-
-.profile-edit-form input[type="text"],
-.profile-edit-form input[type="email"],
-.profile-edit-form input[type="file"] {
+.progress-bar {
   width: 100%;
-  padding: 0.5rem;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
   margin: 0.5rem 0;
-  border: 1px solid var(--border-gray);
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: var(--background-light);
-  color: var(--text-dark);
 }
 
-.profile-edit-form button,
-.profile-info button {
-  background-color: var(--primary-purple);
+.progress-fill {
+  height: 100%;
+  background: #322A88;
+  transition: width 0.3s ease;
+}
+
+.questions-container {
+  display: flex;
+  gap: 2rem;
+}
+
+.questions-box {
+  flex: 1;
+  background: rgba(50, 42, 136, 0.2);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(50, 42, 136, 0.5);
+}
+
+.questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.question-link {
+  color: #c5c2f0;
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.question-link:hover {
+  background: rgba(50, 42, 136, 0.5);
+}
+
+button {
+  background-color: #322A88;
   color: #fff;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -67,7 +118,6 @@
   margin-top: 1rem;
 }
 
-.profile-edit-form button:hover,
-.profile-info button:hover {
-  background-color: var(--hover-purple);
+button:hover {
+  background-color: #403776;
 }

@@ -28,75 +28,79 @@ const SignUp = ({
       <h2>Welcome to FakeStackOverflow!</h2>
       <h4>Sign up with your email and password.</h4>
       <form onSubmit={handleSubmit} className='sign-up-form'>
-        <div className='form-group'>
-          <input
-            type='text'
-            value={firstName}
-            onChange={handleInputChange}
-            placeholder='Enter your first name'
-            required
-            className='input-text'
-            id='firstNameInput'
-          />
+        <div className='form-group-container'>
+          <div className='form-group'>
+            <input
+              type='text'
+              value={firstName}
+              onChange={handleInputChange}
+              placeholder='Enter your first name'
+              required
+              className='input-text'
+              id='firstNameInput'
+            />
+          </div>
+          <div className='form-group'>
+            <input
+              type='text'
+              value={lastName}
+              onChange={handleInputChange}
+              placeholder='Enter your last name'
+              required
+              className='input-text'
+              id='lastNameInput'
+            />
+          </div>
+          <div className='form-group'>
+            <input
+              type='text'
+              value={username}
+              onChange={handleInputChange}
+              placeholder='Enter your desired username'
+              required
+              className='input-text'
+              id='usernameInput'
+            />
+          </div>
+          <div className='form-group'>
+            <input
+              type='email'
+              value={email}
+              onChange={handleInputChange}
+              placeholder='Enter your email'
+              required
+              className='input-text'
+              id='emailInput'
+            />
+          </div>
+          <div className='form-group'>
+            <input
+              type='password'
+              value={passwordOriginal}
+              onChange={handleInputChange}
+              placeholder='Enter your password'
+              required
+              className='input-text'
+              id='passwordInputOriginal'
+            />
+          </div>
+          <div className='form-group'>
+            <input
+              type='password'
+              value={passwordConfirmation}
+              onChange={handleInputChange}
+              placeholder='Confirm your password'
+              required
+              className='input-text'
+              id='passwordInputConfirmation'
+            />
+          </div>
         </div>
-        <div className='form-group'>
-          <input
-            type='text'
-            value={lastName}
-            onChange={handleInputChange}
-            placeholder='Enter your last name'
-            required
-            className='input-text'
-            id='lastNameInput'
-          />
+        <div className='button-container'>
+          <button type='submit' className='sign-up-button'>
+            Sign Up
+          </button>
         </div>
-        <div className='form-group'>
-          <input
-            type='text'
-            value={username}
-            onChange={handleInputChange}
-            placeholder='Enter your desired username'
-            required
-            className='input-text'
-            id='usernameInput'
-          />
-        </div>
-        <div className='form-group'>
-          <input
-            type='email'
-            value={email}
-            onChange={handleInputChange}
-            placeholder='Enter your email'
-            required
-            className='input-text'
-            id='emailInput'
-          />
-        </div>
-        <div className='form-group'>
-          <input
-            type='password'
-            value={passwordOriginal}
-            onChange={handleInputChange}
-            placeholder='Enter your password'
-            required
-            className='input-text'
-            id='passwordInputOriginal'
-          />
-        </div>
-        <div className='form-group'>
-          <input
-            type='password'
-            value={passwordConfirmation}
-            onChange={handleInputChange}
-            placeholder='Confirm your password'
-            required
-            className='input-text'
-            id='passwordInputConfirmation'
-          />
-        </div>
-        <button type='submit' className='sign-up-button'>
-          Sign Up
-        </button>
       </form>
       {error && (
         <p className='error-text' style={{ textAlign: 'center', marginLeft: '15px' }}>
@@ -104,9 +108,12 @@ const SignUp = ({
         </p>
       )}
 
-      <button onClick={() => setShowLogIn(!showLogIn)} className='sign-up-button'>
-        Login instead
-      </button>
+      <div className='footer'>
+        <span>Already have an account?</span>
+        <button onClick={() => setShowLogIn(!showLogIn)} className='sign-up-button'>
+          Login instead
+        </button>
+      </div>
     </div>
   );
 };

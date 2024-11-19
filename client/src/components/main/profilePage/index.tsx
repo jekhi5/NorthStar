@@ -28,8 +28,18 @@ const ProfilePage = () => {
 
   return (
     <div className='profile-page'>
-      <h1 className='profile-title'>Profile</h1>
-
+      <h1 className='profile-title'>Hey there {profile.firstName}!</h1>
+      <div className='profile-container'>
+        <div className='profile-left'>
+          <img src={profile.profilePicture} alt='Profile' className='profile-picture' />
+          <h2 className='profile-name'>
+            {profile.firstName} {profile.lastName}
+          </h2>
+          <p className='profile-status'>{profile.status}</p>
+          <p className='profile-username'>Username: {profile.username}</p>
+          <p className='profile-email'>Email: {profile.email}</p>
+        </div>
+      </div>
       <div className='profile-details'>
         {isEditing ? (
           <div className='profile-edit-form'>
@@ -75,33 +85,65 @@ const ProfilePage = () => {
             {profile.profilePicture && (
               <img src={profile.profilePicture} alt='Profile' className='profile-picture' />
             )}
-            <h2 className='profile-name'>
-              {profile.firstName} {profile.lastName}
-            </h2>
-            <p className='profile-username'>Username: {profile.username}</p>
-            <p className='profile-email'>Email: {profile.email}</p>
-            <div className='profile-status'>
-              <ul>
-                <li>
-                  Progress towards Endorsed: {calculateReputationPercentage(profile.reputation, 30)}
-                  %
-                </li>
-                <li>
-                  Progress towards Super Smarty Pants:{' '}
-                  {calculateReputationPercentage(profile.reputation, 100)}%
-                </li>
-                <li>
-                  Progress towards Mentor: {calculateReputationPercentage(profile.reputation, 500)}%
-                </li>
-                <li>
-                  Progress towards Grandmaster:{' '}
-                  {calculateReputationPercentage(profile.reputation, 1000)}%
-                </li>
-              </ul>
+
+            <div className='profile-right'>
+              <div className='progress-bars'>
+                <div className='progress-item'>
+                  <span>Progress towards Endorsed</span>
+                  <div className='progress-bar'>
+                    <div
+                      className='progress-fill'
+                      style={{ width: `${calculateReputationPercentage(profile.reputation, 30)}%` }}
+                    />
+                  </div>
+                  <span>{calculateReputationPercentage(profile.reputation, 30)}%</span>
+                </div>
+
+                <div className='progress-item'>
+                  <span> Progress towards Super Smarty Pants</span>
+                  <div className='progress-bar'>
+                    <div
+                      className='progress-fill'
+                      style={{
+                        width: `${calculateReputationPercentage(profile.reputation, 100)}%`,
+                      }}
+                    />
+                  </div>
+                  <span>{calculateReputationPercentage(profile.reputation, 100)}%</span>
+                </div>
+
+                <div className='progress-item'>
+                  <span>Progress towards Mentor</span>
+                  <div className='progress-bar'>
+                    <div
+                      className='progress-fill'
+                      style={{
+                        width: `${calculateReputationPercentage(profile.reputation, 500)}%`,
+                      }}
+                    />
+                  </div>
+                  <span>{calculateReputationPercentage(profile.reputation, 500)}%</span>
+                </div>
+
+                <div className='progress-item'>
+                  <span>Progress towards Grandmaster</span>
+                  <div className='progress-bar'>
+                    <div
+                      className='progress-fill'
+                      style={{
+                        width: `${calculateReputationPercentage(profile.reputation, 1000)}%`,
+                      }}
+                    />
+                  </div>
+                  <span>{calculateReputationPercentage(profile.reputation, 1000)}%</span>
+                </div>
+              </div>
+
+              <button onClick={toggleEditing}>Edit Profile</button>
             </div>
-            <button onClick={toggleEditing}>Edit Profile</button>
           </div>
         )}
+
         <h2 className='profile-questionsasked'>Questions Asked</h2>
         {userQuestions.length > 0 ? (
           userQuestions.map((q, index) => (
