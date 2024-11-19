@@ -17,7 +17,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('../../imgs/stars.gif');
+  background: url('../../images/stars.gif');
   background-size: 800px 800px;
   background-repeat: repeat;
   opacity: 0.1;  /* Adjust this value to make stars more/less visible */

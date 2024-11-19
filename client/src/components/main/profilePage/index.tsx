@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import useProfilePage from '../../../hooks/useProfilePage';
 import './index.css';
+import defaultProfilePic from '../../../images/default-profile-pic.png';
 
 const ProfilePage = () => {
   const {
@@ -26,12 +27,14 @@ const ProfilePage = () => {
     return <p>Loading profile...</p>;
   }
 
+  const profilePic = profile?.profilePicture === '' ? defaultProfilePic : profile?.profilePicture;
+
   return (
     <div className='profile-page'>
       <h1 className='profile-title'>Hey there {profile.firstName}!</h1>
       <div className='profile-container'>
         <div className='profile-left'>
-          <img src={profile.profilePicture} alt='Profile' className='profile-picture' />
+          <img src={profilePic ?? defaultProfilePic} alt='Profile' className='profile-picture' />
           <h2 className='profile-name'>
             {profile.firstName} {profile.lastName}
           </h2>
