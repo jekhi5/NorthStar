@@ -3,12 +3,6 @@ import { Message } from '../types';
 import { getMessages, sendMessageToDatabase } from '../services/chatService';
 import useUserContext from './useUserContext';
 
-/*
- * Constant that determines how many of the most recent messages will display.
- * Change this value to change how many messages show.
- */
-const MESSAGE_LIMIT: number = 20;
-
 /**
  * Custom hook for managing chatroom state and logic.
  *
@@ -29,6 +23,9 @@ const useChatroom = () => {
   const { user, socket } = useUserContext();
   const currentUser = user;
 
+  // Set message limit
+  const messageLimit = 20;
+
   // Using two useEffects to separate logic
   // This one handles initial data retrieval
   useEffect(() => {
@@ -39,7 +36,7 @@ const useChatroom = () => {
       setLoading(true);
       try {
         // Set message limit in param
-        const initialMessages = await getMessages(MESSAGE_LIMIT);
+        const initialMessages = await getMessages(messageLimit);
         setMessages(initialMessages);
       } catch (err) {
         setError('Failed to load messages');
