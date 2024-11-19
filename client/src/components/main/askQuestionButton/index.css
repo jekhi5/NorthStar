@@ -1,0 +1,20 @@
+.ask-btn {
+    background: #a359bf;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(163, 89, 191, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ask-btn:hover {
+    background: #c486d8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(163, 89, 191, 0.5);
+}

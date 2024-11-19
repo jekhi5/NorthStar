@@ -4,20 +4,24 @@
   border-radius: 6px;
   background-color: #f9f9f9;
   font-size: 0.9rem;
+  border: 2px solid var(--primary-purple);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .toggle-button {
-  background: none;
-  color: #007bff;
+  background-color: var(--primary-purple);
+  color: white;
   border: none;
   font-size: 1rem;
   cursor: pointer;
-  padding: 0;
-  text-decoration: underline;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .toggle-button:hover {
-  color: #0056b3;
+  background-color: var(--accent-yellow);
+  color: var(--primary-purple);
 }
 
 .comments-container {

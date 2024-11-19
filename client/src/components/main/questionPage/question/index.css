@@ -13,7 +13,17 @@
 }
 
 .postStats {
-  color: #c5c2f0;
+  color: #585858;
+  text-align: center;
+  width: 10%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.question:hover .postStats {
+  color: #e0e0e0;
   text-align: center;
   width: 10%;
   display: flex;
@@ -28,14 +38,17 @@
 }
 
 .postTitle {
-  color: #968fc4;
+  color: #585858;
   font-size: 1.1rem;
   margin-bottom: 0.8rem;
   transition: color 0.3s ease;
 }
 
 .question:hover .postTitle {
-  color: #b3aed5;
+  color: #e0e0e0;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+  transition: color 0.3s ease;
 }
 
 .question_tags {
@@ -46,7 +59,7 @@
 }
 
 .question_tag_button {
-  color: #c5c2f0;
+  color: #585858;
   background: rgba(50, 42, 136, 0.3);
   border: 1px solid rgba(50, 42, 136, 0.5);
   border-radius: 4px;
@@ -55,9 +68,14 @@
   transition: all 0.3s ease;
 }
 
-.question_tag_button:hover {
-  background: rgba(50, 42, 136, 0.5);
-  box-shadow: 0 0 5px rgba(50, 42, 136, 0.5);
+.question:hover .question_tag_button {
+  color: #e0e0e0;
+  background: rgba(50, 42, 136, 0.3);
+  border: 1px solid rgba(50, 42, 136, 0.5);
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
 }
 
 .lastActivity {
@@ -66,17 +84,38 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 0.3rem;
-  color: #c5c2f0;
+  color: #585858;
+  font-size: 0.9rem;
+}
+
+.question:hover .lastActivity {
+  color: #e0e0e0;
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
   font-size: 0.9rem;
 }
 
 .question_author {
-  color: #b3aed5;
+  color: #585858;
+  font-weight: 500;
+}
+
+.question:hover .question_author {
+  color: #e0e0e0;
   font-weight: 500;
 }
 
 .question_meta {
-  color: #c5c2f0;
+  color: #585858;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+}
+
+.question:hover .question_meta {
+  color: #e0e0e0;
   font-size: 0.8rem;
   margin-top: 0.3rem;
 }
@@ -116,34 +155,28 @@
   gap: 0.2rem;
 }
 
-
-
-
-
-
-/* Status-specific backgrounds */
 .status-not-endorsed {
-  background-color: rgba(255, 255, 255, 0.2);  /* White with transparency */
-  color: #fff;
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #585858;
 }
 
 .status-endorsed {
-  background-color: rgba(163, 255, 137, 0.2);  /* Light green with transparency */
-  color: #a3ff89;
+  background-color: rgba(163, 255, 137, 0.5);
+  color: #000000;
 }
 
 .status-super-smarty-pants {
-  background-color: rgba(163, 89, 191, 0.2);  /* Purple with transparency */
+  background-color: rgba(163, 89, 191, 0.5);
   color: #a359bf;
 }
 
 .status-mentor {
-  background-color: rgba(255, 89, 89, 0.2);  /* Red with transparency */
+  background-color: rgba(255, 89, 89, 0.5);
   color: #ff5959;
 }
 
 .status-grandmaster {
-  background-color: rgba(89, 169, 255, 0.2);  /* Blue with transparency */
+  background-color: rgba(89, 169, 255, 0.5);
   color: #59a9ff;
 }
 

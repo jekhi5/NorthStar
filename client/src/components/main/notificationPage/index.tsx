@@ -1,8 +1,7 @@
 import './index.css';
 import { PostNotification } from '../../../types';
 import useNotificationPage from '../../../hooks/useNotificationPage';
-
-const makeBold = (test: string) => <strong>{test}</strong>;
+import PostNotificationComponent from './PostNotificationComponent';
 
 /**
  * NotificationPage component allows users to view their individualized notifications.
@@ -30,24 +29,12 @@ const NotificationPage = () => {
             .slice()
             .reverse()
             .map(({ postNotification, read }, i) => (
-              <li
-                key={i}
-                className={`notification ${!read ? 'unread' : ''}`}
-                style={{ border: !read ? '2px solid red' : 'none' }}>
-                <hr />
-                <h3>{!read ? makeBold(postNotification.title) : postNotification.title}</h3>
-                <p>{!read ? makeBold(postNotification.text) : postNotification.text}</p>
-                <p>
-                  {!read
-                    ? makeBold(postNotification.notificationType)
-                    : postNotification.notificationType}
-                </p>
-                <p>
-                  From:{' '}
-                  {!read
-                    ? makeBold(postNotification.fromUser.username)
-                    : postNotification.fromUser.username}
-                </p>
+              <li key={i} className='notification'>
+                <PostNotificationComponent
+                  title={postNotification.title}
+                  text={postNotification.text}
+                  fromUser={postNotification.fromUser}
+                />
               </li>
             ))}
         </ul>
