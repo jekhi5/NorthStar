@@ -1,6 +1,7 @@
 import './index.css';
 import { PostNotification } from '../../../types';
 import useNotificationPage from '../../../hooks/useNotificationPage';
+import PostNotificationComponent from './PostNotificationComponent';
 
 /**
  * NotificationPage component allows users to view their individualized notifications.
@@ -18,17 +19,17 @@ const NotificationPage = () => {
       {!notifications && !error && <h4>Loading...</h4>}
       {!error && notifications && notifications.length === 0 && <h4>No notifications</h4>}
       {!error && notifications && notifications.length > 0 && (
-        <ul>
+        <ul style={{ listStyleType: 'none' }}>
           {notifications
             .slice()
             .reverse()
             .map((notification, i) => (
               <li key={i} className='notification'>
-                <hr />
-                <h3>{notification.title}</h3>
-                <p>{notification.text}</p>
-                <p>{notification.notificationType}</p>
-                <p>From: {notification.fromUser.username}</p>
+                <PostNotificationComponent
+                  title={notification.title}
+                  text={notification.text}
+                  fromUser={notification.fromUser}
+                />
               </li>
             ))}
         </ul>
