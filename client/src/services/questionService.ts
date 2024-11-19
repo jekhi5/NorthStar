@@ -13,8 +13,16 @@ const QUESTION_API_URL = `${process.env.REACT_APP_SERVER_URL}/question`;
 const getQuestionsByFilter = async (
   order: string = 'newest',
   search: string = '',
+  askedBy: string = '',
 ): Promise<Question[]> => {
-  const res = await api.get(`${QUESTION_API_URL}/getQuestion?order=${order}&search=${search}`);
+  let res;
+  if (askedBy === '') {
+    res = await api.get(`${QUESTION_API_URL}/getQuestion?order=${order}&search=${search}`);
+  } else {
+    res = await api.get(
+      `${QUESTION_API_URL}/getQuestion?order=${order}&search=${search}&askedBy=${askedBy}`,
+    );
+  }
   if (res.status !== 200) {
     throw new Error('Error when fetching or filtering questions');
   }
@@ -32,6 +40,34 @@ const getQuestionById = async (qid: string, uid: string): Promise<Question> => {
   const res = await api.get(`${QUESTION_API_URL}/getQuestionById/${qid}?uid=${uid}`);
   if (res.status !== 200) {
     throw new Error('Error when fetching question by id');
+  }
+  return res.data;
+};
+
+/**
+ * Retrieves questions from the database if they were posted by the user with the provided id.
+ *
+ * @param userId - The id of the question poster's user.
+ * @throws Error if there is an issue fetching the question by user id.
+ */
+const getQuestionsByAskedByUserId = async (userId: string): Promise<Question[]> => {
+  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByAskedByUserId/?userId=${userId}`);
+  if (res.status !== 200) {
+    throw new Error('Error when fetching questions by uid');
+  }
+  return res.data;
+};
+
+/**
+ * Retrieves questions from the database if they were answered by the user with the provided id.
+ *
+ * @param userId - The id of the answer poster user.
+ * @throws Error if there is an issue fetching the question by user id.
+ */
+const getQuestionsByAnsweredByUserId = async (userId: string): Promise<Question[]> => {
+  const res = await api.get(`${QUESTION_API_URL}/getQuestionsByAnsweredByUserId/?userId=${userId}`);
+  if (res.status !== 200) {
+    throw new Error('Error when fetching questions by answer user id');
   }
   return res.data;
 };
@@ -86,4 +122,12 @@ const downvoteQuestion = async (qid: string, uid: string) => {
   return res.data;
 };
 
-export { getQuestionsByFilter, getQuestionById, addQuestion, upvoteQuestion, downvoteQuestion };
+export {
+  getQuestionsByFilter,
+  getQuestionById,
+  getQuestionsByAskedByUserId,
+  getQuestionsByAnsweredByUserId,
+  addQuestion,
+  upvoteQuestion,
+  downvoteQuestion,
+};

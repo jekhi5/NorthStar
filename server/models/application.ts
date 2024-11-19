@@ -266,12 +266,62 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
  * Filters a list of questions by the user who asked them.
  *
  * @param qlist The array of Question objects to be filtered.
- * @param askedBy The uid of the user who asked the questions.
+ * @param uid The uid of the user who asked the questions.
  *
  * @returns Filtered Question objects.
  */
 export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Question[] =>
   qlist.filter(q => q.askedBy.uid === uid);
+
+/**
+ * Retrieves questions from the database, depending on if the user asked them or not
+ *
+ * @param userId - The id of the user who asked the questions.
+ *
+ * @returns {Promise<Question[]>} - Promise that resolves to a list of asked questions
+ */
+export const getQuestionsByAskedByUserId = async (userId: string): Promise<Question[]> => {
+  try {
+    return await QuestionModel.find({ askedBy: userId }).populate([
+      { path: 'tags', model: TagModel },
+      { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
+      { path: 'askedBy', model: UserModel },
+    ]);
+  } catch (error) {
+    return [];
+  }
+};
+
+/**
+ * Filters a list of questions by a user who answered them.
+ *
+ * @param qlist The array of Question objects to be filtered.
+ * @param uid The uid of the user who answered the questions.
+ *
+ * @returns Filtered Question objects.
+ */
+export const filterQuestionsByAnsBy = (qlist: Question[], userId: string): Question[] =>
+  qlist.filter(q => q.answers.some(a => (a as Answer).ansBy._id?.toString() === userId));
+
+/**
+ * Retrieves certain questions from the database, depending on if the given user's id matches a question's answerer's
+ *
+ * @param userId - The id of the user who answered certain questions.
+ *
+ * @returns {Promise<Question[]>} - Promise that resolves to a list of questions
+ */
+export const getQuestionsByAnsweredByUserId = async (userId: string): Promise<Question[]> => {
+  try {
+    const qlist = await QuestionModel.find().populate([
+      { path: 'tags', model: TagModel },
+      { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
+      { path: 'askedBy', model: UserModel },
+    ]);
+    return filterQuestionsByAnsBy(qlist, userId);
+  } catch (error) {
+    return [];
+  }
+};
 
 /**
  * Filters questions based on a search string containing tags and/or keywords.

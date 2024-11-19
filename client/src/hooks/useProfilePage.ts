@@ -1,9 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateProfile } from 'firebase/auth';
-import { User } from '../types';
+import { Question, User } from '../types';
 import { getUserByUid, updateUser } from '../services/userService';
 import UserContext from '../contexts/UserContext';
+import {
+  getQuestionsByAnsweredByUserId,
+  getQuestionsByAskedByUserId,
+} from '../services/questionService';
 
 /**
  * Custom hook to manage the state and logic for the profile page and profile page updates.
@@ -22,12 +26,15 @@ const useProfilePage = () => {
   const [profile, setProfile] = useState<User | null>(null);
   const [editedProfile, setEditedProfile] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [userQuestions, setUserQuestions] = useState<Question[]>([]);
+  const [userAnswers, setUserAnswers] = useState<Question[]>([]);
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   // Get user, and subsequently user id
   const context = useContext(UserContext);
   const uid = context?.user?.uid;
+  const userId = context?.user?._id;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -39,6 +46,10 @@ const useProfilePage = () => {
       try {
         const profileData = await getUserByUid(uid);
         setProfile(profileData);
+        const qlist = await getQuestionsByAskedByUserId(userId as string);
+        setUserQuestions(qlist || []);
+        const alist = await getQuestionsByAnsweredByUserId(userId as string);
+        setUserAnswers(alist || []);
         setEditedProfile(profileData); // Initialize editedProfile with fetched data
       } catch (err) {
         setError('Failed to load profile.');
@@ -46,7 +57,7 @@ const useProfilePage = () => {
     };
 
     fetchProfile();
-  }, [uid]);
+  }, [uid, userId]);
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
@@ -102,17 +113,21 @@ const useProfilePage = () => {
   /**
    * Helper function to calculate the reputation percentage towards endorsed based on the user's reputation.
    * @param reputation the user's reputation
-   * @returns the reputation percentage towards endorsed, as a whole number
+   * @param range the range of reputation required to be endorsed
+   *
+   * @returns the reputation percentage towards a given status, as a whole number
    */
-  const calculateReputationPercentage = (reputation: number) => {
-    if (reputation >= 30) return 100;
-    return ((reputation / 30) * 100).toFixed(0);
+  const calculateReputationPercentage = (reputation: number, range: number) => {
+    if (reputation >= range) return 100;
+    return ((reputation / range) * 100).toFixed(0);
   };
 
   return {
     profile,
     editedProfile,
     error,
+    userQuestions,
+    userAnswers,
     updateError,
     isEditing,
     toggleEditing,
