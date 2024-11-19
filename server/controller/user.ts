@@ -27,7 +27,7 @@ const userController = () => {
     try {
       const user = await UserModel.findOne({ uid }).populate([
         {
-          path: 'postNotifications',
+          path: 'postNotifications.postNotification',
           model: PostNotificationModel,
           populate: { path: 'fromUser', model: UserModel },
         },
@@ -104,7 +104,7 @@ const userController = () => {
       });
 
       if (welcomeNotification) {
-        user.postNotifications = [welcomeNotification];
+        user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
       }
 
       const result = await saveUser(user);

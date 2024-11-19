@@ -2,33 +2,52 @@ import './index.css';
 import { PostNotification } from '../../../types';
 import useNotificationPage from '../../../hooks/useNotificationPage';
 
+const makeBold = (test: string) => <strong>{test}</strong>;
+
 /**
  * NotificationPage component allows users to view their individualized notifications.
  */
 const NotificationPage = () => {
   const {
-    notifications,
+    notificationsWithStatus,
     error,
-  }: { notifications: PostNotification[] | null; error: string | null } = useNotificationPage();
+  }: {
+    notificationsWithStatus: { postNotification: PostNotification; read: boolean }[] | null;
+    error: string | null;
+  } = useNotificationPage();
 
   return (
     <div className='notifications-page'>
       <h2>Notifications</h2>
       {error && <h4>{error}</h4>}
-      {!notifications && !error && <h4>Loading...</h4>}
-      {!error && notifications && notifications.length === 0 && <h4>No notifications</h4>}
-      {!error && notifications && notifications.length > 0 && (
+      {!notificationsWithStatus && !error && <h4>Loading...</h4>}
+      {!error && notificationsWithStatus && notificationsWithStatus.length === 0 && (
+        <h4>No notifications</h4>
+      )}
+      {!error && notificationsWithStatus && notificationsWithStatus.length > 0 && (
         <ul>
-          {notifications
+          {notificationsWithStatus
             .slice()
             .reverse()
-            .map((notification, i) => (
-              <li key={i} className='notification'>
+            .map(({ postNotification, read }, i) => (
+              <li
+                key={i}
+                className={`notification ${!read ? 'unread' : ''}`}
+                style={{ border: !read ? '2px solid red' : 'none' }}>
                 <hr />
-                <h3>{notification.title}</h3>
-                <p>{notification.text}</p>
-                <p>{notification.notificationType}</p>
-                <p>From: {notification.fromUser.username}</p>
+                <h3>{!read ? makeBold(postNotification.title) : postNotification.title}</h3>
+                <p>{!read ? makeBold(postNotification.text) : postNotification.text}</p>
+                <p>
+                  {!read
+                    ? makeBold(postNotification.notificationType)
+                    : postNotification.notificationType}
+                </p>
+                <p>
+                  From:{' '}
+                  {!read
+                    ? makeBold(postNotification.fromUser.username)
+                    : postNotification.fromUser.username}
+                </p>
               </li>
             ))}
         </ul>
@@ -36,5 +55,4 @@ const NotificationPage = () => {
     </div>
   );
 };
-
 export default NotificationPage;

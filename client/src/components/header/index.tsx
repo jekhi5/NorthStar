@@ -8,7 +8,7 @@ import './index.css';
  * when they press Enter.
  */
 const Header = () => {
-  const { val, handleInputChange, handleKeyDown } = useHeader();
+  const { val, handleInputChange, handleKeyDown, unreadNotifs } = useHeader();
 
   return (
     <div id='header' className='header'>
@@ -46,6 +46,7 @@ const Header = () => {
         <div className='notifications-icon'>
           <NavLink to='/notifications'>
             <span className='material-symbols-outlined'>circle_notifications</span>
+            {unreadNotifs > 0 && <span className='notification-bubble'>{unreadNotifs}</span>}
           </NavLink>
         </div>
         <div className='profile-icon'>
