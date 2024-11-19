@@ -1,7 +1,7 @@
 .container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     min-height: 100vh;
     background: radial-gradient(circle, rgba(60,30,90,1) 0%, rgba(20,10,30,1) 100%);
@@ -9,7 +9,7 @@
     color: #ddd;
     box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
     position: relative;
-    padding: 2rem 2rem 6rem 2rem;
+    padding: 2rem 2rem 2rem 2rem;
   }
   
   .sign-up-form {
@@ -18,7 +18,7 @@
     align-items: center;
     width: 100%;
     max-width: 1000px;
-    margin: 2rem 0;
+    margin: 1rem 0;
   }
   
   .form-group-container {
@@ -26,7 +26,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     width: 100%;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
   
   .form-group {
@@ -58,7 +58,7 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
     width: 100%;
   }
   
@@ -86,7 +86,6 @@
     background: transparent;
   }
   
-
   .footer .sign-up-button {
     display: inline-block;
     margin-left: 1rem;
