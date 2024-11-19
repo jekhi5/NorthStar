@@ -176,6 +176,29 @@ const sortQuestionsByMostViews = (qlist: Question[]): Question[] =>
   sortQuestionsByNewest(qlist).sort((a, b) => b.views.length - a.views.length);
 
 /**
+ * Sorts a list of questions by the number of votes in descending order. The questions are
+ * sorted by the number of upvotes minus the number of downvotes (highest first).
+ *
+ * @param qlist The array of Question objects to be sorted.
+ * @returns A new array of Question objects sorted by the number of votes.
+ */
+const sortQuestionsByMostVotes = (qlist: Question[]): Question[] =>
+  qlist.sort((a, b) => {
+    const aVotes = a.upVotes.length - a.downVotes.length;
+    const bVotes = b.upVotes.length - b.downVotes.length;
+
+    if (aVotes > bVotes) {
+      return -1;
+    }
+
+    if (aVotes < bVotes) {
+      return 1;
+    }
+
+    return 0;
+  });
+
+/**
  * Updates the reputation of a user.
  *
  * @param uid The uid of the user to update
@@ -250,6 +273,9 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
       { path: 'tags', model: TagModel },
       { path: 'askedBy', model: UserModel },
     ]);
+    if (order === 'mostVotes') {
+      return sortQuestionsByMostVotes(qlist);
+    }
     if (order === 'unanswered') {
       return sortQuestionsByUnanswered(qlist);
     }
