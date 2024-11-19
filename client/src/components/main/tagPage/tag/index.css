@@ -12,6 +12,7 @@
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
 }
 
 .tagNode:hover {
@@ -20,15 +21,20 @@
 }
 
 .tagName {
-  color: #333;
+  color: #007bff;
   font-size: 1.4em;
   font-weight: 600;
   margin-bottom: 10px;
 }
 
 .tagDescription {
-  font-size: 1em;
   color: #666;
-  text-align: center;
+  font-size: 1em;
   margin-bottom: 10px;
+}
+
+.tagNode > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

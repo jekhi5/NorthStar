@@ -28,11 +28,11 @@ const TagView = ({ t, clickTag }: TagProps) => {
 
   return (
     <div className='tagNode'>
-      <SubscribeComponent item={tag} type={'tag'} />
       <div
         onClick={() => {
           clickTag(t.name);
         }}>
+        <SubscribeComponent item={tag} type={'tag'} />
         <div className='tagName'>{tag.name}</div>
         <div className='tagDescription'>{tag.description}</div>
         <div>{t.qcnt} questions</div>
