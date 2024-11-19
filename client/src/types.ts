@@ -32,7 +32,7 @@ export interface User {
   lastName?: string;
   profilePicture?: string;
   status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster';
-  postNotifications: PostNotification[];
+  postNotifications: { postNotification: PostNotification; read: boolean }[];
   reputation: number;
 }
 
@@ -209,7 +209,8 @@ export interface SubscriberUpdatePayload {
 }
 
 export interface PostNotificationUpdatePayload {
-  notification: PostNotification;
+  notification?: PostNotification;
+  type: 'markRead' | 'newNotification';
 }
 
 /**

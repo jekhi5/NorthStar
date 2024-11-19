@@ -8,27 +8,32 @@ import PostNotificationComponent from './PostNotificationComponent';
  */
 const NotificationPage = () => {
   const {
-    notifications,
+    notificationsWithStatus,
     error,
-  }: { notifications: PostNotification[] | null; error: string | null } = useNotificationPage();
+  }: {
+    notificationsWithStatus: { postNotification: PostNotification; read: boolean }[] | null;
+    error: string | null;
+  } = useNotificationPage();
 
   return (
     <div className='notifications-page'>
       <h2>Notifications</h2>
       {error && <h4>{error}</h4>}
-      {!notifications && !error && <h4>Loading...</h4>}
-      {!error && notifications && notifications.length === 0 && <h4>No notifications</h4>}
-      {!error && notifications && notifications.length > 0 && (
-        <ul style={{ listStyleType: 'none' }}>
-          {notifications
+      {!notificationsWithStatus && !error && <h4>Loading...</h4>}
+      {!error && notificationsWithStatus && notificationsWithStatus.length === 0 && (
+        <h4>No notifications</h4>
+      )}
+      {!error && notificationsWithStatus && notificationsWithStatus.length > 0 && (
+        <ul>
+          {notificationsWithStatus
             .slice()
             .reverse()
-            .map((notification, i) => (
+            .map(({ postNotification, read }, i) => (
               <li key={i} className='notification'>
                 <PostNotificationComponent
-                  title={notification.title}
-                  text={notification.text}
-                  fromUser={notification.fromUser}
+                  title={postNotification.title}
+                  text={postNotification.text}
+                  fromUser={postNotification.fromUser}
                 />
               </li>
             ))}
@@ -37,5 +42,4 @@ const NotificationPage = () => {
     </div>
   );
 };
-
 export default NotificationPage;
