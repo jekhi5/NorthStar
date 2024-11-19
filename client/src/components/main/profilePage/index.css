@@ -75,6 +75,11 @@
   transition: width 0.3s ease;
 }
 
+/* Change the progress fill color to gold on 100% */
+.progress-fill[data-completion="100"] {
+  background-color: gold;
+}
+
 .questions-container {
   display: flex;
   gap: 2rem;
@@ -120,4 +125,68 @@ button {
 
 button:hover {
   background-color: #403776;
+}
+
+.profile-status {
+  background-color: rgba(50, 42, 136, 0.7);
+  border: 2px solid #e0c3fc;
+  color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(50, 42, 136, 0.5);
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.profile-status p {
+  margin: 0;
+}
+
+.profile-questionsasked,
+.profile-questionsanswered {
+  font-size: 1.8rem;
+  color: #e0c3fc;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  text-align: left;
+  border-bottom: 2px solid #322A88;
+  padding-bottom: 0.5rem;
+}
+
+question-item {
+  list-style-type: none;
+  margin-bottom: 0.75rem;
+}
+
+.question_button,
+.answered_button {
+  display: block;
+  color: #c5c2f0;
+  text-decoration: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: rgba(50, 42, 136, 0.2);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.question_button:hover,
+.answered_button:hover {
+  background: rgba(50, 42, 136, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.question_selected,
+.answered {
+  background: rgba(50, 42, 136, 0.6);
+  font-weight: bold;
+}
+
+.no-questions,
+.no-answers {
+  color: #a9a6d3;
+  font-style: italic;
+  margin-left: 1rem;
 }

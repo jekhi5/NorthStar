@@ -1,31 +1,55 @@
 .container {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background: radial-gradient(circle, rgba(60,30,90,1) 0%, rgba(20,10,30,1) 100%);
-  background-size: cover;
   color: #ddd;
   box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
 }
 
-.container h2,
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../../imgs/stars.gif');
+  background-size: 800px 800px;
+  background-repeat: repeat;
+  opacity: 0.1;  /* Adjust this value to make stars more/less visible */
+  pointer-events: none;
+  z-index: 1;
+}
+
+.container > * {
+  position: relative;
+  z-index: 2;
+}
+
+.container h2 {
+  font-size: 2.5rem;  /* Increased from default */
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
 .container h4 {
-  color: #e0c3fc;
-  text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  font-size: 1.5rem;  /* Increased from default */
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .input-text {
-  padding: 0.75rem;
-  font-size: 1rem;
+  padding: 1rem;      /* Increased from 0.75rem */
+  font-size: 1.2rem;  /* Increased from 1rem */
   width: 100%;
-  max-width: 300px;
-  border: 1px solid rgba(255,255,255,0.5);
-  border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #333;
-  transition: all 0.3s ease;
+  max-width: 400px;   /* Increased from 300px */
+  border: 2px solid rgba(255,255,255,0.5);  /* Increased border width */
+  border-radius: 8px;  /* Increased from 4px */
+  margin-bottom: 1rem;
 }
 
 .input-text:focus {
@@ -35,8 +59,14 @@
 }
 
 .login-button {
-  background-color: #a359bf;
+  padding: 1rem 2rem;  /* Increased padding */
+  font-size: 1.2rem;   /* Increased font size */
+  border-radius: 8px;  /* Increased border radius */
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s;
   box-shadow: 0 0 10px rgba(163, 89, 191, 0.5);
+  background-color: #a359bf;
 }
 
 .login-button:hover {
@@ -44,5 +74,32 @@
 }
 
 .error-text {
-  color: #e0c3fc;
+  font-size: 1.2rem;  /* Increased font size */
+  margin-top: 1rem;
+  text-align: center;
+}
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;          /* Added gap between buttons */
+  margin-top: 2rem;   /* Added top margin */
+  width: 100%;
+  max-width: 400px;   /* Match input width */
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;        /* Increased gap between inputs */
+  width: 100%;
+  align-items: center;
+}
+
+form {
+  width: 100%;
+  max-width: 400px;   /* Match input width */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
