@@ -1,14 +1,34 @@
 .tagNode {
   place-self: center;
-  border: #000000 1px dashed;
-  padding: 5%;
-  width: 30%;
+  border: 1px solid #ddd;
+  padding: 20px;
+  width: 90%;
   display: flex;
   flex-direction: column;
-  justify-items: center;
+  justify-content: center;
   align-items: center;
+  margin: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.tagNode:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
 }
 
 .tagName {
-  color: cornflowerblue;
+  color: #333;
+  font-size: 1.4em;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.tagDescription {
+  font-size: 1em;
+  color: #666;
+  text-align: center;
+  margin-bottom: 10px;
 }
