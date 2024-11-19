@@ -27,3 +27,7 @@
 .notification {
   margin-bottom: 10px;
 }
+
+.notifications-list {
+  list-style-type: ''
+}
