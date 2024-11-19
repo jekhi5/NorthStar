@@ -47,7 +47,7 @@ const Chatroom = () => {
         <button onClick={sendMessage}>Send</button>
       </div>
       <div className='messages'>
-        {[...messages].reverse().map((msg, index) => (
+        {[...messages].map((msg, index) => (
           <div key={index} className='message' style={{ marginBottom: '1rem' }}>
             <span className='user'>
               {msg.sentBy && msg.sentBy.username

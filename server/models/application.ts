@@ -685,13 +685,16 @@ export const editUser = async (user: User): Promise<UserResponse> => {
 /**
  * Fetches all messages from the database, sorted by their sending date in ascending order.
  *
+ * @param {number} limit - The number of messages to display.
+ *
  * @returns {Promise<Message[] | { error: string }>} - The list of messages or an error message if fetching fails.
  */
-export const getMessages = async (): Promise<Message[] | { error: string }> => {
+export const getMessages = async (limit: number): Promise<Message[] | { error: string }> => {
   try {
-    const messages = await MessageModel.find()
-      .sort({ sentDateTime: 1 })
-      .populate('sentBy', 'username');
+    const query = MessageModel.find().sort({ sentDateTime: -1 }).populate('sentBy', 'username');
+    // Add message limit to query
+    query.limit(limit);
+    const messages = await query;
     return messages;
   } catch (error) {
     return { error: `Error fetching messages` };
