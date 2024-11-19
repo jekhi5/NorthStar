@@ -31,7 +31,7 @@
   
   .form-group {
     width: 100%;
-    min-width: 0; /* Prevents input overflow */
+    min-width: 0;
   }
   
   .input-text {
@@ -44,7 +44,7 @@
     color: #ddd;
     box-shadow: 0 0 5px rgba(50, 42, 136, 0.5);
     transition: all 0.3s ease;
-    box-sizing: border-box; /* Ensures padding doesn't affect width */
+    box-sizing: border-box;
   }
   
   .input-text:focus {
@@ -76,14 +76,14 @@
   }
   
   .footer {
-    position: fixed; /* Changed from absolute to fixed */
+    position: fixed;
     bottom: 2rem;
     left: 0;
     width: 100%;
     text-align: center;
     color: #e0c3fc;
     padding: 1rem;
-    background: transparent; /* Ensures footer doesn't block content */
+    background: transparent;
   }
   
 
@@ -94,7 +94,7 @@
   
   @media (max-height: 700px) {
     .container {
-      padding-bottom: 8rem; /* Increase padding for smaller screens */
+      padding-bottom: 8rem;
     }
     
     .form-group-container {

@@ -1,7 +1,7 @@
 .btn {
   padding: 0.75rem 1.5rem;
-  background: rgba(50, 42, 136, 0.4);  /* New base color matching #322A88 */
-  border: 2px solid #322A88;  /* New border color */
+  background: rgba(50, 42, 136, 0.4);
+  border: 2px solid #322A88;
   border-radius: 8px;
   color: #e0c3fc;
   font-weight: 500;
@@ -11,7 +11,7 @@
 }
 
 .btn:hover {
-  background: rgba(50, 42, 136, 0.6);  /* Darker hover state */
+  background: rgba(50, 42, 136, 0.6);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(50, 42, 136, 0.4);
 }
@@ -22,7 +22,7 @@
 }
 
 .btn.active {
-  background: #322A88;  /* Solid color for active state */
+  background: #322A88;
   color: white;
   box-shadow: 0 4px 8px rgba(50, 42, 136, 0.6);
 }

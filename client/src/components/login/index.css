@@ -20,7 +20,7 @@
   background: url('../../images/stars.gif');
   background-size: 800px 800px;
   background-repeat: repeat;
-  opacity: 0.1;  /* Adjust this value to make stars more/less visible */
+  opacity: 0.1;
   pointer-events: none;
   z-index: 1;
 }
@@ -31,24 +31,24 @@
 }
 
 .container h2 {
-  font-size: 2.5rem;  /* Increased from default */
+  font-size: 2.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
 }
 
 .container h4 {
-  font-size: 1.5rem;  /* Increased from default */
+  font-size: 1.5rem;
   margin-bottom: 2rem;
   text-align: center;
 }
 
 .input-text {
-  padding: 1rem;      /* Increased from 0.75rem */
-  font-size: 1.2rem;  /* Increased from 1rem */
+  padding: 1rem;    
+  font-size: 1.2rem;
   width: 100%;
-  max-width: 400px;   /* Increased from 300px */
-  border: 2px solid rgba(255,255,255,0.5);  /* Increased border width */
-  border-radius: 8px;  /* Increased from 4px */
+  max-width: 400px; 
+  border: 2px solid rgba(255,255,255,0.5);
+  border-radius: 8px;
   margin-bottom: 1rem;
 }
 
@@ -59,9 +59,9 @@
 }
 
 .login-button {
-  padding: 1rem 2rem;  /* Increased padding */
-  font-size: 1.2rem;   /* Increased font size */
-  border-radius: 8px;  /* Increased border radius */
+  padding: 1rem 2rem;
+  font-size: 1.2rem; 
+  border-radius: 8px;
   width: 100%;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -74,30 +74,30 @@
 }
 
 .error-text {
-  font-size: 1.2rem;  /* Increased font size */
+  font-size: 1.2rem;
   margin-top: 1rem;
   text-align: center;
 }
 .button-group {
   display: flex;
   flex-direction: column;
-  gap: 1rem;          /* Added gap between buttons */
-  margin-top: 2rem;   /* Added top margin */
+  gap: 1rem;        
+  margin-top: 2rem; 
   width: 100%;
-  max-width: 400px;   /* Match input width */
+  max-width: 400px; 
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;        /* Increased gap between inputs */
+  gap: 1.5rem;      
   width: 100%;
   align-items: center;
 }
 
 form {
   width: 100%;
-  max-width: 400px;   /* Match input width */
+  max-width: 400px; 
   display: flex;
   flex-direction: column;
   align-items: center;
