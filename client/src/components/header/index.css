@@ -1,13 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  height: 10%;
-  width: 100%;
-  background: #dddddd;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: var(--primary-purple);
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-right: 2rem;
+}
+
+.menu_button {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: 2px solid white;
+  border-radius: 4px;
+  margin-right: 1rem;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.menu_button:last-child {
+  margin-right: 0;
+}
+
+.menu_button:hover {
+  color: var(--primary-purple);
+  background-color: var(--accent-yellow);
+}
+
+.menu_selected {
+  border: 2px solid var(--accent-yellow);
+  color: var(--primary-purple);
+  background-color: var(--accent-yellow);
+}
+
+.search-and-profile {
+  display: flex;
+  align-items: center;
+}
+
+#searchBar {
+  width: 250px;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-gray);
+  outline: none;
+  font-size: 1rem;
+  color: var(--text-dark);
+  background-color: var(--background-white);
+}
+
+.material-symbols-outlined {
   font-size: 32px;
-  font-weight: 800;
+  vertical-align: middle;
+}
+
+.notifications-icon a,
+.profile-icon a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.notifications-icon a:hover,
+.profile-icon a:hover {
+  color: var(--accent-yellow);
+}
+
+.notifications-and-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-right: 2rem;
 }

@@ -1,5 +1,41 @@
 .tag_list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 80px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px; 
+  justify-content: center;
+}
+
+.tagNode {
+  border: 1px solid #ddd;
+  padding: 20px;
+  width: calc(33.333% - 40px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.tagNode:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+}
+
+.tagName {
+  color: #333;
+  font-size: 1.4em;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.tagDescription {
+  font-size: 1em;
+  color: #666;
+  text-align: center;
+  margin-bottom: 10px;
 }

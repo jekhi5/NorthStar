@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './index.css';
 import { getMetaData } from '../../../../tool';
 import { Question } from '../../../../types';
+import defaultProfilePic from '../../../../images/default-profile-pic.png';
 
 /**
  * Interface representing the props for the Question component.
@@ -44,6 +45,9 @@ const QuestionView = ({ q }: QuestionProps) => {
     navigate(`/question/${questionID}`);
   };
 
+  const profilePic =
+    q.askedBy?.profilePicture === '' ? defaultProfilePic : q.askedBy?.profilePicture;
+
   return (
     <div
       className='question right_padding'
@@ -73,12 +77,20 @@ const QuestionView = ({ q }: QuestionProps) => {
         </div>
       </div>
       <div className='lastActivity'>
-        <div className='question_author'>{q.askedBy?.username || 'Unknown Author'}</div>
-        <div className='question_author_status'>
-          {q.askedBy.status !== 'Not endorsed' ? q.askedBy.status : ''}
+        <div className='user-info'>
+          <div className='user-avatar'>
+            <img src={profilePic ?? defaultProfilePic} alt='User avatar' className='avatar-image' />
+          </div>
+          <div className='user-details'>
+            <div className='question_author'>{q.askedBy?.username || 'Unknown Author'}</div>
+            <div
+              className={`question_author_status status-${q.askedBy.status.toLowerCase().replace(' ', '-')}`}>
+              {q.askedBy.status !== 'Not endorsed' ? q.askedBy.status : ''}
+            </div>
+          </div>
+          <div>&nbsp;</div>
+          <div className='question_meta'>asked {getMetaData(new Date(q.askDateTime))}</div>
         </div>
-        <div>&nbsp;</div>
-        <div className='question_meta'>asked {getMetaData(new Date(q.askDateTime))}</div>
       </div>
     </div>
   );

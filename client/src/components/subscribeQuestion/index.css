@@ -5,16 +5,17 @@
 }
 
 .subscribe-button {
-    padding: 0.5rem;
-    margin-right: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 0.125rem;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    outline: none;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: 2px solid white;
+  border-radius: 4px;
+  background-color: var(--primary-purple);
+  transition: color 0.3s, background-color 0.3s;
 }
 
-.subscribe-button-subscribed {
-    background-color: #38a169;
-    color: white;
+.subscribe-button:hover {
+  color: var(--primary-purple);
+  background-color: var(--accent-yellow);
 }

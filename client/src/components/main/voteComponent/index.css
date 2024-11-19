@@ -5,13 +5,20 @@
 }
 
 .vote-button {
-  padding: 0.5rem;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: 2px solid white;
+  border-radius: 4px;
+  background-color: var(--primary-purple);
+  transition: color 0.3s, background-color 0.3s;
   margin-right: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 0.125rem;
-  background-color: #f0f0f0;
-  cursor: pointer;
-  outline: none;
+}
+
+.vote-button:hover {
+  color: var(--primary-purple);
+  background-color: var(--accent-yellow);
 }
 
 .vote-button-upvoted {
@@ -25,5 +32,9 @@
 }
 
 .vote-count {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: var(--text-dark);
   margin-left: 0.5rem;
 }
