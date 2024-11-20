@@ -108,6 +108,8 @@ const userController = () => {
           user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
         }
       } catch (error) {
+        // We log the errors here, but we do not throw an error as we do not want to block the
+        // user from being added just because the welcome notification failed to load.
         if (error instanceof Error) {
           // eslint-disable-next-line no-console
           console.log('Error fetching welcome notification:', error.message);
