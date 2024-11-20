@@ -124,7 +124,7 @@ const questionController = (socket: FakeSOSocket) => {
     try {
       const questions = await getQuestionsByAskedByUserId(userId);
 
-      if (questions && !('error' in questions)) {
+      if (questions) {
         socket.emit('questionsUpdate', questions);
         res.json(questions);
         return;
@@ -250,18 +250,23 @@ const questionController = (socket: FakeSOSocket) => {
       }
 
       if (populatedQuestion._id) {
-        const newNotification: PostNotificationResponse = await postNotifications(
-          populatedQuestion._id?.toString(),
-          populatedQuestion._id?.toString(),
-          'questionPostedWithTag',
-          askedBy,
-        );
+        try {
+          const newNotification: PostNotificationResponse = await postNotifications(
+            populatedQuestion._id?.toString(),
+            populatedQuestion._id?.toString(),
+            'questionPostedWithTag',
+            askedBy,
+          );
 
-        if (newNotification && !('error' in newNotification)) {
-          socket.emit('postNotificationUpdate', {
-            notification: newNotification,
-            type: 'newNotification',
-          });
+          if (newNotification && !('error' in newNotification)) {
+            socket.emit('postNotificationUpdate', {
+              notification: newNotification,
+              type: 'newNotification',
+            });
+          }
+        } catch (err) {
+          // Do nothing because we still want to add the question,
+          // even if there was an error sending the notifications
         }
       }
 
