@@ -2041,10 +2041,6 @@ describe('application module', () => {
 
     describe('updateNotificationReadStatus', () => {
       test('updateNotificationReadStatus should return the updated user with the notification marked as read', async () => {
-        const userWithNotification: User = {
-          ...user1,
-          postNotifications: [{ postNotification: postNotification1, read: false }],
-        };
         const updatedUser: User = {
           ...user1,
           postNotifications: [{ postNotification: postNotification1, read: true }],

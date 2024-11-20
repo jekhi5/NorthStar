@@ -109,8 +109,6 @@ const ans4 = {
   comments: [],
 };
 
-const MOCK_ANSWERS = [ans1, ans2, ans3, ans4];
-
 const MOCK_QUESTIONS = [
   {
     _id: '65e9b58910afe6e94fc6e6dc',

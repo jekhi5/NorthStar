@@ -29,12 +29,6 @@ const user2: User = {
   reputation: 0,
 };
 
-interface MockResponse {
-  msg: string;
-  upVotes: string[];
-  downVotes: string[];
-}
-
 // There are 25 of them
 const MOCK_MESSAGES: Message[] = [
   {
