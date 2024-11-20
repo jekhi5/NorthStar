@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import Cookies from 'js-cookie';
 import { auth } from '../firebase';
 import useLoginContext from './useLoginContext';
 import { addUser, checkValidUser, getUserByUid } from '../services/userService';
 import { User } from '../types';
-import Cookies from 'js-cookie';
 
 /**
  * Custom hook to handle sign up input and submission.

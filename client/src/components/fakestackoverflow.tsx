@@ -40,7 +40,6 @@ const ProtectedRoute = ({
 const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
   const [user, setUser] = useState<User | null>(null);
   const [showLogIn, setShowLogIn] = useState<boolean>(true);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const cookie = Cookies.get('auth');
@@ -51,10 +50,9 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             setUser(dbUser);
           }
         })
+        // eslint-disable-next-line no-console
         .catch(console.error)
-        .finally(() => setIsLoading(false));
-    } else {
-      setIsLoading(false);
+        .finally();
     }
   }, []);
 
