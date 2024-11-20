@@ -414,6 +414,97 @@ describe('application module', () => {
 
         expect(result.length).toEqual(0);
       });
+
+      test('get questions sorted by most votes', async () => {
+        const questions = [
+          {
+            _id: '65e9b716ff0e892116b2de01',
+            upVotes: ['user1', 'user2', 'user3'],
+            downVotes: ['user4'],
+          },
+          {
+            _id: '65e9b716ff0e892116b2de02',
+            upVotes: ['user1', 'user2'],
+            downVotes: [],
+          },
+          {
+            _id: '65e9b716ff0e892116b2de03',
+            upVotes: ['user1'],
+            downVotes: ['user2', 'user3'],
+          },
+          {
+            _id: '65e9b716ff0e892116b2de04',
+            upVotes: [],
+            downVotes: [],
+          },
+        ];
+
+        mockingoose(QuestionModel).toReturn(questions, 'find');
+        QuestionModel.schema.path('upVotes', Object);
+        QuestionModel.schema.path('downVotes', Object);
+
+        const result = await getQuestionsByOrder('mostVotes');
+
+        expect(result.length).toEqual(4);
+        expect(result[0]._id?.toString()).toEqual('65e9b716ff0e892116b2de01');
+        expect(result[1]._id?.toString()).toEqual('65e9b716ff0e892116b2de02');
+        expect(result[2]._id?.toString()).toEqual('65e9b716ff0e892116b2de04');
+        expect(result[3]._id?.toString()).toEqual('65e9b716ff0e892116b2de03');
+      });
+
+      test('get questions sorted by most votes with equal vote counts', async () => {
+        const questions = [
+          {
+            _id: '65e9b716ff0e892116b2de01',
+            upVotes: ['user1', 'user2'],
+            downVotes: [],
+          },
+          {
+            _id: '65e9b716ff0e892116b2de02',
+            upVotes: ['user1', 'user2'],
+            downVotes: [],
+          },
+          {
+            _id: '65e9b716ff0e892116b2de03',
+            upVotes: ['user1'],
+            downVotes: ['user2'],
+          },
+          {
+            _id: '65e9b716ff0e892116b2de04',
+            upVotes: ['user1'],
+            downVotes: [],
+          },
+        ];
+
+        mockingoose(QuestionModel).toReturn(questions, 'find');
+        QuestionModel.schema.path('upVotes', Object);
+        QuestionModel.schema.path('downVotes', Object);
+
+        const result = await getQuestionsByOrder('mostVotes');
+
+        expect(result.length).toEqual(4);
+        // The first two questions have equal votes, so their order might be arbitrary
+        expect(result[0]._id?.toString()).toMatch(/65e9b716ff0e892116b2de0[12]/);
+        expect(result[1]._id?.toString()).toMatch(/65e9b716ff0e892116b2de0[12]/);
+        expect(result[2]._id?.toString()).toEqual('65e9b716ff0e892116b2de04');
+        expect(result[3]._id?.toString()).toEqual('65e9b716ff0e892116b2de03');
+      });
+
+      test('get questions sorted by most votes with empty list', async () => {
+        mockingoose(QuestionModel).toReturn([], 'find');
+
+        const result = await getQuestionsByOrder('mostVotes');
+
+        expect(result.length).toEqual(0);
+      });
+
+      test('get questions sorted by most votes with error', async () => {
+        mockingoose(QuestionModel).toReturn(new Error('Database error'), 'find');
+
+        const result = await getQuestionsByOrder('mostVotes');
+
+        expect(result.length).toEqual(0);
+      });
     });
 
     describe('fetchAndIncrementQuestionViewsById', () => {

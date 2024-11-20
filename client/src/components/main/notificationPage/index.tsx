@@ -24,7 +24,7 @@ const NotificationPage = () => {
         <h4>No notifications</h4>
       )}
       {!error && notificationsWithStatus && notificationsWithStatus.length > 0 && (
-        <ul>
+        <ul className='notifications-list'>
           {notificationsWithStatus
             .slice()
             .reverse()
