@@ -264,9 +264,16 @@ const questionController = (socket: FakeSOSocket) => {
               type: 'newNotification',
             });
           }
-        } catch (err) {
-          // Do nothing because we still want to add the question,
-          // even if there was an error sending the notifications
+        } catch (error) {
+          // We log the errors here, but we do not throw an error as we do not want to block the adding
+          // of a question just because the notification failed to post.
+          if (error instanceof Error) {
+            // eslint-disable-next-line no-console
+            console.log(`Error when posting notification: ${error.message}`);
+          } else {
+            // eslint-disable-next-line no-console
+            console.log('Error when posting notification');
+          }
         }
       }
 

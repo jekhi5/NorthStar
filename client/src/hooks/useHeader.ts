@@ -41,8 +41,16 @@ const useHeader = () => {
       try {
         const res = await getUserByUid(uid);
         setNotifications(!res ? [] : res.postNotifications);
-      } catch (e) {
-        /* empty */
+      } catch (error) {
+        // We log the errors here, but we do not throw an error as we do not want to block the
+        // user from viewing the site just because the user couldn't be found.
+        if (error instanceof Error) {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching user notifications:', error.message);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching user notifications:', error);
+        }
       }
     };
 
