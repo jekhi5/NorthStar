@@ -108,8 +108,13 @@ const userController = () => {
           user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
         }
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error fetching welcome notification:', error);
+        if (error instanceof Error) {
+          // eslint-disable-next-line no-console
+          console.log('Error fetching welcome notification:', error.message);
+        } else {
+          // eslint-disable-next-line no-console
+          console.log('Error fetching welcome notification:');
+        }
       }
 
       const result = await saveUser(user);
