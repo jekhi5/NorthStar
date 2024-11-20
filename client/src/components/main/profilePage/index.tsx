@@ -88,10 +88,6 @@ const ProfilePage = () => {
             </div>
           ) : (
             <div className='profile-info'>
-              {profile.profilePicture && (
-                <img src={profile.profilePicture} alt='Profile' className='profile-picture' />
-              )}
-
               <div className='profile-right'>
                 <div className='progress-bars'>
                   <div className='progress-item'>
