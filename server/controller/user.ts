@@ -108,8 +108,8 @@ const userController = () => {
           user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
         }
       } catch (error) {
-        // Do nothing because we don't want to stop the user from being created
-        // just because we couldn't attach the welcome notification
+        // eslint-disable-next-line no-console
+        console.error('Error fetching welcome notification:', error);
       }
 
       const result = await saveUser(user);

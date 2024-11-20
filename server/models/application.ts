@@ -282,11 +282,17 @@ export const filterQuestionsByAskedBy = (qlist: Question[], uid: string): Questi
  */
 export const getQuestionsByAskedByUserId = async (userId: string): Promise<Question[]> => {
   try {
-    return await QuestionModel.find({ askedBy: userId }).populate([
+    const result = await QuestionModel.find({ askedBy: userId }).populate([
       { path: 'tags', model: TagModel },
       { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
       { path: 'askedBy', model: UserModel },
     ]);
+
+    if (!result) {
+      throw new Error('Error fetching questions asked by user');
+    }
+
+    return result;
   } catch (error) {
     return [];
   }
@@ -317,6 +323,11 @@ export const getQuestionsByAnsweredByUserId = async (userId: string): Promise<Qu
       { path: 'answers', model: AnswerModel, populate: { path: 'ansBy', model: UserModel } },
       { path: 'askedBy', model: UserModel },
     ]);
+
+    if (!qlist) {
+      throw new Error('Error fetching questions answered by user');
+    }
+
     return filterQuestionsByAnsBy(qlist, userId);
   } catch (error) {
     return [];
@@ -500,9 +511,18 @@ export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
   try {
     const result = await AnswerModel.create(answer);
 
-    // Every answer is worth 2 reputation points
-    await updateUserReputation(answer.ansBy.uid, 2);
-
+    try {
+      // Every answer is worth 2 reputation points
+      await updateUserReputation(answer.ansBy.uid, 2);
+    } catch (error) {
+      if (error instanceof Error) {
+        // eslint-disable-next-line no-console
+        console.log('Error updating user reputation:', error.message);
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('Error updating user reputation');
+      }
+    }
     return result;
   } catch (error) {
     return { error: 'Error when saving an answer' };
@@ -729,7 +749,12 @@ export const getMessages = async (limit: number): Promise<Message[] | { error: s
     const query = MessageModel.find().sort({ sentDateTime: -1 }).populate('sentBy', 'username');
     // Add message limit to query
     query.limit(limit);
-    const messages = await query;
+    let messages = await query;
+
+    if (!messages) {
+      messages = [];
+    }
+
     return messages;
   } catch (error) {
     return { error: `Error fetching messages` };
@@ -766,6 +791,7 @@ export const updateMessage = async (
 ): Promise<Message | { error: string }> => {
   try {
     const updatedMessage = await MessageModel.findByIdAndUpdate(id, updatedData, { new: true });
+
     if (!updatedMessage) {
       throw new Error('Message not found');
     }
