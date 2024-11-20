@@ -97,14 +97,19 @@ const userController = () => {
     }
 
     try {
-      const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
-        title: 'Welcome to Fake Stack Overflow!',
-        text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-        notificationType: 'questionPostedWithTag',
-      });
+      try {
+        const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
+          title: 'Welcome to Fake Stack Overflow!',
+          text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+          notificationType: 'questionPostedWithTag',
+        });
 
-      if (welcomeNotification) {
-        user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
+        if (welcomeNotification) {
+          user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
+        }
+      } catch (error) {
+        // Do nothing because we don't want to stop the user from being created
+        // just because we couldn't attach the welcome notification
       }
 
       const result = await saveUser(user);
