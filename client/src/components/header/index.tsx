@@ -8,7 +8,7 @@ import './index.css';
  * when they press Enter.
  */
 const Header = () => {
-  const { val, handleInputChange, handleKeyDown, unreadNotifs } = useHeader();
+  const { val, handleInputChange, handleKeyDown, unreadNotifs, handleLogOut } = useHeader();
 
   return (
     <div id='header' className='header'>
@@ -42,6 +42,9 @@ const Header = () => {
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
       />
+      <button className='logout-button' onClick={handleLogOut}>
+        Log Out
+      </button>
       <div className='notifications-and-profile'>
         <div className='notifications-icon'>
           <NavLink to='/notifications'>

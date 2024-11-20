@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import Layout from './layout';
 import Login from './login';
 import SignUp from './signup';
@@ -14,6 +15,7 @@ import AnswerPage from './main/answerPage';
 import ProfilePage from './main/profilePage';
 import NotificationPage from './main/notificationPage';
 import Chatroom from './main/chatroom';
+import { getUserByUid } from '../services/userService';
 
 const ProtectedRoute = ({
   user,
@@ -38,6 +40,23 @@ const ProtectedRoute = ({
 const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
   const [user, setUser] = useState<User | null>(null);
   const [showLogIn, setShowLogIn] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const cookie = Cookies.get('auth');
+    if (cookie) {
+      getUserByUid(cookie)
+        .then(dbUser => {
+          if (dbUser) {
+            setUser(dbUser);
+          }
+        })
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
+    }
+  }, []);
 
   return (
     <LoginContext.Provider value={{ user, setUser }}>
@@ -46,7 +65,9 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
         <Route
           path='/'
           element={
-            showLogIn ? (
+            user ? (
+              <Navigate to='/home' />
+            ) : showLogIn ? (
               <Login showLogIn={showLogIn} setShowLogIn={setShowLogIn} />
             ) : (
               <SignUp showLogIn={showLogIn} setShowLogIn={setShowLogIn} />
