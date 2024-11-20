@@ -25,7 +25,7 @@ export interface PostNotification {
 /**
  * Type representing the possible ordering options for questions.
  */
-export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed';
+export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed' | 'mostVotes';
 
 /**
  * Interface representing a user in the application, which contains:
