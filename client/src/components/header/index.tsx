@@ -42,10 +42,8 @@ const Header = () => {
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
       />
-      <button className='logout-button' onClick={handleLogOut}>
-        Log Out
-      </button>
-      <div className='notifications-and-profile'>
+     
+      <div className='notifications-and-profile-group'>
         <div className='notifications-icon'>
           <NavLink to='/notifications'>
             <span className='material-symbols-outlined'>circle_notifications</span>
@@ -56,6 +54,11 @@ const Header = () => {
           <NavLink to='/profile'>
             <span className='material-symbols-outlined'>account_circle</span>
           </NavLink>
+        </div>
+        <div className='logout'>
+        <button className='logout-button' onClick={handleLogOut}>
+          Log Out
+        </button>
         </div>
       </div>
     </div>
