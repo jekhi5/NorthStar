@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ChangeEvent, useState, useEffect } from 'react';
+import { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import Cookies from 'js-cookie';
 import { auth } from '../firebase'; // Firebase initialization
@@ -25,29 +25,32 @@ const useLogin = () => {
   /**
    * Function to attempt auto login with the provided UID.
    */
-  const autoLogin = async (uid: string) => {
-    try {
-      const dbUser = await getUserByUid(uid);
-      if (dbUser) {
-        setUser(dbUser);
-        navigate('/home');
-      } else {
-        // If user not found, clear the cookie
+  const autoLogin = useCallback(
+    async (uid: string) => {
+      try {
+        const dbUser = await getUserByUid(uid);
+        if (dbUser) {
+          setUser(dbUser);
+          navigate('/home');
+        } else {
+          // If user not found, clear the cookie
+          Cookies.remove('auth');
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Auto login failed:', err);
         Cookies.remove('auth');
       }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Auto login failed:', err);
-      Cookies.remove('auth');
-    }
-  };
+    },
+    [navigate, setUser],
+  );
 
   useEffect(() => {
     // Check for existing auth cookie
     const cookie = Cookies.get('auth');
     // If cookie exists, attempt auto login
     if (cookie) autoLogin(cookie);
-  }, []);
+  }, [autoLogin]);
 
   /**
    * Function to handle the input change event.

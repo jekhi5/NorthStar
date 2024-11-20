@@ -58,22 +58,17 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
     }
   }, []);
 
+  const componentToShowOnLogin = showLogIn ? (
+    <Login showLogIn={showLogIn} setShowLogIn={setShowLogIn} />
+  ) : (
+    <SignUp showLogIn={showLogIn} setShowLogIn={setShowLogIn} />
+  );
+
   return (
     <LoginContext.Provider value={{ user, setUser }}>
       <Routes>
         {/* Public Route */}
-        <Route
-          path='/'
-          element={
-            user ? (
-              <Navigate to='/home' />
-            ) : showLogIn ? (
-              <Login showLogIn={showLogIn} setShowLogIn={setShowLogIn} />
-            ) : (
-              <SignUp showLogIn={showLogIn} setShowLogIn={setShowLogIn} />
-            )
-          }
-        />
+        <Route path='/' element={user ? <Navigate to='/home' /> : componentToShowOnLogin} />
         {/* Protected Routes */}
         {
           <Route
