@@ -114,6 +114,7 @@ const useSignUp = () => {
         status: 'Not endorsed',
         postNotifications: [],
         reputation: 0,
+        emailsEnabled: false,
       };
 
       await addUser(newUser);

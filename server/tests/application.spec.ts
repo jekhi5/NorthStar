@@ -37,6 +37,7 @@ const user1: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user2: User = {
@@ -47,6 +48,7 @@ const user2: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user3: User = {
@@ -57,6 +59,7 @@ const user3: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user4: User = {
@@ -67,6 +70,7 @@ const user4: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const tag1: Tag = {
@@ -1298,6 +1302,7 @@ describe('application module', () => {
           status: 'Not endorsed',
           postNotifications: [],
           reputation: 0,
+          emailsEnabled: false,
         };
 
         const result = (await saveUser(mockUser)) as User;
@@ -1320,6 +1325,7 @@ describe('application module', () => {
           status: 'Not endorsed',
           postNotifications: [],
           reputation: 0,
+          emailsEnabled: false,
         };
 
         const updatedUser: User = {
@@ -1329,6 +1335,7 @@ describe('application module', () => {
           status: 'Not endorsed',
           postNotifications: [],
           reputation: 10,
+          emailsEnabled: false,
         };
 
         mockingoose(UserModel).toReturn(updatedUser, 'findOneAndUpdate');

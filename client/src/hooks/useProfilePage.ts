@@ -30,11 +30,14 @@ const useProfilePage = () => {
   const [userAnswers, setUserAnswers] = useState<Question[]>([]);
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [emailOpted, setEmailOpted] = useState<boolean | null>(null);
+  const [optButtonText, setOptButtonText] = useState<string | null>(null);
 
   // Get user, and subsequently user id
   const context = useContext(UserContext);
   const uid = context?.user?.uid;
   const userId = context?.user?._id;
+  const userCanEmail = context?.user?.emailsEnabled;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -50,6 +53,12 @@ const useProfilePage = () => {
         setUserQuestions(qlist || []);
         const alist = await getQuestionsByAnsweredByUserId(userId as string);
         setUserAnswers(alist || []);
+        setEmailOpted(profileData?.emailsEnabled as boolean);
+        if (userCanEmail as boolean) {
+          setOptButtonText('Disable Email Notifications');
+        } else {
+          setOptButtonText('Enable Email Notifications');
+        }
         setEditedProfile(profileData); // Initialize editedProfile with fetched data
       } catch (err) {
         setError('Failed to load profile.');
@@ -57,7 +66,7 @@ const useProfilePage = () => {
     };
 
     fetchProfile();
-  }, [uid, userId]);
+  }, [uid, userId, userCanEmail]);
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
@@ -81,6 +90,20 @@ const useProfilePage = () => {
       } catch (err) {
         setUpdateError('Failed to update profile.');
       }
+    }
+  };
+
+  const toggleEmailOptIn = async () => {
+    if (emailOpted === true) {
+      setEditedProfile(prev => (prev ? { ...prev, emailsEnabled: false } : null));
+      await saveProfile();
+      setEmailOpted(false);
+      setOptButtonText('Enable Email Notifications');
+    } else {
+      setEditedProfile(prev => (prev ? { ...prev, emailsEnabled: true } : null));
+      await saveProfile();
+      setEmailOpted(true);
+      setOptButtonText('Disable Email Notifications');
     }
   };
 
@@ -130,11 +153,14 @@ const useProfilePage = () => {
     userAnswers,
     updateError,
     isEditing,
+    emailOpted,
+    optButtonText,
     toggleEditing,
     handleChange,
     saveProfile,
     handleProfilePictureUpload,
     calculateReputationPercentage,
+    toggleEmailOptIn,
   };
 };
 

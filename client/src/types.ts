@@ -34,6 +34,7 @@ export interface User {
   status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster';
   postNotifications: PostNotification[];
   reputation: number;
+  emailsEnabled: boolean;
 }
 
 /**

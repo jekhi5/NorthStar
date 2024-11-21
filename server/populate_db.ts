@@ -104,6 +104,7 @@ async function userCreate(
   status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster',
   postNotifications: PostNotification[],
   reputation: number,
+  emailsEnabled: boolean,
   firstName?: string,
   lastName?: string,
   profilePicture?: string,
@@ -121,6 +122,7 @@ async function userCreate(
     firstName,
     lastName,
     profilePicture,
+    emailsEnabled,
   };
 
   // Find the welcome notification in the database
@@ -275,6 +277,7 @@ const populate = async () => {
       'Endorsed',
       [],
       0,
+      false,
     );
 
     // Add tag for bogus question that is pointed to by the welcome notification
@@ -305,15 +308,15 @@ const populate = async () => {
       fakeStackOverflowTeamUser,
     );
 
-    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Super Smarty Pants', [], 250);
-    const u2 = await userCreate('2', 'ihba001', 'ihba001@email.com', 'Not endorsed', [], 10);
-    const u3 = await userCreate('3', 'saltyPeter', 'saltyPeter@email.com', 'Endorsed', [], 35);
-    const u4 = await userCreate('4', 'monkeyABC', 'monkeyABC@email.com', 'Not endorsed', [], 24);
-    const u5 = await userCreate('5', 'hamkalo', 'hamkalo@email.com', 'Endorsed', [], 35);
-    const u6 = await userCreate('6', 'azad', 'azad@email.com', 'Not endorsed', [], 1);
-    const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Mentor', [], 560);
-    const u8 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed', [], 0);
-    const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Grandmaster', [], 10000);
+    const u1 = await userCreate('1', 'sana', 'sana@email.com', 'Super Smarty Pants', [], 250, false);
+    const u2 = await userCreate('2', 'ihba001', 'ihba001@email.com', 'Not endorsed', [], 10, false);
+    const u3 = await userCreate('3', 'saltyPeter', 'saltyPeter@email.com', 'Endorsed', [], 35, false);
+    const u4 = await userCreate('4', 'monkeyABC', 'monkeyABC@email.com', 'Not endorsed', [], 24, false);
+    const u5 = await userCreate('5', 'hamkalo', 'hamkalo@email.com', 'Endorsed', [], 35, false);
+    const u6 = await userCreate('6', 'azad', 'azad@email.com', 'Not endorsed', [], 1, false);
+    const u7 = await userCreate('7', 'alia', 'alia@email.com', 'Mentor', [], 560, false);
+    const u8 = await userCreate('8', 'abhi3241', 'abhi3241@email.com', 'Not endorsed', [], 0, false);
+    const u9 = await userCreate('9', 'abaya', 'abaya@email.com', 'Grandmaster', [], 10000, false);
 
     const t2 = await tagCreate(T2_NAME, T2_DESC, [u1, u2, u3]);
     const t3 = await tagCreate(T3_NAME, T3_DESC, []);
@@ -348,6 +351,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       4,
+      false,
       'abaya',
       'khan',
       '',
@@ -376,6 +380,7 @@ const populate = async () => {
       'Endorsed',
       [pn2],
       500,
+      false,
       'mackson',
       'jackson',
       '',
@@ -434,7 +439,7 @@ const populate = async () => {
       u1,
     );
 
-    await userCreate('12', 'mackson3332', 'mackson3332@email.com', 'Endorsed', [pn3], 40);
+    await userCreate('12', 'mackson3332', 'mackson3332@email.com', 'Endorsed', [pn3], 40, false);
 
     // Adding us as a users
     await userCreate(
@@ -444,6 +449,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       13,
+      false,
       'Jacob',
       'Kline',
       '',
@@ -456,6 +462,7 @@ const populate = async () => {
       'Grandmaster',
       [],
       15000,
+      false,
       'Ashley',
       'Davis',
       '',
@@ -468,6 +475,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       20,
+      false,
       'Kenneth',
       'Borrero',
       '',
@@ -480,6 +488,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       100,
+      false,
       'Gracelyn',
       'Theobald',
       '',

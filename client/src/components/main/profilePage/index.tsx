@@ -11,11 +11,14 @@ const ProfilePage = () => {
     userAnswers,
     updateError,
     isEditing,
+    emailOpted,
+    optButtonText,
     toggleEditing,
     handleChange,
     saveProfile,
     handleProfilePictureUpload,
     calculateReputationPercentage,
+    toggleEmailOptIn,
   } = useProfilePage();
 
   if (error) {
@@ -100,39 +103,45 @@ const ProfilePage = () => {
               </ul>
             </div>
             <button onClick={toggleEditing}>Edit Profile</button>
+            <h2 className='profile-questionsasked'>Questions Asked</h2>
+            {userQuestions.length > 0 ? (
+              userQuestions.map((q, index) => (
+                <li key={index} className='question-item'>
+                  <NavLink
+                    to={`/question/${q._id}`}
+                    id='question_view'
+                    className={({ isActive }) =>
+                      `question_button ${isActive ? 'question_selected' : ''}`
+                    }>
+                    {q.title}
+                  </NavLink>
+                </li>
+              ))
+            ) : (
+              <p className='no-questions'>No questions yet.</p>
+            )}
+            <h2 className='profile-questionsanswered'>Questions Answered</h2>
+            {userAnswers.length > 0 ? (
+              userAnswers.map((a, index) => (
+                <li key={index} className='question-item'>
+                  <NavLink
+                    to={`/question/${a._id}`}
+                    id='answered_view'
+                    className={({ isActive }) => `answered_button ${isActive ? 'answered' : ''}`}>
+                    {a.title}
+                  </NavLink>
+                </li>
+              ))
+            ) : (
+              <p className='no-answers'>No answers yet.</p>
+            )}
+            <p></p>
+            <button
+              className={`emailopt-button-enable ${emailOpted === true ? 'emailopt-button-disable' : ''}`}
+              onClick={() => toggleEmailOptIn()}>
+              {optButtonText}
+            </button>
           </div>
-        )}
-        <h2 className='profile-questionsasked'>Questions Asked</h2>
-        {userQuestions.length > 0 ? (
-          userQuestions.map((q, index) => (
-            <li key={index} className='question-item'>
-              <NavLink
-                to={`/question/${q._id}`}
-                id='question_view'
-                className={({ isActive }) =>
-                  `question_button ${isActive ? 'question_selected' : ''}`
-                }>
-                {q.title}
-              </NavLink>
-            </li>
-          ))
-        ) : (
-          <p className='no-questions'>No questions yet.</p>
-        )}
-        <h2 className='profile-questionsanswered'>Questions Answered</h2>
-        {userAnswers.length > 0 ? (
-          userAnswers.map((a, index) => (
-            <li key={index} className='question-item'>
-              <NavLink
-                to={`/question/${a._id}`}
-                id='answered_view'
-                className={({ isActive }) => `answered_button ${isActive ? 'answered' : ''}`}>
-                {a.title}
-              </NavLink>
-            </li>
-          ))
-        ) : (
-          <p className='no-answers'>No answers yet.</p>
         )}
       </div>
     </div>

@@ -528,6 +528,54 @@ export const savePostNotification = async (
 };
 
 /**
+ * Set up OATH2 authentication and send an email detailing with the provided email/notification info.
+ * @param mailOptions a collection of details to go into the email (i.e. from, to, subject, text, etc.)
+ */
+const sendEmail = async (mailOptions: unknown) => {
+  // NOTE: I'm not familiar with how to fix these external package/dependency issues so I'll need help w/ these ;-;
+  // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
+  const nodemailer = require('nodemailer');
+  // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
+  const { google } = require('googleapis');
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { OAuth2 } = google.auth;
+
+  const createTransporter = async () => {
+    const oauth2Client = new OAuth2(
+      process.env.CLIENT_ID,
+      process.env.CLIENT_SECRET,
+      'https://developers.google.com/oauthplayground',
+    );
+    oauth2Client.setCredentials({
+      refresh_token: process.env.REFRESH_TOKEN,
+    });
+    const accessToken = await new Promise((resolve, reject) => {
+      oauth2Client.getAccessToken((err: unknown, token: unknown) => {
+        if (err) {
+          reject();
+        }
+        resolve(token);
+      });
+    });
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: process.env.EMAIL,
+        accessToken,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        refreshToken: process.env.REFRESH_TOKEN,
+      },
+    });
+    return transporter;
+  };
+
+  const emailTransporter = await createTransporter();
+  await emailTransporter.sendMail(mailOptions);
+};
+
+/**
  * Populate notiications to all the subscribers to the question with the given ID.
  * @param qid the qid of the question with action taken on it.
  * @param associatedPostId the post id of the post that the action was taken on (like the ID of the answer or comment posted).
@@ -603,11 +651,22 @@ export const postNotifications = async (
     question.subscribers.map(async subscriberId => {
       // Don't sent notifications to users about their own actions
       if (user._id?.toString() !== subscriberId.toString()) {
-        await UserModel.findOneAndUpdate(
+        const subscribedUser = await UserModel.findOneAndUpdate(
           { _id: subscriberId },
           { $push: { postNotifications: postedNotification } },
           { new: true },
         );
+
+        if (subscribedUser?.emailsEnabled) {
+          const mailOptions = {
+            from: 'fakestackoverflowdotcom@gmail.com',
+            to: subscribedUser?.email,
+            subject: `New FSO Notification: ${postedNotification.title}`,
+            html: `<p>New Notification for ${subscribedUser?.firstName}<p><h1>${postedNotification.title}</h1><p>${postedNotification.text}</p>`,
+          };
+
+          sendEmail(mailOptions);
+        }
       }
     });
 
