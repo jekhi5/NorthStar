@@ -1,36 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=arrow_upward, arrow_downward');
+
 .vote-container {
   display: flex;
   align-items: center;
   padding: 12px;
 }
 
+/* Button styling */
 .vote-button {
-  text-decoration: none;
-  color: white;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  border: 2px solid white;
-  border-radius: 4px;
-  background-color: var(--primary-purple);
-  transition: color 0.3s, background-color 0.3s;
-  margin-right: 0.5rem;
+  background: none; /* Remove background */
+  border: none; /* Remove border */
+  padding: 0; /* Remove padding */
+  cursor: pointer; /* Add pointer cursor for clickability */
+  outline: none; /* Remove default focus outline */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s, outline 0.3s; /* Smooth transitions */
+  border-radius: 50%;
+  margin-right: 5px;
 }
 
-.vote-button:hover {
-  color: var(--primary-purple);
-  background-color: var(--accent-yellow);
+/* Icon styling */
+.material-symbols-outlined {
+  font-size: 32px; /* Adjust size as needed */
+  color: var(--primary-purple); /* Default purple color */
+  border-radius: 50%;
 }
 
-.vote-button-upvoted {
-  background-color: #38a169;
-  color: white;
+/* Hover effect: Change arrow color to yellow */
+.vote-button:hover .material-symbols-outlined {
+  color: var(--accent-yellow);
+  border-radius: 50%;
 }
 
-.vote-button-downvoted {
-  background-color: #e53e3e;
-  color: white;
+.vote-button-upvoted .material-symbols-outlined {
+  color: var(--primary-purple); /* Keep arrow purple if upvoted */
+  outline: 4px solid var(--accent-yellow); /* Yellow outline */
+  border-radius: 50%; /* Optional for rounded outline */
 }
 
+.vote-button-downvoted .material-symbols-outlined {
+  color: var(--primary-purple); /* Keep arrow purple if downvoted */
+  outline: 4px solid var(--accent-yellow); /* Yellow outline */
+  border-radius: 50%; /* Optional for rounded outline */
+}
+
+/* Vote count styling */
 .vote-count {
   display: flex;
   align-items: center;
