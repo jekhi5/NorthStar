@@ -15,6 +15,7 @@ import {
   User,
   UserResponse,
   Message,
+  FakeSOSocket,
 } from '../types';
 import AnswerModel from './answers';
 import QuestionModel from './questions';
@@ -546,6 +547,7 @@ export const savePostNotification = async (
   postNotification: PostNotification,
 ): Promise<PostNotificationResponse> => {
   try {
+    console.log('postNotification to save: ', postNotification);
     const result = await PostNotificationModel.create(postNotification);
     return result;
   } catch (error) {
@@ -564,7 +566,7 @@ export const savePostNotification = async (
 export const postNotifications = async (
   qid: string,
   type: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag' | 'questionUpvoted',
-  user: User,
+  user?: User,
   associatedPostId?: string,
   upvoteTotal?: number,
 ): Promise<PostNotificationResponse> => {
@@ -579,47 +581,55 @@ export const postNotifications = async (
 
     const notificationToPost: Partial<PostNotification> = {};
 
-    if (type === 'questionAnswered') {
-      const answer: Answer | null = await AnswerModel.findOne({ _id: associatedPostId }).populate({
-        path: 'ansBy',
-        model: UserModel,
-      });
-
-      if (!answer || answer._id === undefined) {
-        throw new Error('Could not find answer that was posted');
-      }
-
-      notificationToPost.title = `Your question: "${question.title}" has a new answer!`;
-      notificationToPost.text = `${answer.ansBy.username} said: "${answer.text}"`;
-      notificationToPost.notificationType = 'questionAnswered';
-      notificationToPost.postId = answer._id;
-    } else if (type === 'commentAdded') {
-      const comment: Comment | null = await CommentModel.findOne({
-        _id: associatedPostId,
-      }).populate({ path: 'commentBy', model: UserModel });
-
-      if (!comment || comment._id === undefined) {
-        throw new Error('Could not find comment that was posted');
-      }
-
-      notificationToPost.title = 'A Comment Was Added to a Post You Subscribe to!';
-      notificationToPost.text = `${user.username} said: "${comment.text}"`;
-      notificationToPost.notificationType = 'commentAdded';
-      notificationToPost.postId = comment._id;
-    } else if (type === 'questionPostedWithTag') {
-      notificationToPost.title = 'A Question Was Posted With a Tag You Subscribe to!';
-      notificationToPost.text = `The question: "${question.title}" was asked by ${user.username}`;
-      notificationToPost.notificationType = 'questionPostedWithTag';
-      notificationToPost.postId = question._id;
-    } else if (type === 'questionUpvoted') {
+    if (type === 'questionUpvoted') {
       notificationToPost.title = 'Your post is popular!';
       notificationToPost.text = `The question: "${question.title}" has received ${upvoteTotal} ${upvoteTotal === 1 ? 'upvote' : 'upvotes'}!`;
+      notificationToPost.notificationType = 'questionUpvoted';
       notificationToPost.postId = question._id;
     } else {
-      throw new Error('Invalid notification type');
-    }
+      if (!user || user === undefined) {
+        throw new Error(
+          'User must be provided for questionAnswered, commentAdded, and questionPostedWithTag notifications',
+        );
+      }
+      if (type === 'questionAnswered') {
+        const answer: Answer | null = await AnswerModel.findOne({ _id: associatedPostId }).populate(
+          {
+            path: 'ansBy',
+            model: UserModel,
+          },
+        );
 
-    if (type !== 'questionUpvoted') {
+        if (!answer || answer._id === undefined) {
+          throw new Error('Could not find answer that was posted');
+        }
+
+        notificationToPost.title = `Your question: "${question.title}" has a new answer!`;
+        notificationToPost.text = `${answer.ansBy.username} said: "${answer.text}"`;
+        notificationToPost.notificationType = 'questionAnswered';
+        notificationToPost.postId = answer._id;
+      } else if (type === 'commentAdded') {
+        const comment: Comment | null = await CommentModel.findOne({
+          _id: associatedPostId,
+        }).populate({ path: 'commentBy', model: UserModel });
+
+        if (!comment || comment._id === undefined) {
+          throw new Error('Could not find comment that was posted');
+        }
+
+        notificationToPost.title = 'A Comment Was Added to a Post You Subscribe to!';
+        notificationToPost.text = `${user.username} said: "${comment.text}"`;
+        notificationToPost.notificationType = 'commentAdded';
+        notificationToPost.postId = comment._id;
+      } else if (type === 'questionPostedWithTag') {
+        notificationToPost.title = 'A Question Was Posted With a Tag You Subscribe to!';
+        notificationToPost.text = `The question: "${question.title}" was asked by ${user.username}`;
+        notificationToPost.notificationType = 'questionPostedWithTag';
+        notificationToPost.postId = question._id;
+      } else {
+        throw new Error('Invalid notification type');
+      }
+
       notificationToPost.fromUser = user;
     }
 
@@ -631,7 +641,7 @@ export const postNotifications = async (
 
     // We only send the questionUpvoted question to the asker of the question
     if (type === 'questionUpvoted') {
-      UserModel.findOneAndUpdate(
+      await UserModel.findOneAndUpdate(
         { _id: question.askedBy._id },
         {
           $push: {
@@ -643,6 +653,12 @@ export const postNotifications = async (
         { new: true },
       );
     } else {
+      if (!user || user === undefined) {
+        throw new Error(
+          'User must be provided for questionAnswered, commentAdded, and questionPostedWithTag notifications',
+        );
+      }
+
       question.subscribers.map(async subscriberId => {
         // Don't send notifications to users about their own actions
         if (user._id?.toString() !== subscriberId.toString()) {
@@ -897,10 +913,18 @@ const checkIfUpvoteNotificationExists = (user: User, postId: ObjectId, upvoteNum
       notificationObj.postNotification.text.includes(`${upvoteNumber} upvote`),
   );
 
-const handleUpvoteNotification = async (question: Question, uid: string): Promise<void> => {
-  const user = await UserModel.findOne({ uid }).populate('postNotifications.postNotification');
+const handleUpvoteNotification = async (
+  question: Question,
+  socket: FakeSOSocket,
+): Promise<void> => {
+  const user = await UserModel.findOne({ _id: question.askedBy }).populate(
+    'postNotifications.postNotification',
+  );
+
   // If we have no user to send the notification to, return
   if (!user || !question || !question._id) return;
+
+  let newNotification;
 
   // First upvote notification is sent on the first upvote
   if (question.upVotes.length === 1) {
@@ -910,11 +934,12 @@ const handleUpvoteNotification = async (question: Question, uid: string): Promis
 
       if (!existingNotification) {
         // Add notification to the user
-        await postNotifications(
+        newNotification = await postNotifications(
           question._id.toString(),
           'questionUpvoted',
-          user,
+          undefined,
           question._id.toString(),
+          1,
         );
       }
     }
@@ -926,11 +951,12 @@ const handleUpvoteNotification = async (question: Question, uid: string): Promis
 
     if (!existingNotification) {
       // Add notification to the user
-      await postNotifications(
+      newNotification = await postNotifications(
         question._id.toString(),
         'questionUpvoted',
-        user,
+        undefined,
         question._id.toString(),
+        5,
       );
     }
 
@@ -947,14 +973,22 @@ const handleUpvoteNotification = async (question: Question, uid: string): Promis
 
       if (!existingNotification) {
         // Add notification to the user
-        await postNotifications(
+        newNotification = await postNotifications(
           question._id.toString(),
           'questionUpvoted',
-          user,
+          undefined,
           question._id.toString(),
+          upvoteNumber,
         );
       }
     }
+  }
+
+  if (newNotification && !('error' in newNotification)) {
+    socket.emit('postNotificationUpdate', {
+      notification: newNotification,
+      type: 'newNotification',
+    });
   }
 };
 
@@ -972,6 +1006,7 @@ export const addVoteToQuestion = async (
   qid: string,
   uid: string,
   type: 'upvote' | 'downvote',
+  socket: FakeSOSocket,
 ): Promise<{ msg: string; upVotes: string[]; downVotes: string[] } | { error: string }> => {
   let updateOperation: QueryOptions;
 
@@ -1042,7 +1077,7 @@ export const addVoteToQuestion = async (
 
     // If the user upvoted the question, handle sending an upvote notification to the poster
     if (result.upVotes.includes(uid)) {
-      await handleUpvoteNotification(result, uid);
+      await handleUpvoteNotification(result, socket);
     }
 
     return {

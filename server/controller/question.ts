@@ -300,9 +300,9 @@ const questionController = (socket: FakeSOSocket) => {
     try {
       let status;
       if (type === 'upvote') {
-        status = await addVoteToQuestion(id, uid, type);
+        status = await addVoteToQuestion(id, uid, type, socket);
       } else {
-        status = await addVoteToQuestion(id, uid, type);
+        status = await addVoteToQuestion(id, uid, type, socket);
       }
 
       if (status && 'error' in status) {
