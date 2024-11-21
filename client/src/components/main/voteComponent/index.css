@@ -6,47 +6,40 @@
   padding: 12px;
 }
 
-/* Button styling */
 .vote-button {
-  background: none; /* Remove background */
-  border: none; /* Remove border */
-  padding: 0; /* Remove padding */
-  cursor: pointer; /* Add pointer cursor for clickability */
-  outline: none; /* Remove default focus outline */
+  background: none;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.3s, outline 0.3s; /* Smooth transitions */
+  transition: color 0.3s, outline 0.3s;
   border-radius: 50%;
   margin-right: 5px;
 }
 
-/* Icon styling */
 .material-symbols-outlined {
-  font-size: 32px; /* Adjust size as needed */
-  color: var(--primary-purple); /* Default purple color */
+  font-size: 32px;
+  color: var(--primary-purple);
   border-radius: 50%;
 }
 
-/* Hover effect: Change arrow color to yellow */
 .vote-button:hover .material-symbols-outlined {
   color: var(--accent-yellow);
   border-radius: 50%;
 }
 
 .vote-button-upvoted .material-symbols-outlined {
-  color: var(--primary-purple); /* Keep arrow purple if upvoted */
-  outline: 4px solid var(--accent-yellow); /* Yellow outline */
-  border-radius: 50%; /* Optional for rounded outline */
+  color: var(--primary-purple);
+  outline: 4px solid var(--accent-yellow);
+  border-radius: 50%;
 }
 
 .vote-button-downvoted .material-symbols-outlined {
-  color: var(--primary-purple); /* Keep arrow purple if downvoted */
-  outline: 4px solid var(--accent-yellow); /* Yellow outline */
-  border-radius: 50%; /* Optional for rounded outline */
+  color: var(--primary-purple);
+  outline: 4px solid var(--accent-yellow);
+  border-radius: 50%;
 }
 
-/* Vote count styling */
 .vote-count {
   display: flex;
   align-items: center;
