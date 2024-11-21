@@ -1,4 +1,3 @@
-import React from 'react';
 import './index.css';
 import TagView from './tag';
 import useTagPage from '../../../hooks/useTagPage';

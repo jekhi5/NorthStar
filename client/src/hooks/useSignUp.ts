@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import Cookies from 'js-cookie';
 import { auth } from '../firebase';
 import useLoginContext from './useLoginContext';
 import { addUser, checkValidUser, getUserByUid } from '../services/userService';
@@ -121,6 +122,7 @@ const useSignUp = () => {
 
       if (dbUser) {
         setUser(dbUser); // Set the user context
+        Cookies.set('auth', firebaseUser.uid, { expires: 3 }); // Set the auth cookie to expire every 3 days
       } else {
         throw new Error('User not found in database');
       }
