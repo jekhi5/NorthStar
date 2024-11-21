@@ -449,6 +449,7 @@ const populate = async () => {
       'Endorsed',
       [{ postNotification: pn3, read: true }],
       40,
+      false
     );
 
     // Adding us as a users

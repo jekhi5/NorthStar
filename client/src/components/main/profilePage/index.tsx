@@ -211,6 +211,12 @@ const ProfilePage = () => {
             ) : (
               <p className='no-answers'>No answers yet.</p>
             )}
+            <p></p>
+            <button
+              className={`emailopt-button-enable ${emailOpted === true ? 'emailopt-button-disable' : ''}`}
+              onClick={() => toggleEmailOptIn()}>
+              {optButtonText}
+            </button>
           </ul>
         </div>
       </div>
