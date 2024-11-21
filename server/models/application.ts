@@ -15,7 +15,6 @@ import {
   User,
   UserResponse,
   Message,
-  FakeSOSocket,
 } from '../types';
 import AnswerModel from './answers';
 import QuestionModel from './questions';
@@ -913,63 +912,49 @@ const checkIfUpvoteNotificationExists = (user: User, postId: ObjectId, upvoteNum
       notificationObj.postNotification.text.includes(`${upvoteNumber} upvote`),
   );
 
-const handleUpvoteNotification = async (
-  question: Question,
-  socket: FakeSOSocket,
-): Promise<void> => {
-  const user = await UserModel.findOne({ _id: question.askedBy }).populate(
-    'postNotifications.postNotification',
-  );
+const handleUpvoteNotification = async (question: Question): Promise<PostNotificationResponse> => {
+  try {
+    const user = await UserModel.findOne({ _id: question.askedBy }).populate(
+      'postNotifications.postNotification',
+    );
 
-  // If we have no user to send the notification to, return
-  if (!user || !question || !question._id) return;
+    // If we have no user to send the notification to, error
+    if (!user) {
+      throw new Error('User not found');
+    }
 
-  let newNotification;
+    if (|| !question || !question._id) {
+      throw new Error('Question not found');
+    }
 
-  // First upvote notification is sent on the first upvote
-  if (question.upVotes.length === 1) {
-    if (question._id) {
-      // Check if a notification for this already exists
-      const existingNotification = checkIfUpvoteNotificationExists(user, question._id, 1);
+    let newNotification;
 
-      if (!existingNotification) {
-        // Add notification to the user
-        newNotification = await postNotifications(
-          question._id.toString(),
-          'questionUpvoted',
-          undefined,
-          question._id.toString(),
-          1,
-        );
+    // First upvote notification is sent on the first upvote
+    if (question.upVotes.length === 1) {
+      if (question._id) {
+        // Check if a notification for this already exists
+        const existingNotification = checkIfUpvoteNotificationExists(user, question._id, 1);
+
+        if (!existingNotification) {
+          // Add notification to the user
+          newNotification = await postNotifications(
+            question._id.toString(),
+            'questionUpvoted',
+            undefined,
+            question._id.toString(),
+            1,
+          );
+
+          if (!newNotification || 'error' in newNotification) {
+            throw new Error('Error when posting notification');
+          }
+        }
       }
-    }
 
-    // Second upvote notification is sent on the fifth upvote
-  } else if (question.upVotes.length === 5) {
-    // Check if a notification for this already exists
-    const existingNotification = checkIfUpvoteNotificationExists(user, question._id, 5);
-
-    if (!existingNotification) {
-      // Add notification to the user
-      newNotification = await postNotifications(
-        question._id.toString(),
-        'questionUpvoted',
-        undefined,
-        question._id.toString(),
-        5,
-      );
-    }
-
-    // All subsequent notifications are sent at every 10 upvotes
-  } else if (question.upVotes.length % 10 === 0) {
-    const upvoteNumber = question.upVotes.length;
-    if (question._id) {
+      // Second upvote notification is sent on the fifth upvote
+    } else if (question.upVotes.length === 5) {
       // Check if a notification for this already exists
-      const existingNotification = checkIfUpvoteNotificationExists(
-        user,
-        question._id,
-        upvoteNumber,
-      );
+      const existingNotification = checkIfUpvoteNotificationExists(user, question._id, 5);
 
       if (!existingNotification) {
         // Add notification to the user
@@ -978,17 +963,47 @@ const handleUpvoteNotification = async (
           'questionUpvoted',
           undefined,
           question._id.toString(),
+          5,
+        );
+
+        if (!newNotification || 'error' in newNotification) {
+          throw new Error('Error when posting notification');
+        }
+      }
+
+      // All subsequent notifications are sent at every 10 upvotes
+    } else if (question.upVotes.length % 10 === 0) {
+      const upvoteNumber = question.upVotes.length;
+      if (question._id) {
+        // Check if a notification for this already exists
+        const existingNotification = checkIfUpvoteNotificationExists(
+          user,
+          question._id,
           upvoteNumber,
         );
+
+        if (!existingNotification) {
+          // Add notification to the user
+          newNotification = await postNotifications(
+            question._id.toString(),
+            'questionUpvoted',
+            undefined,
+            question._id.toString(),
+            upvoteNumber,
+          );
+
+          if (!newNotification || 'error' in newNotification) {
+            throw new Error('Error when posting notification');
+          }
+        }
       }
     }
-  }
-
-  if (newNotification && !('error' in newNotification)) {
-    socket.emit('postNotificationUpdate', {
-      notification: newNotification,
-      type: 'newNotification',
-    });
+    return newNotification as PostNotification;
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: `Error when posting notification: ${error.message}` };
+    }
+    return { error: 'Error when posting notification' };
   }
 };
 
@@ -1006,8 +1021,15 @@ export const addVoteToQuestion = async (
   qid: string,
   uid: string,
   type: 'upvote' | 'downvote',
-  socket: FakeSOSocket,
-): Promise<{ msg: string; upVotes: string[]; downVotes: string[] } | { error: string }> => {
+): Promise<
+  | {
+      msg: string;
+      upVotes: string[];
+      downVotes: string[];
+      upvoteNotification: PostNotification | null;
+    }
+  | { error: string }
+> => {
   let updateOperation: QueryOptions;
 
   if (type === 'upvote') {
@@ -1075,15 +1097,22 @@ export const addVoteToQuestion = async (
         : 'Downvote cancelled successfully';
     }
 
+    let upvoteNotification = null;
+
     // If the user upvoted the question, handle sending an upvote notification to the poster
     if (result.upVotes.includes(uid)) {
-      await handleUpvoteNotification(result, socket);
+      const handleUpvoteResponse = await handleUpvoteNotification(result);
+
+      if (handleUpvoteResponse && !('error' in handleUpvoteResponse)) {
+        upvoteNotification = handleUpvoteResponse;
+      }
     }
 
     return {
       msg,
       upVotes: result.upVotes || [],
       downVotes: result.downVotes || [],
+      upvoteNotification,
     };
   } catch (err) {
     return {

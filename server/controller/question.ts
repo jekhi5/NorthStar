@@ -300,9 +300,9 @@ const questionController = (socket: FakeSOSocket) => {
     try {
       let status;
       if (type === 'upvote') {
-        status = await addVoteToQuestion(id, uid, type, socket);
+        status = await addVoteToQuestion(id, uid, type);
       } else {
-        status = await addVoteToQuestion(id, uid, type, socket);
+        status = await addVoteToQuestion(id, uid, type);
       }
 
       if (status && 'error' in status) {
@@ -316,6 +316,13 @@ const questionController = (socket: FakeSOSocket) => {
         downVotes: status.downVotes,
         type: 'Question',
       });
+
+      if (status.upvoteNotification) {
+        socket.emit('postNotificationUpdate', {
+          notification: status.upvoteNotification,
+          type: 'newNotification',
+        });
+      }
       res.json({ msg: status.msg, upVotes: status.upVotes, downVotes: status.downVotes });
     } catch (err) {
       res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
