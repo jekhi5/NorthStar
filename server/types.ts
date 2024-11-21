@@ -17,9 +17,14 @@ export interface PostNotification {
   _id?: ObjectId;
   title: string;
   text: string;
-  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag';
-  postId: ObjectId;
-  fromUser: User;
+  notificationType:
+    | 'questionAnswered'
+    | 'commentAdded'
+    | 'questionPostedWithTag'
+    | 'questionUpvoted'
+    | 'welcomeNotification';
+  postId?: ObjectId;
+  fromUser?: User;
 }
 
 /**

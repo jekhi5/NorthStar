@@ -100,7 +100,7 @@ const userController = () => {
       const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
         title: 'Welcome to Fake Stack Overflow!',
         text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-        notificationType: 'questionPostedWithTag',
+        notificationType: 'welcomeNotification',
       });
 
       if (welcomeNotification) {

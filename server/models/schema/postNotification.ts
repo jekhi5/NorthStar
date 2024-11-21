@@ -24,19 +24,19 @@ const postNotificationSchema: Schema = new Schema(
     },
     notificationType: {
       type: String,
-      enum: ['questionAnswered', 'commentAdded', 'questionPostedWithTag'],
+      enum: ['questionAnswered', 'commentAdded', 'questionPostedWithTag', 'questionUpvoted'],
       required: true,
     },
     // No ref is given here because the post could be a question, answer, or comment
     // When a query is made, the ref can be dynamically determined based on the postType
     postId: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: false,
     },
     fromUser: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
     },
   },
   { collection: 'PostNotification' },

@@ -252,9 +252,9 @@ const questionController = (socket: FakeSOSocket) => {
       if (populatedQuestion._id) {
         const newNotification: PostNotificationResponse = await postNotifications(
           populatedQuestion._id?.toString(),
-          populatedQuestion._id?.toString(),
           'questionPostedWithTag',
           askedBy,
+          populatedQuestion._id?.toString(),
         );
 
         if (newNotification && !('error' in newNotification)) {
