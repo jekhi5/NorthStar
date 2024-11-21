@@ -115,3 +115,8 @@
   vertical-align: middle;
   white-space: nowrap;
 }
+
+.logout-button:hover {
+  color: var(--primary-purple);
+  background-color: var(--accent-yellow);
+}
