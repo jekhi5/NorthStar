@@ -923,7 +923,7 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
       throw new Error('User not found');
     }
 
-    if (|| !question || !question._id) {
+    if (!question || !question._id) {
       throw new Error('Question not found');
     }
 
