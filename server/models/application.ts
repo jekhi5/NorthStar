@@ -897,11 +897,10 @@ const checkIfUpvoteNotificationExists = (user: User, postId: ObjectId, upvoteNum
       notificationObj.postNotification.text.includes(`${upvoteNumber} upvote`),
   );
 
-const handleUpvoteNotification = async (qid: string, uid: string): Promise<void> => {
+const handleUpvoteNotification = async (question: Question, uid: string): Promise<void> => {
   const user = await UserModel.findOne({ uid }).populate('postNotifications.postNotification');
-  const question = await QuestionModel.findOne({ qid });
   // If we have no user to send the notification to, return
-  if (!user || !question) return;
+  if (!user || !question || !question._id) return;
 
   // First upvote notification is sent on the first upvote
   if (question.upVotes.length === 1) {
@@ -1041,8 +1040,9 @@ export const addVoteToQuestion = async (
         : 'Downvote cancelled successfully';
     }
 
+    // If the user upvoted the question, handle sending an upvote notification to the poster
     if (result.upVotes.includes(uid)) {
-      await handleUpvoteNotification(qid, uid);
+      await handleUpvoteNotification(result, uid);
     }
 
     return {
