@@ -4,13 +4,16 @@ import api from './config';
 const CHAT_API_URL = `${process.env.REACT_APP_SERVER_URL}/chat`;
 
 /**
- * Fetches all messages for the chatroom.
+ * Fetches messages for the chatroom.
+ *
+ * @param limit - The number of messages to display, if provided.
  *
  * @returns Promise<Message[]> - Array of message objects.
  * @throws Error if there is an issue fetching messages.
  */
-const getMessages = async (): Promise<Message[]> => {
-  const res = await api.get(`${CHAT_API_URL}/getMessages`);
+const getMessages = async (limit?: number): Promise<Message[]> => {
+  const url = limit ? `${CHAT_API_URL}/getMessages?limit=${limit}` : `${CHAT_API_URL}/getMessages`;
+  const res = await api.get(url);
   if (res.status !== 200) {
     throw new Error('Error while fetching messages');
   }

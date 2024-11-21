@@ -23,6 +23,9 @@ const useChatroom = () => {
   const { user, socket } = useUserContext();
   const currentUser = user;
 
+  // Set message limit
+  const messageLimit = 20;
+
   // Using two useEffects to separate logic
   // This one handles initial data retrieval
   useEffect(() => {
@@ -32,7 +35,8 @@ const useChatroom = () => {
     const fetchMessages = async () => {
       setLoading(true);
       try {
-        const initialMessages = await getMessages();
+        // Set message limit in param
+        const initialMessages = await getMessages(messageLimit);
         setMessages(initialMessages);
       } catch (err) {
         setError('Failed to load messages');
@@ -52,7 +56,7 @@ const useChatroom = () => {
        * @param message - The new message object.
        */
       const handleNewMessage = (message: Message) => {
-        setMessages(prevMessages => [...prevMessages, message]);
+        setMessages(prevMessages => [message, ...prevMessages]);
       };
       socket.on('newMessage', handleNewMessage);
       // Clean up listener when the component unmounts
@@ -79,7 +83,6 @@ const useChatroom = () => {
 
     try {
       await sendMessageToDatabase(newMessage);
-      // setMessages(prevMessages => [...prevMessages, newMessage]);
       setNewMessageContent('');
     } catch (err) {
       setError('Failed to send message');

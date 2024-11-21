@@ -32,7 +32,7 @@ export interface User {
   lastName?: string;
   profilePicture?: string;
   status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster';
-  postNotifications: PostNotification[];
+  postNotifications: { postNotification: PostNotification; read: boolean }[];
   reputation: number;
   emailsEnabled: boolean;
 }
@@ -46,6 +46,7 @@ export const orderTypeDisplayName = {
   unanswered: 'Unanswered',
   active: 'Active',
   mostViewed: 'Most Viewed',
+  voteCount: 'Vote Count',
 } as const;
 
 /**
@@ -210,7 +211,8 @@ export interface SubscriberUpdatePayload {
 }
 
 export interface PostNotificationUpdatePayload {
-  notification: PostNotification;
+  notification?: PostNotification;
+  type: 'markRead' | 'newNotification';
 }
 
 /**

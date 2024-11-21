@@ -176,6 +176,29 @@ const sortQuestionsByMostViews = (qlist: Question[]): Question[] =>
   sortQuestionsByNewest(qlist).sort((a, b) => b.views.length - a.views.length);
 
 /**
+ * Sorts a list of questions by the number of votes in descending order. The questions are
+ * sorted by the number of upvotes minus the number of downvotes (highest first).
+ *
+ * @param qlist The array of Question objects to be sorted.
+ * @returns A new array of Question objects sorted by the number of votes.
+ */
+const sortQuestionsByMostVotes = (qlist: Question[]): Question[] =>
+  qlist.sort((a, b) => {
+    const aVotes = a.upVotes.length - a.downVotes.length;
+    const bVotes = b.upVotes.length - b.downVotes.length;
+
+    if (aVotes > bVotes) {
+      return -1;
+    }
+
+    if (aVotes < bVotes) {
+      return 1;
+    }
+
+    return 0;
+  });
+
+/**
  * Updates the reputation of a user.
  *
  * @param uid The uid of the user to update
@@ -250,6 +273,9 @@ export const getQuestionsByOrder = async (order: OrderType): Promise<Question[]>
       { path: 'tags', model: TagModel },
       { path: 'askedBy', model: UserModel },
     ]);
+    if (order === 'mostVotes') {
+      return sortQuestionsByMostVotes(qlist);
+    }
     if (order === 'unanswered') {
       return sortQuestionsByUnanswered(qlist);
     }
@@ -576,7 +602,7 @@ const sendEmail = async (mailOptions: unknown) => {
 };
 
 /**
- * Populate notiications to all the subscribers to the question with the given ID.
+ * Populate notifications to all the subscribers to the question with the given ID.
  * @param qid the qid of the question with action taken on it.
  * @param associatedPostId the post id of the post that the action was taken on (like the ID of the answer or comment posted).
  * @param type the kinda of notification, either 'questionAnswered', 'commentAdded', or 'questionPostedWithTag'.
@@ -649,11 +675,19 @@ export const postNotifications = async (
     }
 
     question.subscribers.map(async subscriberId => {
-      // Don't sent notifications to users about their own actions
+      // Don't send notifications to users about their own actions
       if (user._id?.toString() !== subscriberId.toString()) {
         const subscribedUser = await UserModel.findOneAndUpdate(
           { _id: subscriberId },
-          { $push: { postNotifications: postedNotification } },
+          {
+            $push: {
+              // The type of `postNotifications` is an array of objects with a `postNotification` field and a `read` field.
+              // The `read` field is set to `false` by default by MongoDB, so it isn't included here
+              postNotifications: {
+                postNotification: postedNotification,
+              },
+            },
+          },
           { new: true },
         );
 
@@ -676,6 +710,33 @@ export const postNotifications = async (
       return { error: `Error when posting notification: ${error.message}` };
     }
     return { error: 'Error when posting notification' };
+  }
+};
+
+/**
+ * Updates the read status of a post notification stored in a user.
+ * @param uid the uid of the user who read the notification.
+ * @param postNotificationId the id of the post notification that was read.
+ * @returns a Promise that resolves to the updated user or an error message if the operation fails.
+ */
+export const updateNotificationReadStatus = async (
+  uid: string,
+  postNotificationId: ObjectId,
+): Promise<UserResponse> => {
+  try {
+    const user = await UserModel.findOneAndUpdate(
+      { uid, 'postNotifications.postNotification': postNotificationId },
+      { $set: { 'postNotifications.$.read': true } },
+      { new: true },
+    );
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
+  } catch (error) {
+    return { error: 'Error updating notification read status' };
   }
 };
 
@@ -744,13 +805,16 @@ export const editUser = async (user: User): Promise<UserResponse> => {
 /**
  * Fetches all messages from the database, sorted by their sending date in ascending order.
  *
+ * @param {number} limit - The number of messages to display.
+ *
  * @returns {Promise<Message[] | { error: string }>} - The list of messages or an error message if fetching fails.
  */
-export const getMessages = async (): Promise<Message[] | { error: string }> => {
+export const getMessages = async (limit: number): Promise<Message[] | { error: string }> => {
   try {
-    const messages = await MessageModel.find()
-      .sort({ sentDateTime: 1 })
-      .populate('sentBy', 'username');
+    const query = MessageModel.find().sort({ sentDateTime: -1 }).populate('sentBy', 'username');
+    // Add message limit to query
+    query.limit(limit);
+    const messages = await query;
     return messages;
   } catch (error) {
     return { error: `Error fetching messages` };

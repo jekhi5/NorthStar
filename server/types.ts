@@ -25,7 +25,7 @@ export interface PostNotification {
 /**
  * Type representing the possible ordering options for questions.
  */
-export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed';
+export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed' | 'mostVotes';
 
 /**
  * Interface representing a user in the application, which contains:
@@ -49,7 +49,7 @@ export interface User {
   lastName?: string;
   profilePicture?: string;
   status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster';
-  postNotifications: PostNotification[];
+  postNotifications: { postNotification: PostNotification; read: boolean }[];
   reputation: number;
   emailsEnabled: boolean;
 }
@@ -148,7 +148,6 @@ export type QuestionsResponse = Question[] | { error: string };
  */
 export type PostNotificationResponse = PostNotification | { error: string };
 
-
 /**
  * Interface for the request query to find questions using a search string, which contains:
  * - order - The order in which to sort the questions
@@ -209,12 +208,14 @@ export interface VoteRequest extends Request {
 
 /**
  * Interface for the request body when getting Notifications.
- * - body - The uid of the user voting.
- *  - uid - The uid of the user whom the PostNotification should be delivered to.
+ * - body - The uid of the user with the notification, and the id of that notification.
+ *  - uid - The uid of the user with the post notification.
+ *  - postNotificationId - The unique identifier of the PostNotification.
  */
-export interface NotificationRequest extends Request {
+export interface PostNotificationRequest extends Request {
   params: {
     uid: string;
+    postNotificationId: string;
   };
 }
 
@@ -261,7 +262,6 @@ export interface MessageRequest extends Request {
     sentBy: User;
   };
 }
-
 
 /**
  * Type representing the possible responses for a Message-related operation.
@@ -380,7 +380,8 @@ export interface AnswerUpdatePayload {
 }
 
 export interface PostNotificationUpdatePayload {
-  notification: PostNotification;
+  notification?: PostNotification;
+  type: 'markRead' | 'newNotification';
 }
 
 /**

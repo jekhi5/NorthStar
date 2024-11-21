@@ -44,6 +44,7 @@ const SubscribeComponent = ({ item, type }: SubscribeComponentProps) => {
         className={`subscribe-button ${subscribed ? 'subscribe-button-subscribed' : ''}`}
         onClick={e => {
           e.preventDefault();
+          e.stopPropagation();
           handleToggleSubscribe();
         }}>
         {subscribed ? 'Unsubscribe' : 'Subscribe'}

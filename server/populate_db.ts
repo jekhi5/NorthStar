@@ -102,7 +102,7 @@ async function userCreate(
   username: string,
   email: string,
   status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster',
-  postNotifications: PostNotification[],
+  postNotifications: { postNotification: PostNotification; read: boolean }[],
   reputation: number,
   emailsEnabled: boolean,
   firstName?: string,
@@ -134,7 +134,10 @@ async function userCreate(
 
   // If the welcome notification exists, add it to the user's postNotifications prior to creation
   if (welcomeNotification) {
-    user.postNotifications = [...postNotifications, welcomeNotification];
+    user.postNotifications = [
+      ...postNotifications,
+      { postNotification: welcomeNotification, read: false },
+    ];
   }
 
   // Create the user
@@ -378,7 +381,7 @@ const populate = async () => {
       'Joji John',
       'Joji_John@email.com',
       'Endorsed',
-      [pn2],
+      [{ postNotification: pn2, read: false }],
       500,
       false,
       'mackson',
@@ -439,7 +442,14 @@ const populate = async () => {
       u1,
     );
 
-    await userCreate('12', 'mackson3332', 'mackson3332@email.com', 'Endorsed', [pn3], 40, false);
+    await userCreate(
+      '12',
+      'mackson3332',
+      'mackson3332@email.com',
+      'Endorsed',
+      [{ postNotification: pn3, read: true }],
+      40,
+    );
 
     // Adding us as a users
     await userCreate(

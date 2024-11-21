@@ -1,34 +1,40 @@
 import './index.css';
 import { PostNotification } from '../../../types';
 import useNotificationPage from '../../../hooks/useNotificationPage';
+import PostNotificationComponent from './PostNotificationComponent';
 
 /**
  * NotificationPage component allows users to view their individualized notifications.
  */
 const NotificationPage = () => {
   const {
-    notifications,
+    notificationsWithStatus,
     error,
-  }: { notifications: PostNotification[] | null; error: string | null } = useNotificationPage();
+  }: {
+    notificationsWithStatus: { postNotification: PostNotification; read: boolean }[] | null;
+    error: string | null;
+  } = useNotificationPage();
 
   return (
     <div className='notifications-page'>
       <h2>Notifications</h2>
       {error && <h4>{error}</h4>}
-      {!notifications && !error && <h4>Loading...</h4>}
-      {!error && notifications && notifications.length === 0 && <h4>No notifications</h4>}
-      {!error && notifications && notifications.length > 0 && (
-        <ul>
-          {notifications
+      {!notificationsWithStatus && !error && <h4>Loading...</h4>}
+      {!error && notificationsWithStatus && notificationsWithStatus.length === 0 && (
+        <h4>No notifications</h4>
+      )}
+      {!error && notificationsWithStatus && notificationsWithStatus.length > 0 && (
+        <ul className='notifications-list'>
+          {notificationsWithStatus
             .slice()
             .reverse()
-            .map((notification, i) => (
+            .map(({ postNotification, read }, i) => (
               <li key={i} className='notification'>
-                <hr />
-                <h3>{notification.title}</h3>
-                <p>{notification.text}</p>
-                <p>{notification.notificationType}</p>
-                <p>From: {notification.fromUser.username}</p>
+                <PostNotificationComponent
+                  title={postNotification.title}
+                  text={postNotification.text}
+                  fromUser={postNotification.fromUser}
+                />
               </li>
             ))}
         </ul>
@@ -36,5 +42,4 @@ const NotificationPage = () => {
     </div>
   );
 };
-
 export default NotificationPage;

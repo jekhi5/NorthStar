@@ -18,33 +18,36 @@ const Login = ({
       <h2>Welcome to FakeStackOverflow!</h2>
       <h4>Please log in with your email and password.</h4>
       <form onSubmit={handleSubmit}>
-        <input
-          type='email'
-          value={email}
-          onChange={handleInputChange}
-          placeholder='Enter your email'
-          required
-          className='input-text'
-          id='emailInput'
-        />
-        <input
-          type='password'
-          value={password}
-          onChange={handleInputChange}
-          placeholder='Enter your password'
-          required
-          className='input-text'
-          id='passwordInput'
-        />
-        <button type='submit' className='login-button'>
-          Log In
-        </button>
+        <div className='input-group'>
+          <input
+            type='email'
+            value={email}
+            onChange={handleInputChange}
+            placeholder='Enter your email'
+            required
+            className='input-text'
+            id='emailInput'
+          />
+          <input
+            type='password'
+            value={password}
+            onChange={handleInputChange}
+            placeholder='Enter your password'
+            required
+            className='input-text'
+            id='passwordInput'
+          />
+        </div>
+        <div className='button-group'>
+          <button type='submit' className='login-button'>
+            Log In
+          </button>
+          <button type='button' onClick={() => setShowLogIn(!showLogIn)} className='login-button'>
+            Sign Up
+          </button>
+        </div>
       </form>
       {error && <p className='error-text'>{error}</p>}
-
-      <button onClick={() => setShowLogIn(!showLogIn)} className='login-button'>
-        Sign up instead
-      </button>
     </div>
   );
 };

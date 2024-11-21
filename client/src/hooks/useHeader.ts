@@ -1,5 +1,8 @@
-import { ChangeEvent, useState, KeyboardEvent } from 'react';
+import { ChangeEvent, useState, KeyboardEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PostNotification, PostNotificationUpdatePayload } from '../types';
+import { getUserByUid } from '../services/userService';
+import useUserContext from './useUserContext';
 
 /**
  * Custom hook to manage the state and logic for a header search input.
@@ -14,6 +17,66 @@ const useHeader = () => {
   const navigate = useNavigate();
 
   const [val, setVal] = useState<string>('');
+  const [unreadNotifs, setUnreadNotifs] = useState<number>(0);
+  const [notifications, setNotifications] = useState<
+    { postNotification: PostNotification; read: boolean }[] | null
+  >(null);
+
+  // Get user, and subsequently user id
+  const { user, socket } = useUserContext();
+  const uid = user?.uid;
+
+  useEffect(() => {
+    if (notifications) {
+      const unread = notifications.filter(({ read }) => !read).length;
+      setUnreadNotifs(unread);
+    }
+  }, [notifications]);
+
+  useEffect(() => {
+    /**
+     * Function to fetch the question data based on the question ID.
+     */
+    const fetchData = async () => {
+      try {
+        const res = await getUserByUid(uid);
+        setNotifications(!res ? [] : res.postNotifications);
+      } catch (e) {
+        /* empty */
+      }
+    };
+
+    const handleNotificationUpdate = async ({
+      notification,
+      type,
+    }: PostNotificationUpdatePayload) => {
+      // We mark notifications as read immediately after loading the page, but we don't want to
+      // visually mark them as read until the user reloads the page, that way the user can see
+      // which ones are unread.
+      if (type === 'newNotification') {
+        if (notification) {
+          setNotifications(prevNotifications =>
+            prevNotifications
+              ? [...prevNotifications, { postNotification: notification, read: false }]
+              : [{ postNotification: notification, read: false }],
+          );
+        } else {
+          /* empty */
+        }
+        // If the user has read the notification, we want to update the state to reflect that.
+      } else if (type === 'markRead') {
+        fetchData();
+      }
+    };
+
+    fetchData();
+
+    socket.on('postNotificationUpdate', handleNotificationUpdate);
+
+    return () => {
+      socket.off('postNotificationUpdate', handleNotificationUpdate);
+    };
+  }, [uid, socket]);
 
   /**
    * Function to handle changes in the input field.
@@ -23,7 +86,6 @@ const useHeader = () => {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setVal(e.target.value);
   };
-
   /**
    * Function to handle 'Enter' key press and trigger the search.
    *
@@ -32,19 +94,17 @@ const useHeader = () => {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-
       const searchParams = new URLSearchParams();
       searchParams.set('search', e.currentTarget.value);
-
       navigate(`/home?${searchParams.toString()}`);
     }
   };
-
   return {
     val,
     setVal,
     handleInputChange,
     handleKeyDown,
+    unreadNotifs,
   };
 };
 

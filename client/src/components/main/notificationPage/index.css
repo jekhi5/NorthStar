@@ -1,0 +1,33 @@
+.notifications-page {
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.notifications-page h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.notifications-page h4 {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.notifications-page ul {
+  padding: 0;
+  margin: 0;
+}
+
+.notification {
+  margin-bottom: 10px;
+}
+
+.notifications-list {
+  list-style-type: ''
+}

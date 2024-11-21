@@ -48,9 +48,15 @@ const userSchema = new mongoose.Schema(
     },
     postNotifications: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'PostNotification',
-        required: true,
+        postNotification: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'PostNotification',
+          required: true,
+        },
+        read: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
     reputation: {

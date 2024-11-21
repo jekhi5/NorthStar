@@ -47,7 +47,7 @@ const Chatroom = () => {
         <button onClick={sendMessage}>Send</button>
       </div>
       <div className='messages'>
-        {[...messages].reverse().map((msg, index) => (
+        {[...messages].map((msg, index) => (
           <div key={index} className='message' style={{ marginBottom: '1rem' }}>
             <span className='user'>
               {msg.sentBy && msg.sentBy.username
@@ -56,7 +56,15 @@ const Chatroom = () => {
             </span>
             : {msg.content}
             <div className='timestamp' style={{ marginTop: '0.5rem' }}>
-              {new Date(msg.sentDateTime).toLocaleTimeString()}
+              {new Date(msg.sentDateTime).toLocaleString('en-US', {
+                weekday: 'short', // Mon
+                year: 'numeric', // 2024
+                month: 'short', // Nov
+                day: 'numeric', // 18
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+              })}
             </div>
           </div>
         ))}
