@@ -56,6 +56,7 @@ const useChatroom = () => {
        * @param message - The new message object.
        */
       const handleNewMessage = (message: Message) => {
+        console.log('Message.sentBy received from socket:', message.sentBy);
         setMessages(prevMessages => [message, ...prevMessages]);
       };
       socket.on('newMessage', handleNewMessage);
@@ -74,6 +75,7 @@ const useChatroom = () => {
    */
   const sendMessage = async () => {
     if (!currentUser || newMessageContent.trim() === '') return;
+    console.log(currentUser);
 
     const newMessage: Message = {
       content: newMessageContent,

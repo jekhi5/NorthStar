@@ -1,5 +1,6 @@
 import useChatroom from '../../../hooks/useChatroom';
 import './index.css';
+import MessageComponent from './message';
 
 /**
  * Chatroom component displays a list of chat messages in real-time and provides an input for users to add new messages.
@@ -47,26 +48,8 @@ const Chatroom = () => {
         <button onClick={sendMessage}>Send</button>
       </div>
       <div className='messages'>
-        {[...messages].map((msg, index) => (
-          <div key={index} className='message' style={{ marginBottom: '1rem' }}>
-            <span className='user'>
-              {msg.sentBy && msg.sentBy.username
-                ? msg.sentBy.username
-                : `${currentUser.username} (me)`}
-            </span>
-            : {msg.content}
-            <div className='timestamp' style={{ marginTop: '0.5rem' }}>
-              {new Date(msg.sentDateTime).toLocaleString('en-US', {
-                weekday: 'short', // Mon
-                year: 'numeric', // 2024
-                month: 'short', // Nov
-                day: 'numeric', // 18
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-              })}
-            </div>
-          </div>
+        {messages.map((msg, index) => (
+          <MessageComponent key={index} message={msg} currentUser={currentUser} />
         ))}
       </div>
     </div>

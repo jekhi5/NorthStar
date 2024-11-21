@@ -772,7 +772,7 @@ export const editUser = async (user: User): Promise<UserResponse> => {
  */
 export const getMessages = async (limit: number): Promise<Message[] | { error: string }> => {
   try {
-    const query = MessageModel.find().sort({ sentDateTime: -1 }).populate('sentBy', 'username');
+    const query = MessageModel.find().sort({ sentDateTime: -1 }).populate('sentBy');
     // Add message limit to query
     query.limit(limit);
     let messages = await query;

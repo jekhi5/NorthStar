@@ -56,6 +56,7 @@ const messageController = (socket: FakeSOSocket) => {
 
     try {
       const newMessage = await saveMessage(messageData);
+      console.log('Message data from controller: ', messageData);
       if ('error' in newMessage) {
         throw new Error(newMessage.error);
       }
