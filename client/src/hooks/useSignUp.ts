@@ -145,8 +145,8 @@ const useSignUp = () => {
    */
   const handleGoogleSignUp = async () => {
     setError(null);
-    console.log('MADE IT HERE PLSSSS');
     const googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: 'select_account' });
 
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -157,45 +157,46 @@ const useSignUp = () => {
       }
 
       // Check if the user already exists in your database
-      const existingUser = await getUserByUid(firebaseUser.uid);
+      try {
+        const existingUser = await getUserByUid(firebaseUser.uid);
 
-      if (existingUser) {
-        // User already exists, ask them to log in instead
-        setError('User already exists - please log in!');
-        return;
+        if (existingUser) {
+          // User already exists, ask them to log in instead
+          setError('User already exists - please log in!');
+        }
+        // If error is thrown, user doesn't exist
+      } catch (err) {
+        // User doesn't exist, create a new user in database
+        const newUser: User = {
+          uid: firebaseUser.uid,
+          firstName: firebaseUser.displayName?.split(' ')[0] || '',
+          lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
+          username: `user_${firebaseUser.uid.slice(0, 8)}`,
+          email: firebaseUser.email || '',
+          status: 'Not endorsed',
+          postNotifications: [],
+          reputation: 0,
+        };
+
+        // Check if email is available (it should be, but better to be safe)
+        const isUserValid = await checkValidUser(newUser.username, newUser.email);
+        if (!isUserValid.available) {
+          throw new Error(isUserValid.message);
+        }
+
+        await addUser(newUser);
+        const dbUser = await getUserByUid(newUser.uid);
+
+        if (dbUser) {
+          setUser(dbUser);
+          Cookies.set('auth', firebaseUser.uid, { expires: 3 });
+        } else {
+          throw new Error('User not found in database after creation');
+        }
+
+        navigate('/home');
       }
-
-      // User doesn't exist, create a new user in database
-      const newUser: User = {
-        uid: firebaseUser.uid,
-        firstName: firebaseUser.displayName?.split(' ')[0] || '',
-        lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
-        username: `user_${firebaseUser.uid.slice(0, 8)}`,
-        email: firebaseUser.email || '',
-        status: 'Not endorsed',
-        postNotifications: [],
-        reputation: 0,
-      };
-
-      // Check if email is available (it should be, but better to be safe)
-      const isUserValid = await checkValidUser(newUser.username, newUser.email);
-      if (!isUserValid.available) {
-        throw new Error(isUserValid.message);
-      }
-
-      await addUser(newUser);
-      const dbUser = await getUserByUid(newUser.uid);
-
-      if (dbUser) {
-        setUser(dbUser);
-        Cookies.set('auth', firebaseUser.uid, { expires: 3 });
-      } else {
-        throw new Error('User not found in database after creation');
-      }
-
-      navigate('/home');
     } catch (err) {
-      console.error('Google sign-up error:', err);
       setError('Failed to sign up with Google. Please try again.');
     }
   };
