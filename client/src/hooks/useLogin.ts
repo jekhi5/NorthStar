@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import Cookies from 'js-cookie';
 import { auth } from '../firebase'; // Firebase initialization
 import useLoginContext from './useLoginContext';
 import { getUserByUid } from '../services/userService';
@@ -20,6 +21,36 @@ const useLogin = () => {
   const [error, setError] = useState<string | null>(null); // Error state can remain string | null
   const { setUser } = useLoginContext();
   const navigate = useNavigate();
+
+  /**
+   * Function to attempt auto login with the provided UID.
+   */
+  const autoLogin = useCallback(
+    async (uid: string) => {
+      try {
+        const dbUser = await getUserByUid(uid);
+        if (dbUser) {
+          setUser(dbUser);
+          navigate('/home');
+        } else {
+          // If user not found, clear the cookie
+          Cookies.remove('auth');
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('Auto login failed:', err);
+        Cookies.remove('auth');
+      }
+    },
+    [navigate, setUser],
+  );
+
+  useEffect(() => {
+    // Check for existing auth cookie
+    const cookie = Cookies.get('auth');
+    // If cookie exists, attempt auto login
+    if (cookie) autoLogin(cookie);
+  }, [autoLogin]);
 
   /**
    * Function to handle the input change event.
@@ -55,6 +86,7 @@ const useLogin = () => {
 
       if (dbUser) {
         setUser(dbUser); // Set the user context
+        Cookies.set('auth', user.uid, { expires: 3 }); // Set the auth cookie to expire every 3 days
       } else {
         throw new Error('User not found in database');
       }
@@ -71,6 +103,7 @@ const useLogin = () => {
     handleInputChange,
     handleSubmit,
     error,
+    autoLogin,
   };
 };
 

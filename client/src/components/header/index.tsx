@@ -8,12 +8,12 @@ import './index.css';
  * when they press Enter.
  */
 const Header = () => {
-  const { val, handleInputChange, handleKeyDown, unreadNotifs } = useHeader();
+  const { val, handleInputChange, handleKeyDown, unreadNotifs, handleLogOut } = useHeader();
 
   return (
     <div id='header' className='header'>
       <div></div>
-      <div className='title'>Fake Stack Overflow</div>
+      <div className='title'>Read It</div>
       <div className='headerNav'>
         <NavLink
           to='/home'
@@ -42,7 +42,8 @@ const Header = () => {
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
       />
-      <div className='notifications-and-profile'>
+
+      <div className='notifications-and-profile-group'>
         <div className='notifications-icon'>
           <NavLink to='/notifications'>
             <span className='material-symbols-outlined'>circle_notifications</span>
@@ -53,6 +54,11 @@ const Header = () => {
           <NavLink to='/profile'>
             <span className='material-symbols-outlined'>account_circle</span>
           </NavLink>
+        </div>
+        <div className='logout'>
+          <button className='logout-button' onClick={handleLogOut}>
+            Log Out
+          </button>
         </div>
       </div>
     </div>
