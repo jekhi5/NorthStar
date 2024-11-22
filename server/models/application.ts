@@ -15,6 +15,7 @@ import {
   User,
   UserResponse,
   Message,
+  MessageResponse,
 } from '../types';
 import AnswerModel from './answers';
 import QuestionModel from './questions';
@@ -395,16 +396,16 @@ export const filterQuestionsBySearch = (qlist: Question[], search: string): Ques
 /**
  * Fetches and populates a question, answer, or tag document based on the provided ID and type.
  *
- * @param {string | undefined} id - The ID of the question, answer, or tag to fetch.
+ * @param {string | undefined} id - The ID of the question, answer, tag, or message to fetch.
  * @param {'question' | 'answer' | 'tag'} type - Specifies whether to fetch a question, an answer, or a tag.
  *
- * @returns {Promise<QuestionResponse | AnswerResponse | TagResponse>} - Promise that resolves to the
- *          populated question, answer, or tag, or an error message if the operation fails
+ * @returns {Promise<QuestionResponse | AnswerResponse | TagResponse | MessageResponse>} - Promise that resolves to the
+ *          populated question, answer, tag, or message, or an error message if the operation fails
  */
 export const populateDocument = async (
   id: string | undefined,
-  type: 'question' | 'answer' | 'tag' | 'user',
-): Promise<QuestionResponse | AnswerResponse | TagResponse | UserResponse> => {
+  type: 'question' | 'answer' | 'tag' | 'user' | 'message',
+): Promise<QuestionResponse | AnswerResponse | TagResponse | UserResponse | MessageResponse> => {
   try {
     if (!id) {
       throw new Error('Provided question ID is undefined.');
@@ -453,6 +454,10 @@ export const populateDocument = async (
     } else if (type === 'user') {
       result = await UserModel.findOne({ _id: id }).populate([
         { path: 'postNotifications', model: PostNotificationModel },
+      ]);
+    } else if (type === 'message') {
+      result = await MessageModel.findOne({ _id: id }).populate([
+        { path: 'sentBy', model: UserModel },
       ]);
     }
     if (!result) {

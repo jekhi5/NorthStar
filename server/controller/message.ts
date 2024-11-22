@@ -1,5 +1,11 @@
 import express, { Response, Request } from 'express';
-import { getMessages, saveMessage, updateMessage, deleteMessage } from '../models/application';
+import {
+  getMessages,
+  saveMessage,
+  updateMessage,
+  deleteMessage,
+  populateDocument,
+} from '../models/application';
 import { FakeSOSocket, Message } from '../types';
 
 const messageController = (socket: FakeSOSocket) => {
@@ -60,7 +66,13 @@ const messageController = (socket: FakeSOSocket) => {
       if ('error' in newMessage) {
         throw new Error(newMessage.error);
       }
-      socket.emit('newMessage', newMessage);
+
+      const populatedMessage = await populateDocument(newMessage._id?.toString(), 'message');
+      if ('error' in populatedMessage) {
+        throw new Error(populatedMessage.error);
+      }
+
+      socket.emit('newMessage', populatedMessage as Message);
       res.json(newMessage);
     } catch (error) {
       res.status(500).json({ error: `Failed to send message: ${(error as Error).message}` });

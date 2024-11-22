@@ -1,10 +1,18 @@
 import { Message, User } from '../../../../types';
 
+/**
+ * Parameters for Message component, which takes in the message and user information.
+ */
 interface MessageProps {
   message: Message;
   currentUser: User;
 }
 
+/**
+ * Message component represents each individual message in the chatroom.
+ * It displays the username, message, and timestamp, altering the username
+ * based on whether or not the current user sent the message.
+ */
 const MessageComponent = ({ message, currentUser }: MessageProps) => {
   const isCurrentUser = message.sentBy?.uid === currentUser.uid;
 
