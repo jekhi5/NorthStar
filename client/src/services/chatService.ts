@@ -6,13 +6,13 @@ const CHAT_API_URL = `${process.env.REACT_APP_SERVER_URL}/chat`;
 /**
  * Fetches messages for the chatroom.
  *
- * @param limit - The number of messages to display, if provided.
+ * @param limit - The number of messages to display.
  *
  * @returns Promise<Message[]> - Array of message objects.
  * @throws Error if there is an issue fetching messages.
  */
-const getMessages = async (limit?: number): Promise<Message[]> => {
-  const url = limit ? `${CHAT_API_URL}/getMessages?limit=${limit}` : `${CHAT_API_URL}/getMessages`;
+const getMessages = async (limit: number): Promise<Message[]> => {
+  const url = `${CHAT_API_URL}/getMessages?limit=${limit}`;
   const res = await api.get(url);
   if (res.status !== 200) {
     throw new Error('Error while fetching messages');

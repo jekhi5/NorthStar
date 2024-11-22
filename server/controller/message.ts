@@ -27,7 +27,9 @@ const messageController = (socket: FakeSOSocket) => {
   const getAllMessages = async (req: Request, res: Response): Promise<void> => {
     try {
       // Pull message limit from query
-      const limit = req.query.limit ? parseInt(req.query.limit as string, 20) : 20;
+      // "10" is the radix, indicating we're using a decimal number system
+      // Added 20 as a backup default in case the passed limit is invalid
+      const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 20;
       const messages = await getMessages(limit);
       if ('error' in messages) {
         throw new Error(messages.error);
