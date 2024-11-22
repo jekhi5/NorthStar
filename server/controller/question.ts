@@ -323,7 +323,12 @@ const questionController = (socket: FakeSOSocket) => {
           type: 'newNotification',
         });
       }
-      res.json({ msg: status.msg, upVotes: status.upVotes, downVotes: status.downVotes });
+      res.json({
+        msg: status.msg,
+        upVotes: status.upVotes,
+        downVotes: status.downVotes,
+        upvoteNotification: status.upvoteNotification,
+      });
     } catch (err) {
       res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
     }

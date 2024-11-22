@@ -602,6 +602,7 @@ describe('application module', () => {
           msg: 'Question upvoted successfully',
           upVotes: ['testUser'],
           downVotes: [],
+          upvoteNotification: null,
         });
       });
 
@@ -623,6 +624,7 @@ describe('application module', () => {
           msg: 'Question upvoted successfully',
           upVotes: ['testUser'],
           downVotes: [],
+          upvoteNotification: null,
         });
       });
 
@@ -644,6 +646,7 @@ describe('application module', () => {
           msg: 'Upvote cancelled successfully',
           upVotes: [],
           downVotes: [],
+          upvoteNotification: null,
         });
       });
 
@@ -668,6 +671,7 @@ describe('application module', () => {
           _id: 'someQuestionId',
           upVotes: [],
           downVotes: [],
+          upvoteNotification: null,
         };
 
         mockingoose(QuestionModel).toReturn(
@@ -681,6 +685,7 @@ describe('application module', () => {
           msg: 'Question downvoted successfully',
           upVotes: [],
           downVotes: ['testUser'],
+          upvoteNotification: null,
         });
       });
 
@@ -702,6 +707,7 @@ describe('application module', () => {
           msg: 'Question downvoted successfully',
           upVotes: [],
           downVotes: ['testUser'],
+          upvoteNotification: null,
         });
       });
 
@@ -723,6 +729,7 @@ describe('application module', () => {
           msg: 'Downvote cancelled successfully',
           upVotes: [],
           downVotes: [],
+          upvoteNotification: null,
         });
       });
 
