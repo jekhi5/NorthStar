@@ -192,7 +192,7 @@ question-item {
 }
 
 .emailopt-button-enable {
-  background-color: #38a169 !important;
+  background-color: #322A88 !important;
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -204,8 +204,8 @@ question-item {
 }
 
 .emailopt-button-disable {
-  background-color: #e53e3e !important;
-  color: white;
+  background-color: #e0c3fc !important;
+  color: black;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;

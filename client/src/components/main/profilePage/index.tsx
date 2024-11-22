@@ -48,6 +48,14 @@ const ProfilePage = () => {
           <p className='profile-email'>Email: {profile.email}</p>
 
           <button onClick={toggleEditing}>Edit Profile</button>
+          <p></p>
+          <button
+            className={`emailopt-button-enable ${emailOpted === true ? 'emailopt-button-disable' : ''}`}
+            onClick={async () => {
+              await toggleEmailOptIn();
+            }}>
+            {optButtonText}
+          </button>
         </div>
         <div className='profile-details'>
           {isEditing ? (
@@ -173,52 +181,49 @@ const ProfilePage = () => {
             </div>
           )}
         </div>
+        {!isEditing ? (
+          <div className='questions-section'>
+            <h2 className='profile-questionsasked'>Questions Asked</h2>
+            <ul className='questions-list'>
+              {userQuestions.length > 0 ? (
+                userQuestions.map((q, index) => (
+                  <li key={index} className='question-item'>
+                    <NavLink
+                      to={`/question/${q._id}`}
+                      id='question_view'
+                      className={({ isActive }) =>
+                        `question_button ${isActive ? 'question_selected' : ''}`
+                      }>
+                      {q.title}
+                    </NavLink>
+                  </li>
+                ))
+              ) : (
+                <p className='no-questions'>No questions yet.</p>
+              )}
+            </ul>
 
-        <div className='questions-section'>
-          <h2 className='profile-questionsasked'>Questions Asked</h2>
-          <ul className='questions-list'>
-            {userQuestions.length > 0 ? (
-              userQuestions.map((q, index) => (
-                <li key={index} className='question-item'>
-                  <NavLink
-                    to={`/question/${q._id}`}
-                    id='question_view'
-                    className={({ isActive }) =>
-                      `question_button ${isActive ? 'question_selected' : ''}`
-                    }>
-                    {q.title}
-                  </NavLink>
-                </li>
-              ))
-            ) : (
-              <p className='no-questions'>No questions yet.</p>
-            )}
-          </ul>
-
-          <h2 className='profile-questionsanswered'>Questions Answered</h2>
-          <ul className='questions-list'>
-            {userAnswers.length > 0 ? (
-              userAnswers.map((a, index) => (
-                <li key={index} className='question-item'>
-                  <NavLink
-                    to={`/question/${a._id}`}
-                    id='answered_view'
-                    className={({ isActive }) => `answered_button ${isActive ? 'answered' : ''}`}>
-                    {a.title}
-                  </NavLink>
-                </li>
-              ))
-            ) : (
-              <p className='no-answers'>No answers yet.</p>
-            )}
-            <p></p>
-            <button
-              className={`emailopt-button-enable ${emailOpted === true ? 'emailopt-button-disable' : ''}`}
-              onClick={() => toggleEmailOptIn()}>
-              {optButtonText}
-            </button>
-          </ul>
-        </div>
+            <h2 className='profile-questionsanswered'>Questions Answered</h2>
+            <ul className='questions-list'>
+              {userAnswers.length > 0 ? (
+                userAnswers.map((a, index) => (
+                  <li key={index} className='question-item'>
+                    <NavLink
+                      to={`/question/${a._id}`}
+                      id='answered_view'
+                      className={({ isActive }) => `answered_button ${isActive ? 'answered' : ''}`}>
+                      {a.title}
+                    </NavLink>
+                  </li>
+                ))
+              ) : (
+                <p className='no-answers'>No answers yet.</p>
+              )}
+            </ul>
+          </div>
+        ) : (
+          <p></p>
+        )}
       </div>
     </div>
   );

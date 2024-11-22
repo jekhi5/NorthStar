@@ -53,6 +53,9 @@ const useProfilePage = () => {
         setUserQuestions(qlist || []);
         const alist = await getQuestionsByAnsweredByUserId(userId as string);
         setUserAnswers(alist || []);
+
+        console.log('Profile data: ', profileData);
+
         setEmailOpted(profileData?.emailsEnabled as boolean);
         if (userCanEmail as boolean) {
           setOptButtonText('Disable Email Notifications');
@@ -81,30 +84,48 @@ const useProfilePage = () => {
   };
 
   const saveProfile = async () => {
+    console.log('saving profile');
     if (editedProfile) {
+      console.log('editedProfile: ', editedProfile);
       try {
         const updatedProfile = await updateUser(editedProfile);
+        console.log('updatedProfile: ', updatedProfile);
         setProfile(updatedProfile);
         setIsEditing(false); // Exit edit mode
         setUpdateError(null);
       } catch (err) {
+        console.log('errored in saveProfile');
         setUpdateError('Failed to update profile.');
       }
     }
   };
 
   const toggleEmailOptIn = async () => {
-    if (emailOpted === true) {
-      setEditedProfile(prev => (prev ? { ...prev, emailsEnabled: false } : null));
-      await saveProfile();
-      setEmailOpted(false);
-      setOptButtonText('Enable Email Notifications');
-    } else {
-      setEditedProfile(prev => (prev ? { ...prev, emailsEnabled: true } : null));
-      await saveProfile();
-      setEmailOpted(true);
-      setOptButtonText('Disable Email Notifications');
+    console.log('Opting');
+    console.log('emailOpting value before button press: ', emailOpted);
+
+    if (!editedProfile && !profile) {
+      setError('Error, could not load profile data');
+      return;
     }
+
+    setEditedProfile(prev =>
+      prev
+        ? { ...prev, emailsEnabled: !emailOpted }
+        : { ...(profile as User), emailsEnabled: !emailOpted },
+    );
+
+    console.log('profile data before save: ', editedProfile);
+
+    await saveProfile();
+
+    console.log('new profile: ', profile);
+
+    setEmailOpted(!emailOpted);
+
+    console.log('new emailOpted value: ', emailOpted);
+
+    setOptButtonText(emailOpted ? 'Disable Email Notifications' : 'Enable Email Notifications');
   };
 
   // TODO THIS CURRENTLY DOES NOT WORK!!! NEED TO CHANGE THE WAY FILES ARE STORED IN FIREBASE
