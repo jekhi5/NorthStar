@@ -145,6 +145,7 @@ const useSignUp = () => {
    */
   const handleGoogleSignUp = async () => {
     setError(null);
+    console.log('MADE IT HERE PLSSSS');
     const googleProvider = new GoogleAuthProvider();
 
     try {
