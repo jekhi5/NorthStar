@@ -30,9 +30,16 @@ const useTagPage = () => {
       try {
         const res = await getTagsWithQuestionNumber();
         setTlist(res || []);
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(e);
+      } catch (error) {
+        // We log the errors here, but we do not throw an error as we do not want to block the
+        // user from viewing the site just because the tag failed to be found.
+        if (error instanceof Error) {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching tags:', error.message);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching tags');
+        }
       }
     };
 

@@ -97,14 +97,26 @@ const userController = () => {
     }
 
     try {
-      const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
-        title: 'Welcome to Fake Stack Overflow!',
-        text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-        notificationType: 'welcomeNotification',
-      });
+      try {
+        const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
+          title: 'Welcome to Fake Stack Overflow!',
+          text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+          notificationType: 'welcomeNotification',
+        });
 
-      if (welcomeNotification) {
-        user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
+        if (welcomeNotification) {
+          user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
+        }
+      } catch (error) {
+        // We log the errors here, but we do not throw an error as we do not want to block the
+        // user from being added just because the welcome notification failed to load.
+        if (error instanceof Error) {
+          // eslint-disable-next-line no-console
+          console.log('Error fetching welcome notification:', error.message);
+        } else {
+          // eslint-disable-next-line no-console
+          console.log('Error fetching welcome notification:');
+        }
       }
 
       const result = await saveUser(user);

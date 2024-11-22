@@ -3,12 +3,13 @@ import supertest from 'supertest';
 import { ObjectId } from 'mongodb';
 import { app } from '../app';
 import * as util from '../models/application';
-import { User } from '../types';
+import { PostNotification, User } from '../types';
 
 const saveAnswerSpy = jest.spyOn(util, 'saveAnswer');
 const addAnswerToQuestionSpy = jest.spyOn(util, 'addAnswerToQuestion');
 const addVoteToAnswerSpy = jest.spyOn(util, 'addVoteToAnswer');
 const popDocSpy = jest.spyOn(util, 'populateDocument');
+const postNotificationSpy = jest.spyOn(util, 'postNotifications');
 
 const user1: User = {
   uid: 'ab531234510c19729de860ea',
@@ -55,6 +56,18 @@ describe('POST /addAnswer', () => {
       downVotes: [],
       comments: [],
     };
+
+    const mockNotification: PostNotification = {
+      _id: new ObjectId(),
+      title: 'Mock Notification',
+      text: 'This is a mock notification',
+      notificationType: 'questionAnswered',
+      postId: mockAnswer._id,
+      fromUser: user1,
+    };
+
+    postNotificationSpy.mockResolvedValueOnce(mockNotification);
+
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
 
     addAnswerToQuestionSpy.mockResolvedValueOnce({
@@ -246,6 +259,16 @@ describe('POST /addAnswer', () => {
       subscribers: [],
     };
 
+    const mockNotification: PostNotification = {
+      _id: new ObjectId(),
+      title: 'Mock Notification',
+      text: 'This is a mock notification',
+      notificationType: 'questionPostedWithTag',
+      postId: mockQuestion._id,
+      fromUser: user1,
+    };
+
+    postNotificationSpy.mockResolvedValueOnce(mockNotification);
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
     addAnswerToQuestionSpy.mockResolvedValueOnce(mockQuestion);
     popDocSpy.mockResolvedValueOnce({ error: 'Error when populating document' });
@@ -253,6 +276,76 @@ describe('POST /addAnswer', () => {
     const response = await supertest(app).post('/answer/addAnswer').send(mockReqBody);
 
     expect(response.status).toBe(500);
+  });
+
+  it('should add a new answer to the question, even if posting the notifications fails', async () => {
+    const validQid = new mongoose.Types.ObjectId();
+    const validAid = new mongoose.Types.ObjectId();
+    const mockReqBody = {
+      qid: validQid,
+      ans: {
+        text: 'This is a test answer',
+        ansBy: user1,
+        ansDateTime: new Date('2024-06-03'),
+      },
+    };
+
+    const mockAnswer = {
+      _id: validAid,
+      text: 'This is a test answer',
+      ansBy: user1,
+      ansDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
+      comments: [],
+    };
+
+    postNotificationSpy.mockResolvedValueOnce({ error: 'Error when posting notifications' });
+
+    saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
+
+    addAnswerToQuestionSpy.mockResolvedValueOnce({
+      _id: validQid,
+      title: 'This is a test question',
+      text: 'This is a test question',
+      tags: [],
+      askedBy: user1,
+      askDateTime: new Date('2024-06-03'),
+      views: [],
+      upVotes: [],
+      downVotes: [],
+      answers: [mockAnswer],
+      comments: [],
+      subscribers: [],
+    });
+
+    popDocSpy.mockResolvedValueOnce({
+      _id: validQid,
+      title: 'This is a test question',
+      text: 'This is a test question',
+      tags: [],
+      askedBy: user1,
+      askDateTime: new Date('2024-06-03'),
+      views: [],
+      upVotes: [],
+      downVotes: [],
+      answers: [mockAnswer],
+      comments: [],
+      subscribers: [],
+    });
+
+    const response = await supertest(app).post('/answer/addAnswer').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      _id: validAid.toString(),
+      text: 'This is a test answer',
+      ansBy: user1,
+      ansDateTime: mockAnswer.ansDateTime.toISOString(),
+      upVotes: [],
+      downVotes: [],
+      comments: [],
+    });
   });
 });
 

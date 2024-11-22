@@ -25,9 +25,16 @@ const useTagSelected = (t: TagData) => {
       try {
         const res = await getTagByName(t.name);
         setTag(res || { name: 'Error', description: 'Error' });
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(e);
+      } catch (error) {
+        // We log the errors here, but we do not throw an error as we do not want to block the
+        // user from viewing the site just because the tag failed to be found.
+        if (error instanceof Error) {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching tag:', error.message);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching tag:', error);
+        }
       }
     };
     fetchData();
