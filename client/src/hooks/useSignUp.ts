@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import Cookies from 'js-cookie';
 import { auth } from '../firebase';
 import useLoginContext from './useLoginContext';
@@ -137,10 +137,73 @@ const useSignUp = () => {
     }
   };
 
+  /**
+   * Function to handle the Google sign-up event.
+   * Authenticates the user with Google and navigates to the home page on success.
+   *
+   * @returns error - An error message, if any - else successfully signs up.
+   */
+  const handleGoogleSignUp = async () => {
+    setError(null);
+    const googleProvider = new GoogleAuthProvider();
+
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const { user: firebaseUser } = result;
+
+      if (!firebaseUser) {
+        throw new Error('Failed to sign up with Google');
+      }
+
+      // Check if the user already exists in your database
+      const existingUser = await getUserByUid(firebaseUser.uid);
+
+      if (existingUser) {
+        // User already exists, ask them to log in instead
+        setError('User already exists - please log in!');
+        return;
+      }
+
+      // User doesn't exist, create a new user in database
+      const newUser: User = {
+        uid: firebaseUser.uid,
+        firstName: firebaseUser.displayName?.split(' ')[0] || '',
+        lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
+        username: `user_${firebaseUser.uid.slice(0, 8)}`,
+        email: firebaseUser.email || '',
+        status: 'Not endorsed',
+        postNotifications: [],
+        reputation: 0,
+      };
+
+      // Check if email is available (it should be, but better to be safe)
+      const isUserValid = await checkValidUser(newUser.username, newUser.email);
+      if (!isUserValid.available) {
+        throw new Error(isUserValid.message);
+      }
+
+      await addUser(newUser);
+      const dbUser = await getUserByUid(newUser.uid);
+
+      if (dbUser) {
+        setUser(dbUser);
+        Cookies.set('auth', firebaseUser.uid, { expires: 3 });
+      } else {
+        throw new Error('User not found in database after creation');
+      }
+
+      navigate('/home');
+    } catch (err) {
+      console.error('Google sign-up error:', err);
+      setError('Failed to sign up with Google. Please try again.');
+    }
+  };
+
   return {
     ...formData,
     handleInputChange,
     handleSubmit,
+    handleGoogleSignUp,
     error,
   };
 };

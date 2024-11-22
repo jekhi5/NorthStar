@@ -128,7 +128,7 @@ const useLogin = () => {
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Google sign-in error:', err);
-      setError('Failed to sign in with Google');
+      setError("Account not found - if you aren't registered, please sign up!");
     }
   };
 
