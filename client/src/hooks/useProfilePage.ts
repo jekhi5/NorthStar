@@ -106,6 +106,7 @@ const useProfilePage = () => {
   const toggleEmailOptIn = async () => {
     console.log('Opting');
     console.log('emailOpting value before button press: ', emailOpted);
+    console.log('button text before button press:', optButtonText);
 
     // if (!editedProfile && !profile) {
     //   setError('Error, could not load profile data');
@@ -129,6 +130,7 @@ const useProfilePage = () => {
     // (context as UserContextType).user.emailsEnabled = emailOpted as boolean;
 
     console.log('new emailOpted value: ', emailOpted);
+    console.log('new button text:', optButtonText);
   };
 
   // TODO THIS CURRENTLY DOES NOT WORK!!! NEED TO CHANGE THE WAY FILES ARE STORED IN FIREBASE
