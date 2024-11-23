@@ -50,7 +50,7 @@ const ProfilePage = () => {
           <button onClick={toggleEditing}>Edit Profile</button>
           <p></p>
           <button
-            className={`emailopt-button-enable ${emailOpted === true ? 'emailopt-button-disable' : ''}`}
+            className={`${emailOpted ? 'emailopt-button-disable' : 'emailopt-button-enable'}`}
             onClick={toggleEmailOptIn}>
             {optButtonText}
           </button>

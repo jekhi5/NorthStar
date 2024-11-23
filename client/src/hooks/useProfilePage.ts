@@ -30,6 +30,7 @@ const useProfilePage = () => {
   const [userAnswers, setUserAnswers] = useState<Question[]>([]);
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+
   const [emailOpted, setEmailOpted] = useState<boolean | null>(null);
   const [optButtonText, setOptButtonText] = useState<string | null>(null);
 
@@ -104,31 +105,15 @@ const useProfilePage = () => {
   };
 
   const toggleEmailOptIn = async () => {
-    console.log('Opting');
-    console.log('emailOpting value before button press: ', emailOpted);
+    const newEmailOpted = !(emailOpted as boolean);
+    setEmailOpted(newEmailOpted);
 
-    // if (!editedProfile && !profile) {
-    //   setError('Error, could not load profile data');
-    //   return;
-    // }
+    const updatedProfile = { ...(profile as User), emailsEnabled: newEmailOpted };
+    setProfile(updatedProfile);
 
-    console.log('profile data before save: ', editedProfile);
+    await updateUser(updatedProfile);
 
-    // saveProfile();
-
-    console.log('new profile: ', profile);
-
-    setProfile({ ...(profile as User), emailsEnabled: !(emailOpted as boolean) });
-    updateUser(profile as User);
-    // ((context as UserContextType).user.emailsEnabled as boolean) = !(emailOpted as boolean);
-    setOptButtonText(
-      !(emailOpted as boolean) ? 'Disable Email Notifications' : 'Enable Email Notifications',
-    );
-    setEmailOpted(!(emailOpted as boolean));
-
-    // (context as UserContextType).user.emailsEnabled = emailOpted as boolean;
-
-    console.log('new emailOpted value: ', emailOpted);
+    setOptButtonText(newEmailOpted ? 'Disable Email Notifications' : 'Enable Email Notifications');
   };
 
   // TODO THIS CURRENTLY DOES NOT WORK!!! NEED TO CHANGE THE WAY FILES ARE STORED IN FIREBASE
