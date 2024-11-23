@@ -19,6 +19,7 @@ const useLogin = () => {
   const [email, setEmail] = useState<string>(''); // Ensure it's initialized as an empty string
   const [password, setPassword] = useState<string>(''); // Same for password
   const [error, setError] = useState<string | null>(null); // Error state can remain string | null
+  const [wobble, setWobble] = useState<number>(0);
   const { setUser } = useLoginContext();
   const navigate = useNavigate();
 
@@ -97,6 +98,16 @@ const useLogin = () => {
     }
   };
 
+  // New function to handle planet click
+  const handlePlanetClick = () => {
+    setWobble(1);
+  };
+
+  // New function to handle animation end
+  const handleAnimationEnd = () => {
+    setWobble(0);
+  };
+
   return {
     email,
     password,
@@ -104,6 +115,9 @@ const useLogin = () => {
     handleSubmit,
     error,
     autoLogin,
+    wobble,
+    handlePlanetClick,
+    handleAnimationEnd,
   };
 };
 

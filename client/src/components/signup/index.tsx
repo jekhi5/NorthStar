@@ -25,11 +25,11 @@ const SignUp = ({
 
   return (
     <div className='container'>
-      <h2>Welcome to FakeStackOverflow!</h2>
-      <h4>Sign up with your email and password.</h4>
-      <form onSubmit={handleSubmit} className='sign-up-form'>
-        <div className='form-group-container'>
-          <div className='form-group'>
+      <div className='right-content'>
+        <h2>Welcome to North Star!</h2>
+        <h4>Sign up with your email and password.</h4>
+        <form onSubmit={handleSubmit}>
+          <div className='input-group'>
             <input
               type='text'
               value={firstName}
@@ -39,8 +39,6 @@ const SignUp = ({
               className='input-text'
               id='firstNameInput'
             />
-          </div>
-          <div className='form-group'>
             <input
               type='text'
               value={lastName}
@@ -50,8 +48,6 @@ const SignUp = ({
               className='input-text'
               id='lastNameInput'
             />
-          </div>
-          <div className='form-group'>
             <input
               type='text'
               value={username}
@@ -61,8 +57,6 @@ const SignUp = ({
               className='input-text'
               id='usernameInput'
             />
-          </div>
-          <div className='form-group'>
             <input
               type='email'
               value={email}
@@ -72,8 +66,6 @@ const SignUp = ({
               className='input-text'
               id='emailInput'
             />
-          </div>
-          <div className='form-group'>
             <input
               type='password'
               value={passwordOriginal}
@@ -83,8 +75,6 @@ const SignUp = ({
               className='input-text'
               id='passwordInputOriginal'
             />
-          </div>
-          <div className='form-group'>
             <input
               type='password'
               value={passwordConfirmation}
@@ -95,24 +85,16 @@ const SignUp = ({
               id='passwordInputConfirmation'
             />
           </div>
-        </div>
-        <div className='button-container'>
-          <button type='submit' className='sign-up-button'>
-            Sign Up
-          </button>
-        </div>
-      </form>
-      {error && (
-        <p className='error-text' style={{ textAlign: 'center', marginLeft: '15px' }}>
-          {error}
-        </p>
-      )}
-
-      <div className='footer'>
-        <span>Already have an account?</span>
-        <button onClick={() => setShowLogIn(!showLogIn)} className='sign-up-button'>
-          Login instead
-        </button>
+          <div className='button-group'>
+            <button type='submit' className='login-button'>
+              Sign Up
+            </button>
+            <button type='button' onClick={() => setShowLogIn(!showLogIn)} className='login-button'>
+              Back to Login
+            </button>
+          </div>
+        </form>
+        {error && <p className='error-text'>{error}</p>}
       </div>
     </div>
   );
