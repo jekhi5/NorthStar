@@ -44,6 +44,8 @@ import MessageModel from '../models/messages';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');
 
+const postNotificationSpy = jest.spyOn(util, 'postNotifications');
+
 const user1: User = {
   _id: new ObjectId('ab53191e810c19729de860ea'),
   uid: 'ab53191e810c19729de860ea',
@@ -630,45 +632,83 @@ describe('application module', () => {
     });
 
     describe('addVoteToQuestion', () => {
-      test('addVoteToQuestion should upvote a question', async () => {
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
+      test('addVoteToQuestion should upvote a question, second upvote', async () => {
         const mockQuestion = {
           _id: 'someQuestionId',
-          upVotes: [],
+          title: 'Some question',
+          upVotes: ['testUser1'],
           downVotes: [],
+          askedBy: user1,
         };
 
         mockingoose(QuestionModel).toReturn(
-          { ...mockQuestion, upVotes: ['testUser'], downVotes: [] },
+          { ...mockQuestion, upVotes: ['testUser1', 'testUser2'], downVotes: [] },
           'findOneAndUpdate',
         );
 
-        const result = await addVoteToQuestion('someQuestionId', 'testUser', 'upvote');
+        // The user has already received the upvote notification for reaching 1 upvote
+        jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce({
+          ...user1,
+          postNotifications: [
+            {
+              postNotification: {
+                title: 'Your post is popular!',
+                text: 'The question: "Some question" has received 1 upvote!',
+                notificationType: 'questionUpvoted',
+                postId: 'someQuestionId',
+              },
+              read: false,
+            },
+          ],
+        });
+
+        const result = await addVoteToQuestion('someQuestionId', 'testUser2', 'upvote');
 
         expect(result).toEqual({
           msg: 'Question upvoted successfully',
-          upVotes: ['testUser'],
+          upVotes: ['testUser1', 'testUser2'],
           downVotes: [],
           upvoteNotification: null,
         });
       });
 
-      test('If a downvoter upvotes, add them to upvotes and remove them from downvotes', async () => {
+      test('If a downvoter upvotes, add them to upvotes and remove them from downvotes, second upvote on post', async () => {
         const mockQuestion = {
           _id: 'someQuestionId',
-          upVotes: [],
-          downVotes: ['testUser'],
+          upVotes: ['testUser1'],
+          downVotes: ['testUser2'],
+          askedBy: user1,
         };
 
         mockingoose(QuestionModel).toReturn(
-          { ...mockQuestion, upVotes: ['testUser'], downVotes: [] },
+          { ...mockQuestion, upVotes: ['testUser1', 'testUser2'], downVotes: [] },
           'findOneAndUpdate',
         );
 
-        const result = await addVoteToQuestion('someQuestionId', 'testUser', 'upvote');
+        // The user has already received the upvote notification for reaching 1 upvote
+        jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce({
+          ...user1,
+          postNotifications: [
+            {
+              postNotification: {
+                title: 'Your post is popular!',
+                text: 'The question: "Some question" has received 1 upvote!',
+                notificationType: 'questionUpvoted',
+                postId: 'someQuestionId',
+              },
+              read: false,
+            },
+          ],
+        });
+
+        const result = await addVoteToQuestion('someQuestionId', 'testUser2', 'upvote');
 
         expect(result).toEqual({
           msg: 'Question upvoted successfully',
-          upVotes: ['testUser'],
+          upVotes: ['testUser1', 'testUser2'],
           downVotes: [],
           upvoteNotification: null,
         });
@@ -695,6 +735,220 @@ describe('application module', () => {
           upvoteNotification: null,
         });
       });
+
+      // TODO: Write tests for add vote to question:
+      // - upvote a question to 5 upvote for the first time
+      // - upvote a question to 10 upvote for the first time
+      // - upvote a question to 40 upvote for the first time
+      // - upvote a question to 1 upvote, not first time
+      // - upvote a question to 5 upvote, not first time
+      // - upvote a question to 10 upvote, not first time
+      // - upvote a question to 40 upvote, not first time
+      // - erroring when sending upvote notification does not prevent upvote from posting
+
+      test('addVoteToQuestion should include an upvote notification in return obj on 1st upvote', async () => {
+        const mockQuestion = {
+          _id: 'someQuestionId',
+          title: 'Some question',
+          upVotes: [],
+          downVotes: [],
+          askedBy: user1,
+        };
+
+        mockingoose(QuestionModel).toReturn(
+          { ...mockQuestion, upVotes: ['testUser'], downVotes: [] },
+          'findOneAndUpdate',
+        );
+
+        // Mock the UserMode.findOne().```populate()``` function to return the user with an
+        // empty postNotifications array
+        const mockPopulate = jest.fn().mockResolvedValue({ ...user1, postNotifications: [] });
+
+        // Trick the findOne() function to return a user with a populate field so that the
+        // MongoDB populate() function can be mocked
+        const mockFindOne = jest.fn().mockReturnValue({
+          populate: mockPopulate,
+        });
+
+        // Assign the mocked findOne to UserModel
+        UserModel.findOne = mockFindOne;
+
+        const mockUpvotePostNotification: PostNotification = {
+          title: 'Your post is popular!',
+          text: 'The question: "Some question" has received 1 upvote!',
+          notificationType: 'questionUpvoted',
+          postId: new ObjectId('ab432e810c19729de860eabb'),
+        };
+
+        postNotificationSpy.mockResolvedValueOnce(mockUpvotePostNotification);
+
+        const result = await addVoteToQuestion('someQuestionId', 'testUser', 'upvote');
+
+        expect(result).toEqual({
+          msg: 'Question upvoted successfully',
+          upVotes: ['testUser'],
+          downVotes: [],
+          upvoteNotification: mockUpvotePostNotification,
+        });
+      });
+
+      test('addVoteToQuestion should include an upvote notification in return obj on 5th upvote', async () => {
+        const mockQuestion = {
+          _id: 'someQuestionId',
+          title: 'Some question',
+          upVotes: ['someUser1', 'someUser2', 'someUser3', 'someUser4'],
+          downVotes: [],
+          askedBy: user1,
+        };
+
+        mockingoose(QuestionModel).toReturn(
+          {
+            ...mockQuestion,
+            upVotes: ['someUser1', 'someUser2', 'someUser3', 'someUser4', 'testUser'],
+            downVotes: [],
+          },
+          'findOneAndUpdate',
+        );
+
+        // Mock the UserMode.findOne().```populate()``` function to return the user with just
+        // a postNotification for when the post hit 1 upvote
+        const mockPopulate = jest.fn().mockResolvedValue({
+          ...user1,
+          postNotifications: [
+            {
+              title: 'Your post is popular!',
+              text: 'The question: "Some question" has received 1 upvote!',
+              notificationType: 'questionUpvoted',
+              postId: new ObjectId('ab432e810c19729de860eabb'),
+            },
+          ],
+        });
+
+        // Trick the findOne() function to return a user with a populate field so that the
+        // MongoDB populate() function can be mocked
+        const mockFindOne = jest.fn().mockReturnValue({
+          populate: mockPopulate,
+        });
+
+        // Assign the mocked findOne to UserModel
+        UserModel.findOne = mockFindOne;
+
+        const mockUpvotePostNotification: PostNotification = {
+          title: 'Your post is popular!',
+          text: 'The question: "Some question" has received 5 upvotes!',
+          notificationType: 'questionUpvoted',
+          postId: new ObjectId('ab432e810c19729de860eabb'),
+        };
+
+        postNotificationSpy.mockResolvedValueOnce(mockUpvotePostNotification);
+
+        const result = await addVoteToQuestion('someQuestionId', 'testUser', 'upvote');
+
+        expect(result).toEqual({
+          msg: 'Question upvoted successfully',
+          upVotes: ['someUser1', 'someUser2', 'someUser3', 'someUser4', 'testUser'],
+          downVotes: [],
+          upvoteNotification: mockUpvotePostNotification,
+        });
+      });
+
+      // test('addVoteToQuestion should include an upvote notification in return obj on 10th upvote', async () => {
+      //   const mockQuestion = {
+      //     _id: 'someQuestionId',
+      //     title: 'Some question',
+      //     upVotes: [
+      //       'someUser1',
+      //       'someUser2',
+      //       'someUser3',
+      //       'someUser4',
+      //       'someUser5',
+      //       'someUser6',
+      //       'someUser7',
+      //       'someUser8',
+      //       'someUser9',
+      //     ],
+      //     downVotes: [],
+      //     askedBy: user1,
+      //   };
+
+      //   mockingoose(QuestionModel).toReturn(
+      //     {
+      //       ...mockQuestion,
+      //       upVotes: [
+      //         'someUser1',
+      //         'someUser2',
+      //         'someUser3',
+      //         'someUser4',
+      //         'someUser5',
+      //         'someUser6',
+      //         'someUser7',
+      //         'someUser8',
+      //         'someUser9',
+      //         'testUser',
+      //       ],
+      //       downVotes: [],
+      //     },
+      //     'findOneAndUpdate',
+      //   );
+
+      //   // Mock the UserMode.findOne().```populate()``` function to return the user with an
+      //   // array of post notifications from when the post hit 1 and 5 upvotes
+      //   const mockPopulate = jest.fn().mockResolvedValue({
+      //     ...user1,
+      //     postNotifications: [
+      //       {
+      //         title: 'Your post is popular!',
+      //         text: 'The question: "Some question" has received 1 upvote!',
+      //         notificationType: 'questionUpvoted',
+      //         postId: new ObjectId('ab432e810c19729de860eabb'),
+      //       },
+      //       {
+      //         title: 'Your post is popular!',
+      //         text: 'The question: "Some question" has received 5 upvotes!',
+      //         notificationType: 'questionUpvoted',
+      //         postId: new ObjectId('ab432e810c19729de860eabb'),
+      //       },
+      //     ],
+      //   });
+
+      //   // Trick the findOne() function to return a user with a populate field so that the
+      //   // MongoDB populate() function can be mocked
+      //   const mockFindOne = jest.fn().mockReturnValue({
+      //     populate: mockPopulate,
+      //   });
+
+      //   // Assign the mocked findOne to UserModel
+      //   UserModel.findOne = mockFindOne;
+
+      //   const mockUpvotePostNotification: PostNotification = {
+      //     title: 'Your post is popular!',
+      //     text: 'The question: "Some question" has received 10 upvotes!',
+      //     notificationType: 'questionUpvoted',
+      //     postId: new ObjectId('ab432e810c19729de860eabb'),
+      //   };
+
+      //   postNotificationSpy.mockResolvedValueOnce(mockUpvotePostNotification);
+
+      //   const result = await addVoteToQuestion('someQuestionId', 'testUser', 'upvote');
+
+      //   expect(result).toEqual({
+      //     msg: 'Question upvoted successfully',
+      //     upVotes: [
+      //       'someUser1',
+      //       'someUser2',
+      //       'someUser3',
+      //       'someUser4',
+      //       'someUser5',
+      //       'someUser6',
+      //       'someUser7',
+      //       'someUser8',
+      //       'someUser9',
+      //       'testUser',
+      //     ],
+      //     downVotes: [],
+      //     upvoteNotification: mockUpvotePostNotification,
+      //   });
+      // });
 
       test('addVoteToQuestion should return an error if the question is not found', async () => {
         mockingoose(QuestionModel).toReturn(null, 'findById');

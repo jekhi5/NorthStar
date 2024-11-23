@@ -566,7 +566,6 @@ export const savePostNotification = async (
   postNotification: PostNotification,
 ): Promise<PostNotificationResponse> => {
   try {
-    console.log('postNotification to save: ', postNotification);
     const result = await PostNotificationModel.create(postNotification);
     return result;
   } catch (error) {
