@@ -3,7 +3,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { Question, User } from '../types';
 import { getUserByUid, updateUser } from '../services/userService';
-import UserContext from '../contexts/UserContext';
+import UserContext, { UserContextType } from '../contexts/UserContext';
 import {
   getQuestionsByAnsweredByUserId,
   getQuestionsByAskedByUserId,
@@ -54,9 +54,9 @@ const useProfilePage = () => {
         const alist = await getQuestionsByAnsweredByUserId(userId as string);
         setUserAnswers(alist || []);
 
-        console.log('Profile data: ', profileData);
+        console.log('Profile data during UseEffect: ', profileData);
 
-        setEmailOpted(profileData?.emailsEnabled as boolean);
+        setEmailOpted(userCanEmail as boolean);
         if (userCanEmail as boolean) {
           setOptButtonText('Disable Email Notifications');
         } else {
@@ -98,34 +98,37 @@ const useProfilePage = () => {
         setUpdateError('Failed to update profile.');
       }
     }
+
+    console.log('new emailOpted value in SaveProfile: ', emailOpted);
+    console.log('new profile in SaveProfile: ', profile);
   };
 
   const toggleEmailOptIn = async () => {
     console.log('Opting');
     console.log('emailOpting value before button press: ', emailOpted);
 
-    if (!editedProfile && !profile) {
-      setError('Error, could not load profile data');
-      return;
-    }
-
-    setEditedProfile(prev =>
-      prev
-        ? { ...prev, emailsEnabled: !emailOpted }
-        : { ...(profile as User), emailsEnabled: !emailOpted },
-    );
+    // if (!editedProfile && !profile) {
+    //   setError('Error, could not load profile data');
+    //   return;
+    // }
 
     console.log('profile data before save: ', editedProfile);
 
-    await saveProfile();
+    // saveProfile();
 
     console.log('new profile: ', profile);
 
-    setEmailOpted(!emailOpted);
+    setProfile({ ...(profile as User), emailsEnabled: !(emailOpted as boolean) });
+    updateUser(profile as User);
+    // ((context as UserContextType).user.emailsEnabled as boolean) = !(emailOpted as boolean);
+    setOptButtonText(
+      !(emailOpted as boolean) ? 'Disable Email Notifications' : 'Enable Email Notifications',
+    );
+    setEmailOpted(!(emailOpted as boolean));
+
+    // (context as UserContextType).user.emailsEnabled = emailOpted as boolean;
 
     console.log('new emailOpted value: ', emailOpted);
-
-    setOptButtonText(emailOpted ? 'Disable Email Notifications' : 'Enable Email Notifications');
   };
 
   // TODO THIS CURRENTLY DOES NOT WORK!!! NEED TO CHANGE THE WAY FILES ARE STORED IN FIREBASE

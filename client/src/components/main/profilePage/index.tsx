@@ -51,9 +51,7 @@ const ProfilePage = () => {
           <p></p>
           <button
             className={`emailopt-button-enable ${emailOpted === true ? 'emailopt-button-disable' : ''}`}
-            onClick={async () => {
-              await toggleEmailOptIn();
-            }}>
+            onClick={toggleEmailOptIn}>
             {optButtonText}
           </button>
         </div>
