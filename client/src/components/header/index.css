@@ -11,6 +11,7 @@
 }
 
 .title {
+  color: white;
   font-size: 1.5rem;
   font-weight: bold;
   margin-right: 10rem;
@@ -76,9 +77,10 @@
   color: var(--accent-yellow);
 }
 
-.notifications-and-profile {
+.notifications-and-profile-group {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
   margin-right: 2rem;
 }
@@ -94,6 +96,29 @@
     font-size: 12px;
 }
 
-.notifications-icon {
-  position: relative;
+.notifications-icon,
+.profile-icon,
+.logout {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-button {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border: 2px solid white;
+  border-radius: 4px;
+  transition: color 0.3s, background-color 0.3s;
+  margin: 0;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.logout-button:hover {
+  color: var(--primary-purple);
+  background-color: var(--accent-yellow);
 }

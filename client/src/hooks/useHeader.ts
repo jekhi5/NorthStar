@@ -1,8 +1,10 @@
 import { ChangeEvent, useState, KeyboardEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import { PostNotification, PostNotificationUpdatePayload } from '../types';
 import { getUserByUid } from '../services/userService';
 import useUserContext from './useUserContext';
+import useLoginContext from './useLoginContext';
 
 /**
  * Custom hook to manage the state and logic for a header search input.
@@ -21,6 +23,7 @@ const useHeader = () => {
   const [notifications, setNotifications] = useState<
     { postNotification: PostNotification; read: boolean }[] | null
   >(null);
+  const { setUser } = useLoginContext();
 
   // Get user, and subsequently user id
   const { user, socket } = useUserContext();
@@ -41,8 +44,16 @@ const useHeader = () => {
       try {
         const res = await getUserByUid(uid);
         setNotifications(!res ? [] : res.postNotifications);
-      } catch (e) {
-        /* empty */
+      } catch (error) {
+        // We log the errors here, but we do not throw an error as we do not want to block the
+        // user from viewing the site just because the user couldn't be found.
+        if (error instanceof Error) {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching user notifications:', error.message);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching user notifications:', error);
+        }
       }
     };
 
@@ -99,12 +110,20 @@ const useHeader = () => {
       navigate(`/home?${searchParams.toString()}`);
     }
   };
+
+  const handleLogOut = () => {
+    Cookies.remove('auth');
+    setUser(null);
+    navigate('/');
+  };
+
   return {
     val,
     setVal,
     handleInputChange,
     handleKeyDown,
     unreadNotifs,
+    handleLogOut,
   };
 };
 
