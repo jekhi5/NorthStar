@@ -1,5 +1,7 @@
 import { ObjectId } from 'mongodb';
 import mongoose, { QueryOptions } from 'mongoose';
+import nodemailer, { TransportOptions } from 'nodemailer';
+import { google } from 'googleapis';
 import {
   Answer,
   AnswerResponse,
@@ -584,21 +586,13 @@ export const savePostNotification = async (
  * @param mailOptions a collection of details to go into the email (i.e. from, to, subject, text, etc.)
  */
 const sendEmail = async (mailOptions: MailOptions) => {
-  // NOTE: I'm not familiar with how to fix these external package/dependency issues so I'll need help w/ these ;-;
-  // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
-  const nodemailer = require('nodemailer');
-  // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
-  const { google } = require('googleapis');
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { OAuth2 } = google.auth;
-
   try {
     if (!mailOptions) {
       throw new Error('Mail Options provided were invalid.');
     }
 
     const createTransporter = async () => {
-      const oauth2Client = new OAuth2(
+      const oauth2Client = new google.auth.OAuth2(
         process.env.CLIENT_ID,
         process.env.CLIENT_SECRET,
         'https://developers.google.com/oauthplayground',
@@ -624,7 +618,7 @@ const sendEmail = async (mailOptions: MailOptions) => {
           clientSecret: process.env.CLIENT_SECRET,
           refreshToken: process.env.REFRESH_TOKEN,
         },
-      });
+      } as TransportOptions);
       return transporter;
     };
 
