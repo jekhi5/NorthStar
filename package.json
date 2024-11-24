@@ -1,6 +1,0 @@
-{
-  "devDependencies": {
-    "googleapis": "^144.0.0",
-    "nodemailer": "^6.9.16"
-  }
-}
