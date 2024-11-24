@@ -943,8 +943,6 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
       'postNotifications.postNotification',
     );
 
-    console.log('user', user);
-
     // If we have no user to send the notification to, error
     if (!user) {
       throw new Error('User not found');
@@ -954,11 +952,7 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
       throw new Error('Question not found');
     }
 
-    console.log('question', question);
-
     let newNotification;
-
-    console.log('length: ', question.upVotes.length);
 
     // First upvote notification is sent on the first upvote
     if (question.upVotes.length === 1) {
@@ -966,10 +960,7 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
         // Check if a notification for this already exists
         const existingNotification = checkIfUpvoteNotificationExists(user, question._id, 1);
 
-        console.log('existingNotification', existingNotification);
-
         if (!existingNotification) {
-          console.log("I'm here");
           // Add notification to the user
           newNotification = await postNotifications(
             question._id.toString(),
@@ -978,8 +969,6 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
             question._id.toString(),
             1,
           );
-
-          console.log('newNotification', newNotification);
 
           if (!newNotification || 'error' in newNotification) {
             throw new Error('Error when posting notification');
@@ -1001,8 +990,6 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
           question._id.toString(),
           5,
         );
-
-        console.log('newNotification', newNotification);
 
         if (!newNotification || 'error' in newNotification) {
           throw new Error('Error when posting notification');
@@ -1039,7 +1026,6 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
     return newNotification as PostNotification;
   } catch (error) {
     if (error instanceof Error) {
-      console.log('Error when posting notification:', error.message);
       return { error: `Error when posting notification: ${error.message}` };
     }
     return { error: 'Error when posting notification' };

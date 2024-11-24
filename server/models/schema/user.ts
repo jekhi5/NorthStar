@@ -1,6 +1,4 @@
 import mongoose from 'mongoose';
-import { PostNotification } from '../../types';
-import PostNotificationModel from '../postNotifications';
 
 /**
  * Mongoose schema for the User collection.
