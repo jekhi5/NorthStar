@@ -578,7 +578,7 @@ export const savePostNotification = async (
  * Set up OATH2 authentication and send an email detailing with the provided email/notification info.
  * @param mailOptions a collection of details to go into the email (i.e. from, to, subject, text, etc.)
  */
-export const sendEmail = async (mailOptions: MailOptions) => {
+const sendEmail = async (mailOptions: MailOptions) => {
   // NOTE: I'm not familiar with how to fix these external package/dependency issues so I'll need help w/ these ;-;
   // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
   const nodemailer = require('nodemailer');

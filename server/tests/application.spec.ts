@@ -18,7 +18,6 @@ import {
   addVoteToComment,
   saveUser,
   updateUserReputation,
-  sendEmail,
   populateDocument,
   getQuestionsByAnsweredByUserId,
   getQuestionsByAskedByUserId,
@@ -32,16 +31,7 @@ import {
   deleteMessage,
   toggleSubscribe,
 } from '../models/application';
-import {
-  Answer,
-  Question,
-  Tag,
-  Comment,
-  User,
-  PostNotification,
-  Message,
-  MailOptions,
-} from '../types';
+import { Answer, Question, Tag, Comment, User, PostNotification, Message } from '../types';
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
 import AnswerModel from '../models/answers';
 import CommentModel from '../models/comments';
