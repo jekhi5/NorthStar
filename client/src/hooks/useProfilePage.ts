@@ -3,7 +3,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { Question, User } from '../types';
 import { getUserByUid, updateUser } from '../services/userService';
-import UserContext, { UserContextType } from '../contexts/UserContext';
+import UserContext from '../contexts/UserContext';
 import {
   getQuestionsByAnsweredByUserId,
   getQuestionsByAskedByUserId,
