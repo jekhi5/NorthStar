@@ -204,6 +204,15 @@ async function tagCreate(name: string, description: string, subscribers: User[])
   return await TagModel.create(tag);
 }
 
+/**
+ * Creates a new PostNotification document in the database.
+ * @param title The title of the post notification
+ * @param text The text of the post notification
+ * @param notificationType The type of the post notification
+ * @param postId The id of the associated post
+ * @param fromUser The user who triggered the post notification
+ * @returns
+ */
 async function postNotificationCreate(
   title: string,
   text: string,
