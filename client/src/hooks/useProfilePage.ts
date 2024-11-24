@@ -128,8 +128,15 @@ const useProfilePage = () => {
       // Update the user's profile with the new photo URL
       await updateProfile(user, { photoURL });
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Error uploading profile picture:', err);
+      // We log the errors here, but we do not throw an error as we do not want to block the
+      // user from viewing the site just because the profile pic failed to load.
+      if (err instanceof Error) {
+        // eslint-disable-next-line no-console
+        console.error('Error uploading profile picture:', err.message);
+      } else {
+        // eslint-disable-next-line no-console
+        console.error('Error uploading profile picture:', err);
+      }
     }
   };
 

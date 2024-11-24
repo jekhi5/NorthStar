@@ -1,5 +1,4 @@
 import { ObjectId } from 'mongodb';
-import Tags from '../models/tags';
 import QuestionModel from '../models/questions';
 import {
   addTag,
@@ -20,18 +19,43 @@ import {
   saveUser,
   updateUserReputation,
   sendEmail,
+  populateDocument,
+  getQuestionsByAnsweredByUserId,
+  getQuestionsByAskedByUserId,
+  savePostNotification,
+  postNotifications,
+  updateNotificationReadStatus,
+  editUser,
+  getMessages,
+  saveMessage,
+  updateMessage,
+  deleteMessage,
+  toggleSubscribe,
 } from '../models/application';
-import { Answer, Question, Tag, Comment, User, MailOptions } from '../types';
+import {
+  Answer,
+  Question,
+  Tag,
+  Comment,
+  User,
+  PostNotification,
+  Message,
+  MailOptions,
+} from '../types';
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
 import AnswerModel from '../models/answers';
 import CommentModel from '../models/comments';
 import UserModel from '../models/user';
+import TagModel from '../models/tags';
+import * as util from '../models/application';
+import PostNotificationModel from '../models/postNotifications';
+import MessageModel from '../models/messages';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const mockingoose = require('mockingoose');
 
 const user1: User = {
-  _id: new ObjectId(),
+  _id: new ObjectId('ab53191e810c19729de860ea'),
   uid: 'ab53191e810c19729de860ea',
   username: 'User1',
   email: 'user1@email.com',
@@ -42,7 +66,7 @@ const user1: User = {
 };
 
 const user2: User = {
-  _id: new ObjectId(),
+  _id: new ObjectId('ab531234510c19729de860ea'),
   uid: 'ab531234510c19729de860ea',
   username: 'User2',
   email: 'user4@email.com',
@@ -53,7 +77,7 @@ const user2: User = {
 };
 
 const user3: User = {
-  _id: new ObjectId(),
+  _id: new ObjectId('ab53191e810caaa29de860ea'),
   uid: 'ab53191e810caaa29de860ea',
   username: 'User3',
   email: 'user4@email.com',
@@ -64,7 +88,7 @@ const user3: User = {
 };
 
 const user4: User = {
-  _id: new ObjectId(),
+  _id: new ObjectId('ab45891e810c19729de860ea'),
   uid: 'ab45891e810c19729de860ea',
   username: 'User4',
   email: 'user4@email.com',
@@ -202,6 +226,15 @@ const QUESTIONS: Question[] = [
     subscribers: [],
   },
 ];
+
+const postNotification1: PostNotification = {
+  _id: new ObjectId('65e9b716ff0e892116b2de09'),
+  title: 'Post Notification 1',
+  text: 'This is a test post notification',
+  notificationType: 'questionAnswered',
+  postId: QUESTIONS[0]._id as ObjectId,
+  fromUser: user1,
+};
 
 describe('application module', () => {
   beforeEach(() => {
@@ -586,6 +619,28 @@ describe('application module', () => {
         expect(result.views).toEqual([]);
         expect(result.answers.length).toEqual(0);
       });
+
+      test('saveQuestion should return an object with error if create throws an error', async () => {
+        jest.spyOn(QuestionModel, 'create').mockImplementationOnce(() => {
+          throw new Error('error');
+        });
+
+        const result = await saveQuestion({
+          title: 'New Question Title',
+          text: 'New Question Text',
+          tags: [tag1, tag2],
+          askedBy: user3,
+          askDateTime: new Date('2024-06-06'),
+          answers: [],
+          views: [],
+          upVotes: [],
+          downVotes: [],
+          comments: [],
+          subscribers: [],
+        });
+
+        expect(result).toEqual({ error: 'Error when saving a question' });
+      });
     });
 
     describe('addVoteToQuestion', () => {
@@ -747,6 +802,89 @@ describe('application module', () => {
         expect(result).toEqual({ error: 'Error when adding downvote to question' });
       });
     });
+
+    describe('getQuestionsByAnsweredByUserId', () => {
+      test('getQuestionsByAnsweredByUserId should return questions answered by the given user', async () => {
+        const questions = QUESTIONS.filter(q =>
+          q.answers.some(a => (a as Answer).ansBy._id === user1._id),
+        );
+        mockingoose(QuestionModel).toReturn(questions, 'find');
+        QuestionModel.schema.path('answers', Object);
+        QuestionModel.schema.path('tags', Object);
+
+        const result = await getQuestionsByAnsweredByUserId(user1._id?.toString() as string);
+
+        expect(result.length).toEqual(2);
+        expect(result[0]._id?.toString()).toEqual('65e9b58910afe6e94fc6e6dc');
+        expect(result[1]._id?.toString()).toEqual('65e9b5a995b6c7045a30d823');
+      });
+
+      test('getQuestionsByAnsweredByUserId should return an empty list if no questions are answered by the given user', async () => {
+        mockingoose(QuestionModel).toReturn([], 'find');
+        QuestionModel.schema.path('answers', Object);
+        QuestionModel.schema.path('tags', Object);
+
+        const result = await getQuestionsByAnsweredByUserId('nonExistentUserId');
+
+        expect(result.length).toEqual(0);
+      });
+
+      test('getQuestionsByAnsweredByUserId should return an empty list if find throws an error', async () => {
+        mockingoose(QuestionModel).toReturn(new Error('error'), 'find');
+
+        const result = await getQuestionsByAnsweredByUserId(user1._id?.toString() as string);
+
+        expect(result.length).toEqual(0);
+      });
+
+      test('getQuestionsByAnsweredByUserId should return an empty list if find returns null', async () => {
+        mockingoose(QuestionModel).toReturn(null, 'find');
+
+        const result = await getQuestionsByAnsweredByUserId(user1._id?.toString() as string);
+
+        expect(result.length).toEqual(0);
+      });
+    });
+
+    describe('getQuestionsByAskedByUserId', () => {
+      test('getQuestionsByAskedByUserId should return questions asked by the given user', async () => {
+        const questions = QUESTIONS.filter(q => q.askedBy._id === user1._id);
+        mockingoose(QuestionModel).toReturn(questions, 'find');
+        QuestionModel.schema.path('answers', Object);
+        QuestionModel.schema.path('tags', Object);
+
+        const result = await getQuestionsByAskedByUserId(user1._id?.toString() as string);
+
+        expect(result.length).toEqual(1);
+        expect(result[0]._id?.toString()).toEqual('65e9b58910afe6e94fc6e6dc');
+      });
+
+      test('getQuestionsByAskedByUserId should return an empty list if no questions are asked by the given user', async () => {
+        mockingoose(QuestionModel).toReturn([], 'find');
+        QuestionModel.schema.path('answers', Object);
+        QuestionModel.schema.path('tags', Object);
+
+        const result = await getQuestionsByAskedByUserId('nonExistentUserId');
+
+        expect(result.length).toEqual(0);
+      });
+
+      test('getQuestionsByAskedByUserId should return an empty list if find throws an error', async () => {
+        mockingoose(QuestionModel).toReturn(new Error('error'), 'find');
+
+        const result = await getQuestionsByAskedByUserId(user1._id?.toString() as string);
+
+        expect(result.length).toEqual(0);
+      });
+
+      test('getQuestionsByAskedByUserId should return an empty list if find returns null', async () => {
+        mockingoose(QuestionModel).toReturn(null, 'find');
+
+        const result = await getQuestionsByAskedByUserId(user1._id?.toString() as string);
+
+        expect(result.length).toEqual(0);
+      });
+    });
   });
 
   describe('Answer model', () => {
@@ -760,6 +898,43 @@ describe('application module', () => {
           downVotes: [],
           comments: [],
         };
+
+        const result = (await saveAnswer(mockAnswer)) as Answer;
+
+        expect(result._id).toBeDefined();
+        expect(result.text).toEqual(mockAnswer.text);
+        expect(result.ansBy._id).toEqual(mockAnswer.ansBy._id);
+        expect(result.ansDateTime).toEqual(mockAnswer.ansDateTime);
+      });
+
+      test('saveAnswer should return an object with error if create throws an error', async () => {
+        jest.spyOn(AnswerModel, 'create').mockImplementationOnce(() => {
+          throw new Error('error');
+        });
+
+        const result = await saveAnswer({
+          text: 'This is a test answer',
+          ansBy: user1,
+          ansDateTime: new Date('2024-06-06'),
+          upVotes: [],
+          downVotes: [],
+          comments: [],
+        });
+
+        expect(result).toEqual({ error: 'Error when saving an answer' });
+      });
+
+      test('saveAnswer should return the saved answer even if updating reputation fails', async () => {
+        const mockAnswer = {
+          text: 'This is a test answer',
+          ansBy: user1,
+          ansDateTime: new Date('2024-06-06'),
+          upVotes: [],
+          downVotes: [],
+          comments: [],
+        };
+
+        jest.spyOn(util, 'updateUserReputation').mockRejectedValueOnce(new Error('error'));
 
         const result = (await saveAnswer(mockAnswer)) as Answer;
 
@@ -989,7 +1164,7 @@ describe('application module', () => {
   describe('Tag model', () => {
     describe('addTag', () => {
       test('addTag return tag if the tag already exists', async () => {
-        mockingoose(Tags).toReturn(tag1, 'findOne');
+        mockingoose(TagModel).toReturn(tag1, 'findOne');
 
         const result = await addTag({
           name: tag1.name,
@@ -1001,7 +1176,7 @@ describe('application module', () => {
       });
 
       test('addTag return tag id of new tag if does not exist in database', async () => {
-        mockingoose(Tags).toReturn(null, 'findOne');
+        mockingoose(TagModel).toReturn(null, 'findOne');
 
         const result = await addTag({
           name: tag2.name,
@@ -1013,7 +1188,7 @@ describe('application module', () => {
       });
 
       test('addTag returns null if findOne throws an error', async () => {
-        mockingoose(Tags).toReturn(new Error('error'), 'findOne');
+        mockingoose(TagModel).toReturn(new Error('error'), 'findOne');
 
         const result = await addTag({
           name: tag1.name,
@@ -1025,8 +1200,8 @@ describe('application module', () => {
       });
 
       test('addTag returns null if save throws an error', async () => {
-        mockingoose(Tags).toReturn(null, 'findOne');
-        mockingoose(Tags).toReturn(new Error('error'), 'save');
+        mockingoose(TagModel).toReturn(null, 'findOne');
+        mockingoose(TagModel).toReturn(new Error('error'), 'save');
 
         const result = await addTag({
           name: tag2.name,
@@ -1040,7 +1215,7 @@ describe('application module', () => {
 
     describe('processTags', () => {
       test('processTags should return the tags of tag names in the collection', async () => {
-        mockingoose(Tags).toReturn(tag1, 'findOne');
+        mockingoose(TagModel).toReturn(tag1, 'findOne');
 
         const result = await processTags([tag1, tag2]);
 
@@ -1050,7 +1225,7 @@ describe('application module', () => {
       });
 
       test('processTags should return a list of new tags ids if they do not exist in the collection', async () => {
-        mockingoose(Tags).toReturn(null, 'findOne');
+        mockingoose(TagModel).toReturn(null, 'findOne');
 
         const result = await processTags([tag1, tag2]);
 
@@ -1058,7 +1233,7 @@ describe('application module', () => {
       });
 
       test('processTags should return empty list if an error is thrown when finding tags', async () => {
-        mockingoose(Tags).toReturn(Error('Dummy error'), 'findOne');
+        mockingoose(TagModel).toReturn(Error('Dummy error'), 'findOne');
 
         const result = await processTags([tag1, tag2]);
 
@@ -1066,8 +1241,8 @@ describe('application module', () => {
       });
 
       test('processTags should return empty list if an error is thrown when saving tags', async () => {
-        mockingoose(Tags).toReturn(null, 'findOne');
-        mockingoose(Tags).toReturn(Error('Dummy error'), 'save');
+        mockingoose(TagModel).toReturn(null, 'findOne');
+        mockingoose(TagModel).toReturn(Error('Dummy error'), 'save');
 
         const result = await processTags([tag1, tag2]);
 
@@ -1077,7 +1252,7 @@ describe('application module', () => {
 
     describe('getTagCountMap', () => {
       test('getTagCountMap should return a map of tag names and their counts', async () => {
-        mockingoose(Tags).toReturn([tag1, tag2, tag3], 'find');
+        mockingoose(TagModel).toReturn([tag1, tag2, tag3], 'find');
         mockingoose(QuestionModel).toReturn(QUESTIONS, 'find');
         QuestionModel.schema.path('tags', Object);
 
@@ -1103,7 +1278,7 @@ describe('application module', () => {
 
       test('getTagCountMap should return an object with error if an error is thrown when finding tags', async () => {
         mockingoose(QuestionModel).toReturn(QUESTIONS, 'find');
-        mockingoose(Tags).toReturn(new Error('error'), 'find');
+        mockingoose(TagModel).toReturn(new Error('error'), 'find');
 
         const result = await getTagCountMap();
 
@@ -1116,7 +1291,7 @@ describe('application module', () => {
 
       test('getTagCountMap should return null if Tags find returns null', async () => {
         mockingoose(QuestionModel).toReturn(QUESTIONS, 'find');
-        mockingoose(Tags).toReturn(null, 'find');
+        mockingoose(TagModel).toReturn(null, 'find');
 
         const result = await getTagCountMap();
 
@@ -1125,7 +1300,7 @@ describe('application module', () => {
 
       test('getTagCountMap should return default map if QuestionModel find returns null but not tag find', async () => {
         mockingoose(QuestionModel).toReturn(null, 'find');
-        mockingoose(Tags).toReturn([tag1], 'find');
+        mockingoose(TagModel).toReturn([tag1], 'find');
 
         const result = (await getTagCountMap()) as Map<string, number>;
 
@@ -1134,7 +1309,7 @@ describe('application module', () => {
 
       test('getTagCountMap should return null if find returns []', async () => {
         mockingoose(QuestionModel).toReturn([], 'find');
-        mockingoose(Tags).toReturn([], 'find');
+        mockingoose(TagModel).toReturn([], 'find');
 
         const result = await getTagCountMap();
 
@@ -1152,6 +1327,16 @@ describe('application module', () => {
         expect(result.text).toEqual(com1.text);
         expect(result.commentBy._id).toEqual(com1.commentBy._id);
         expect(result.commentDateTime).toEqual(com1.commentDateTime);
+      });
+
+      test('saveComment should return an object with error if create throws an error', async () => {
+        jest.spyOn(CommentModel, 'create').mockImplementationOnce(() => {
+          throw new Error('error');
+        });
+
+        const result = await saveComment(com1);
+
+        expect(result).toEqual({ error: 'Error when saving a comment' });
       });
     });
 
@@ -1406,6 +1591,24 @@ describe('application module', () => {
         expect(result.status).toEqual('Not endorsed');
         expect(result.reputation).toEqual(0);
       });
+
+      test('saveUser should return an object with error if create throws an error', async () => {
+        jest.spyOn(UserModel, 'create').mockImplementationOnce(() => {
+          throw new Error('error');
+        });
+
+        const result = await saveUser({
+          uid: '1',
+          email: 'test@email.com',
+          username: 'test',
+          status: 'Not endorsed',
+          postNotifications: [],
+          reputation: 0,
+          emailsEnabled: false,
+        });
+
+        expect(result).toEqual({ error: 'Error when saving a User' });
+      });
     });
 
     describe('updateUserReputation', () => {
@@ -1466,6 +1669,941 @@ describe('application module', () => {
         const result = await updateUserReputation('testUid', 5);
 
         expect(result).toEqual({ error: 'Error updating user reputation' });
+      });
+    });
+
+    describe('editUser', () => {
+      test('editUser should return the updated user', async () => {
+        const updatedUser: User = {
+          ...user1,
+          username: 'UpdatedUser1',
+          email: 'updateduser1@email.com',
+        };
+
+        mockingoose(UserModel).toReturn(updatedUser, 'findOneAndUpdate');
+
+        const result = (await editUser(updatedUser)) as User;
+
+        expect(result._id?.toString()).toEqual(updatedUser._id?.toString());
+        expect(result.username).toEqual(updatedUser.username);
+        expect(result.email).toEqual(updatedUser.email);
+      });
+
+      test('editUser should return an error if user uid is not provided', async () => {
+        const invalidUser: Partial<User> = {
+          username: 'InvalidUser',
+          email: 'invaliduser@email.com',
+        };
+
+        const result = await editUser(invalidUser as User);
+
+        expect(result).toEqual({ error: 'Error when updating user.' });
+      });
+
+      test('editUser should return an error if user username is not provided', async () => {
+        const invalidUser: Partial<User> = {
+          uid: 'someUid',
+          email: 'invaliduser@email.com',
+        };
+
+        const result = await editUser(invalidUser as User);
+
+        expect(result).toEqual({ error: 'Error when updating user.' });
+      });
+
+      test('editUser should return an error if user email is not provided', async () => {
+        const invalidUser: Partial<User> = {
+          uid: 'someUid',
+          username: 'InvalidUser',
+        };
+
+        const result = await editUser(invalidUser as User);
+
+        expect(result).toEqual({ error: 'Error when updating user.' });
+      });
+
+      test('editUser should return an error if findOneAndUpdate throws an error', async () => {
+        const updatedUser: User = {
+          ...user1,
+          username: 'UpdatedUser1',
+          email: 'updateduser1@email.com',
+        };
+
+        mockingoose(UserModel).toReturn(new Error('Database error'), 'findOneAndUpdate');
+
+        const result = await editUser(updatedUser);
+
+        expect(result).toEqual({ error: 'Error when updating user.' });
+      });
+
+      test('editUser should return an error if findOneAndUpdate returns null', async () => {
+        const updatedUser: User = {
+          ...user1,
+          username: 'UpdatedUser1',
+          email: 'updateduser1@email.com',
+        };
+
+        mockingoose(UserModel).toReturn(null, 'findOneAndUpdate');
+
+        const result = await editUser(updatedUser);
+
+        expect(result).toEqual({ error: 'Error when updating user.' });
+      });
+    });
+  });
+
+  describe('Notification model', () => {
+    describe('savePostNotification', () => {
+      test('savePostNotification should return the saved postNotification', async () => {
+        const mockPostNotification: PostNotification = {
+          title: 'New Post Notification',
+          text: 'This is a new post notification',
+          notificationType: 'questionAnswered',
+          postId: new ObjectId(),
+          fromUser: user1,
+        };
+
+        const result = (await savePostNotification(mockPostNotification)) as PostNotification;
+
+        expect(result._id).toBeDefined();
+        expect(result.title).toEqual(mockPostNotification.title);
+        expect(result.text).toEqual(mockPostNotification.text);
+        expect(result.notificationType).toEqual(mockPostNotification.notificationType);
+        expect(result.postId.toString()).toEqual(mockPostNotification.postId.toString());
+        expect(result.fromUser._id?.toString()).toEqual(
+          mockPostNotification.fromUser._id?.toString(),
+        );
+      });
+
+      test('savePostNotification should return an object with error if create throws an error', async () => {
+        jest.spyOn(PostNotificationModel, 'create').mockImplementationOnce(() => {
+          throw new Error('error');
+        });
+
+        const result = await savePostNotification({
+          title: 'New Post Notification',
+          text: 'This is a new post notification',
+          notificationType: 'questionAnswered',
+          postId: new ObjectId(),
+          fromUser: user1,
+        });
+
+        expect(result).toEqual({ error: 'Error when saving a postNotification' });
+      });
+    });
+
+    describe('postNotifications', () => {
+      test('postNotifications should return the posted notification', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          title: 'Quick question about storage on android',
+          text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
+          tags: [tag3, tag2],
+          answers: [{ ...ans1, ansBy: { ...user1, username: 'User1' } }, ans2],
+          askedBy: user1,
+          askDateTime: new Date('2023-11-16T09:24:00'),
+          views: ['question1_user', 'question2_user'],
+          upVotes: [],
+          downVotes: [],
+          comments: [],
+          subscribers: [user2._id, user3._id],
+        };
+
+        const mockNotification: PostNotification = {
+          _id: new ObjectId(),
+          title: `Your question: "${mockQuestion.title}" has a new answer!`,
+          text: `undefined said: "${ans1.text}"`,
+          notificationType: 'questionAnswered',
+          postId: mockQuestion._id,
+          fromUser: user1,
+        };
+
+        mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+        mockingoose(AnswerModel).toReturn(
+          { ...ans1, ansBy: { ...user1, username: 'User1' } },
+          'findOne',
+        );
+        mockingoose(PostNotificationModel).toReturn(mockNotification, 'create');
+
+        const result = (await postNotifications(
+          mockQuestion._id.toString(),
+          mockNotification.postId.toString(),
+          'questionAnswered',
+          user1,
+        )) as PostNotification;
+
+        expect(result._id).toBeDefined();
+        expect(result.title).toEqual(mockNotification.title);
+        expect(result.text).toEqual(mockNotification.text);
+        expect(result.notificationType).toEqual(mockNotification.notificationType);
+        expect(result.postId.toString()).toEqual(mockNotification.postId.toString());
+        expect(result.fromUser._id?.toString()).toEqual(mockNotification.fromUser._id?.toString());
+      });
+
+      test('postNotifications should return an error if question is not found', async () => {
+        mockingoose(QuestionModel).toReturn(null, 'findOne');
+
+        const result = (await postNotifications(
+          'nonExistentQuestionId',
+          'somePostId',
+          'questionAnswered',
+          user1,
+        )) as { error: string };
+
+        expect(result.error).toEqual(
+          'Error when posting notification: Could not find question that had action taken',
+        );
+      });
+
+      test('postNotifications should return an error if savePostNotification throws an error', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          title: 'Quick question about storage on android',
+          text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
+          tags: [tag3, tag2],
+          answers: [ans1, ans2],
+          askedBy: user1,
+          askDateTime: new Date('2023-11-16T09:24:00'),
+          views: ['question1_user', 'question2_user'],
+          upVotes: [],
+          downVotes: [],
+          comments: [],
+          subscribers: [user2._id, user3._id],
+        };
+
+        mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+        mockingoose(AnswerModel).toReturn(ans1, 'findOne');
+        jest
+          .spyOn(util, 'savePostNotification')
+          .mockResolvedValueOnce({ error: 'Error when saving a postNotification' });
+
+        const result = (await postNotifications(
+          mockQuestion._id.toString(),
+          'somePostId',
+          'questionAnswered',
+          user1,
+        )) as { error: string };
+
+        expect(result.error).toEqual(
+          'Error when posting notification: Error when saving a postNotification',
+        );
+      });
+
+      test('postNotifications should return an error if notification type is invalid', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          title: 'Quick question about storage on android',
+          text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
+          tags: [tag3, tag2],
+          answers: [ans1, ans2],
+          askedBy: user1,
+          askDateTime: new Date('2023-11-16T09:24:00'),
+          views: ['question1_user', 'question2_user'],
+          upVotes: [],
+          downVotes: [],
+          comments: [],
+          subscribers: [user2._id, user3._id],
+        };
+
+        mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+
+        const result = (await postNotifications(
+          mockQuestion._id.toString(),
+          'somePostId',
+          'invalidType' as 'questionAnswered',
+          user1,
+        )) as { error: string };
+
+        expect(result.error).toEqual('Error when posting notification: Invalid notification type');
+      });
+
+      test('postNotifications should return an error if question cannot be found', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          title: 'Quick question about storage on android',
+          text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
+          tags: [tag3, tag2],
+          answers: [ans1, ans2],
+          askedBy: user1,
+          askDateTime: new Date('2023-11-16T09:24:00'),
+          views: ['question1_user', 'question2_user'],
+          upVotes: [],
+          downVotes: [],
+          comments: [],
+          subscribers: [],
+        };
+
+        mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+
+        const result = (await postNotifications(
+          mockQuestion._id.toString(),
+          'somePostId',
+          'questionAnswered',
+          user1,
+        )) as { error: string };
+
+        expect(result.error).toEqual(
+          'Error when posting notification: Could not find answer that was posted',
+        );
+      });
+
+      test('postNotifications should return the posted notification for commentAdded', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          title: 'Quick question about storage on android',
+          text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
+          tags: [tag3, tag2],
+          answers: [ans1, ans2],
+          askedBy: user1,
+          askDateTime: new Date('2023-11-16T09:24:00'),
+          views: ['question1_user', 'question2_user'],
+          upVotes: [],
+          downVotes: [],
+          comments: [com1],
+          subscribers: [user2._id, user3._id],
+        };
+
+        const mockNotification: PostNotification = {
+          _id: new ObjectId(),
+          title: 'A Comment Was Added to a Post You Subscribe to!',
+          text: `${user1.username} said: "${mockQuestion.comments[0].text}"`,
+          notificationType: 'commentAdded',
+          postId: mockQuestion.comments[0]._id as ObjectId,
+          fromUser: user1,
+        };
+
+        mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+        mockingoose(CommentModel).toReturn(com1, 'findOne');
+        mockingoose(PostNotificationModel).toReturn(mockNotification, 'create');
+
+        const result = (await postNotifications(
+          mockQuestion._id.toString(),
+          mockNotification.postId.toString(),
+          'commentAdded',
+          user1,
+        )) as PostNotification;
+
+        expect(result._id).toBeDefined();
+        expect(result.title).toEqual(mockNotification.title);
+        expect(result.text).toEqual(mockNotification.text);
+        expect(result.notificationType).toEqual(mockNotification.notificationType);
+        expect(result.postId.toString()).toEqual(mockNotification.postId.toString());
+        expect(result.fromUser._id?.toString()).toEqual(mockNotification.fromUser._id?.toString());
+      });
+
+      test('postNotifications should return an error if comment is not found for commentAdded', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          title: 'Quick question about storage on android',
+          text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
+          tags: [tag3, tag2],
+          answers: [ans1, ans2],
+          askedBy: user1,
+          askDateTime: new Date('2023-11-16T09:24:00'),
+          views: ['question1_user', 'question2_user'],
+          upVotes: [],
+          downVotes: [],
+          comments: [com1],
+          subscribers: [user2._id, user3._id],
+        };
+
+        mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+        mockingoose(CommentModel).toReturn(null, 'findOne');
+
+        const result = (await postNotifications(
+          mockQuestion._id.toString(),
+          'nonExistentCommentId',
+          'commentAdded',
+          user1,
+        )) as { error: string };
+
+        expect(result.error).toEqual(
+          'Error when posting notification: Could not find comment that was posted',
+        );
+      });
+
+      test('postNotifications should return an error if savePostNotification throws an error for commentAdded', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          title: 'Quick question about storage on android',
+          text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
+          tags: [tag3, tag2],
+          answers: [ans1, ans2],
+          askedBy: user1,
+          askDateTime: new Date('2023-11-16T09:24:00'),
+          views: ['question1_user', 'question2_user'],
+          upVotes: [],
+          downVotes: [],
+          comments: [com1],
+          subscribers: [user2._id, user3._id],
+        };
+
+        mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+        mockingoose(CommentModel).toReturn(com1, 'findOne');
+        jest
+          .spyOn(util, 'savePostNotification')
+          .mockResolvedValueOnce({ error: 'Error when saving a postNotification' });
+
+        const result = (await postNotifications(
+          mockQuestion._id.toString(),
+          'somePostId',
+          'commentAdded',
+          user1,
+        )) as { error: string };
+
+        expect(result.error).toEqual(
+          'Error when posting notification: Error when saving a postNotification',
+        );
+      });
+
+      test('postNotifications should return the posted notification for questionPostedWithTag', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          title: 'Quick question about storage on android',
+          text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
+          tags: [tag3, tag2],
+          answers: [ans1, ans2],
+          askedBy: user1,
+          askDateTime: new Date('2023-11-16T09:24:00'),
+          views: ['question1_user', 'question2_user'],
+          upVotes: [],
+          downVotes: [],
+          comments: [],
+          subscribers: [user2._id, user3._id],
+        };
+
+        const mockNotification: PostNotification = {
+          _id: new ObjectId(),
+          title: 'A Question Was Posted With a Tag You Subscribe to!',
+          text: `The question: "${mockQuestion.title}" was asked by ${user1.username}`,
+          notificationType: 'questionPostedWithTag',
+          postId: mockQuestion._id,
+          fromUser: user1,
+        };
+
+        mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+        mockingoose(PostNotificationModel).toReturn(mockNotification, 'create');
+
+        const result = (await postNotifications(
+          mockQuestion._id.toString(),
+          mockNotification.postId.toString(),
+          'questionPostedWithTag',
+          user1,
+        )) as PostNotification;
+
+        expect(result._id).toBeDefined();
+        expect(result.title).toEqual(mockNotification.title);
+        expect(result.text).toEqual(mockNotification.text);
+        expect(result.notificationType).toEqual(mockNotification.notificationType);
+        expect(result.postId.toString()).toEqual(mockNotification.postId.toString());
+        expect(result.fromUser._id?.toString()).toEqual(mockNotification.fromUser._id?.toString());
+      });
+
+      test('postNotifications should return an error if question is not found for questionPostedWithTag', async () => {
+        mockingoose(QuestionModel).toReturn(null, 'findOne');
+
+        const result = (await postNotifications(
+          'nonExistentQuestionId',
+          'somePostId',
+          'questionPostedWithTag',
+          user1,
+        )) as { error: string };
+
+        expect(result.error).toEqual(
+          'Error when posting notification: Could not find question that had action taken',
+        );
+      });
+
+      test('postNotifications should return an error if savePostNotification throws an error for questionPostedWithTag', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          title: 'Quick question about storage on android',
+          text: 'I would like to know the best way to go about storing an array on an android phone so that even when the app/activity ended the data remains',
+          tags: [tag3, tag2],
+          answers: [ans1, ans2],
+          askedBy: user1,
+          askDateTime: new Date('2023-11-16T09:24:00'),
+          views: ['question1_user', 'question2_user'],
+          upVotes: [],
+          downVotes: [],
+          comments: [],
+          subscribers: [user2._id, user3._id],
+        };
+
+        mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+        jest
+          .spyOn(util, 'savePostNotification')
+          .mockResolvedValueOnce({ error: 'Error when saving a postNotification' });
+
+        const result = (await postNotifications(
+          mockQuestion._id.toString(),
+          'somePostId',
+          'questionPostedWithTag',
+          user1,
+        )) as { error: string };
+
+        expect(result.error).toEqual(
+          'Error when posting notification: Error when saving a postNotification',
+        );
+      });
+    });
+
+    describe('updateNotificationReadStatus', () => {
+      test('updateNotificationReadStatus should return the updated user with the notification marked as read', async () => {
+        const updatedUser: User = {
+          ...user1,
+          postNotifications: [{ postNotification: postNotification1, read: true }],
+        };
+
+        mockingoose(UserModel).toReturn(updatedUser, 'findOneAndUpdate');
+
+        const result = (await updateNotificationReadStatus(
+          user1.uid,
+          postNotification1._id as ObjectId,
+        )) as User;
+
+        expect(result.postNotifications.length).toEqual(1);
+        expect(result.postNotifications[0].read).toBe(true);
+      });
+
+      test('updateNotificationReadStatus should return an error if user is not found', async () => {
+        const postNotificationId = new ObjectId('65e9b58910afe6e94fc6e6dc');
+
+        mockingoose(UserModel).toReturn(null, 'findOneAndUpdate');
+
+        const result = await updateNotificationReadStatus(user1.uid, postNotificationId);
+
+        expect(result).toEqual({ error: 'Error updating notification read status' });
+      });
+
+      test('updateNotificationReadStatus should return an error if findOneAndUpdate throws an error', async () => {
+        const postNotificationId = new ObjectId('65e9b58910afe6e94fc6e6dc');
+
+        mockingoose(UserModel).toReturn(new Error('Database error'), 'findOneAndUpdate');
+
+        const result = await updateNotificationReadStatus(user1.uid, postNotificationId);
+
+        expect(result).toEqual({ error: 'Error updating notification read status' });
+      });
+    });
+
+    describe('toggleSubscribe', () => {
+      test('toggleSubscribe should add a user to the subscribers list if not already subscribed', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          subscribers: [],
+        };
+
+        mockingoose(QuestionModel).toReturn(
+          { ...mockQuestion, subscribers: [user1._id] },
+          'findOneAndUpdate',
+        );
+
+        const result = (await toggleSubscribe(
+          mockQuestion._id.toString(),
+          'question',
+          user1,
+        )) as Question;
+
+        expect(result.subscribers.length).toEqual(1);
+        expect(result.subscribers[0].toString()).toEqual(user1._id?.toString());
+      });
+
+      test('toggleSubscribe should remove a user from the subscribers list if already subscribed', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          subscribers: [user1._id],
+        };
+
+        mockingoose(QuestionModel).toReturn(
+          { ...mockQuestion, subscribers: [] },
+          'findOneAndUpdate',
+        );
+
+        const result = (await toggleSubscribe(
+          mockQuestion._id.toString(),
+          'question',
+          user1,
+        )) as Question;
+
+        expect(result.subscribers.length).toEqual(0);
+      });
+
+      test('toggleSubscribe should return an error if user is invalid', async () => {
+        const invalidUser: Partial<User> = {};
+
+        try {
+          await toggleSubscribe('someQuestionId', 'question', invalidUser as User);
+        } catch (err: unknown) {
+          expect(err).toBeInstanceOf(Error);
+          if (err instanceof Error) expect(err.message).toBe('Invalid user');
+        }
+      });
+
+      test('toggleSubscribe should return an error if question is not found', async () => {
+        mockingoose(QuestionModel).toReturn(null, 'findOneAndUpdate');
+
+        const result = await toggleSubscribe('nonExistentQuestionId', 'question', user1);
+
+        expect(result).toEqual({
+          error: 'Error when toggling subscriber: Failed to toggle subscriber',
+        });
+      });
+
+      test('toggleSubscribe should return an error if findOneAndUpdate throws an error', async () => {
+        mockingoose(QuestionModel).toReturn(new Error('Database error'), 'findOneAndUpdate');
+
+        const result = await toggleSubscribe('someQuestionId', 'question', user1);
+
+        expect(result).toEqual({ error: 'Error when toggling subscriber: Database error' });
+      });
+
+      test('toggleSubscribe should add a user to the tag subscribers list if not already subscribed', async () => {
+        const mockTag = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          subscribers: [],
+        };
+
+        mockingoose(TagModel).toReturn(
+          { ...mockTag, subscribers: [user1._id] },
+          'findOneAndUpdate',
+        );
+
+        const result = (await toggleSubscribe(mockTag._id.toString(), 'tag', user1)) as Tag;
+
+        expect(result.subscribers.length).toEqual(1);
+        expect(result.subscribers[0].toString()).toEqual(user1._id?.toString());
+      });
+
+      test('toggleSubscribe should remove a user from the tag subscribers list if already subscribed', async () => {
+        const mockTag = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          subscribers: [user1._id],
+        };
+
+        mockingoose(TagModel).toReturn({ ...mockTag, subscribers: [] }, 'findOneAndUpdate');
+
+        const result = (await toggleSubscribe(mockTag._id.toString(), 'tag', user1)) as Tag;
+
+        expect(result.subscribers.length).toEqual(0);
+      });
+
+      test('toggleSubscribe should return an error if tag is not found', async () => {
+        mockingoose(TagModel).toReturn(null, 'findOneAndUpdate');
+
+        const result = await toggleSubscribe('nonExistentTagId', 'tag', user1);
+
+        expect(result).toEqual({
+          error: 'Error when toggling subscriber: Failed to toggle subscriber',
+        });
+      });
+
+      test('toggleSubscribe should return an error if findOneAndUpdate throws an error for tag', async () => {
+        mockingoose(TagModel).toReturn(new Error('Database error'), 'findOneAndUpdate');
+
+        const result = await toggleSubscribe('someTagId', 'tag', user1);
+
+        expect(result).toEqual({ error: 'Error when toggling subscriber: Database error' });
+      });
+
+      test('toggleSubscribe should error if type invalid', async () => {
+        const mockQuestion = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          subscribers: [],
+        };
+
+        mockingoose(QuestionModel).toReturn(
+          { ...mockQuestion, subscribers: [user1._id] },
+          'findOneAndUpdate',
+        );
+
+        const result = (await toggleSubscribe(
+          mockQuestion._id.toString(),
+          'invalidType' as 'question',
+          user1,
+        )) as Question;
+
+        expect(result).toEqual({ error: 'Error when toggling subscriber: Invalid type' });
+      });
+    });
+  });
+
+  describe('populateDocument', () => {
+    test('populateDocument should return a populated question', async () => {
+      const question = QUESTIONS[0];
+      mockingoose(QuestionModel).toReturn(question, 'findOne');
+      QuestionModel.schema.path('tags', Object);
+      QuestionModel.schema.path('answers', Object);
+
+      const result = (await populateDocument(question._id?.toString(), 'question')) as Question;
+
+      expect(result._id?.toString()).toEqual(question._id?.toString());
+      expect(result.title).toEqual(question.title);
+      expect(result.text).toEqual(question.text);
+      expect(result.tags.length).toEqual(question.tags.length);
+      expect(result.answers.length).toEqual(question.answers.length);
+    });
+
+    test('populateDocument should return a populated answer', async () => {
+      const answer = ans1;
+      mockingoose(AnswerModel).toReturn(answer, 'findOne');
+      AnswerModel.schema.path('comments', Object);
+
+      const result = (await populateDocument(answer._id?.toString(), 'answer')) as Answer;
+
+      expect(result._id?.toString()).toEqual(answer._id?.toString());
+      expect(result.text).toEqual(answer.text);
+      expect(result.ansBy._id?.toString()).toEqual(answer.ansBy._id?.toString());
+      expect(result.comments.length).toEqual(answer.comments.length);
+    });
+
+    test('populateDocument should return a populated tag', async () => {
+      const tag = tag1;
+      mockingoose(TagModel).toReturn(tag, 'findOne');
+
+      const result = (await populateDocument(tag._id?.toString(), 'tag')) as Tag;
+
+      expect(result._id?.toString()).toEqual(tag._id?.toString());
+      expect(result.name).toEqual(tag.name);
+      expect(result.description).toEqual(tag.description);
+    });
+
+    test('populateDocument should return a populated user', async () => {
+      const user = user1;
+      mockingoose(UserModel).toReturn(user, 'findOne');
+
+      const result = (await populateDocument(user._id?.toString(), 'user')) as User;
+
+      expect(result._id?.toString()).toEqual(user._id?.toString());
+      expect(result.username).toEqual(user.username);
+      expect(result.email).toEqual(user.email);
+    });
+
+    test('populateDocument should return an error if id is not provided', async () => {
+      const result = (await populateDocument(undefined, 'question')) as { error: string };
+
+      expect(result.error).toEqual(
+        'Error when fetching and populating a document: Provided question ID is undefined.',
+      );
+    });
+
+    test('populateDocument should return an error if document type is invalid', async () => {
+      const result = (await populateDocument('someId', 'invalidType' as unknown as 'question')) as {
+        error: string;
+      };
+
+      expect(result.error).toEqual(
+        'Error when fetching and populating a document: Failed to fetch and populate a invalidType',
+      );
+    });
+
+    test('populateDocument should return an error if document is not found', async () => {
+      mockingoose(QuestionModel).toReturn(null, 'findOne');
+
+      const result = (await populateDocument('nonExistentId', 'question')) as { error: string };
+
+      expect(result.error).toEqual(
+        'Error when fetching and populating a document: Failed to fetch and populate a question',
+      );
+    });
+
+    test('populateDocument should return an error if findOne throws an error', async () => {
+      mockingoose(QuestionModel).toReturn(new Error('Database error'), 'findOne');
+
+      const result = (await populateDocument('someId', 'question')) as { error: string };
+
+      expect(result.error).toEqual('Error when fetching and populating a document: Database error');
+    });
+  });
+
+  describe('Message model', () => {
+    describe('getMessages', () => {
+      test('getMessages should return a list of messages sorted by sentDateTime in descending order', async () => {
+        const messages = [
+          {
+            _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+            text: 'Message 1',
+            sentBy: user1,
+            sentDateTime: new Date('2023-11-18T09:24:00'),
+          },
+          {
+            _id: new ObjectId('65e9b58910afe6e94fc6e6dd'),
+            text: 'Message 2',
+            sentBy: user2,
+            sentDateTime: new Date('2023-11-19T09:24:00'),
+          },
+        ];
+
+        mockingoose(MessageModel).toReturn(messages, 'find');
+
+        const result = (await getMessages(10)) as Message[];
+
+        expect(result.length).toEqual(2);
+        expect(result[0]._id?.toString()).toEqual('65e9b58910afe6e94fc6e6dc');
+        expect(result[1]._id?.toString()).toEqual('65e9b58910afe6e94fc6e6dd');
+      });
+
+      test('getMessages should return an empty list if no messages are found', async () => {
+        mockingoose(MessageModel).toReturn([], 'find');
+
+        const result = (await getMessages(10)) as Message[];
+
+        expect(result.length).toEqual(0);
+      });
+
+      test('getMessages should return an error if find throws an error', async () => {
+        mockingoose(MessageModel).toReturn(new Error('error'), 'find');
+
+        const result = await getMessages(10);
+
+        expect(result).toEqual({ error: 'Error fetching messages' });
+      });
+
+      test('getMessages should return an empty list if find returns null', async () => {
+        mockingoose(MessageModel).toReturn(null, 'find');
+
+        const result = (await getMessages(10)) as Message[];
+
+        expect(result.length).toEqual(0);
+      });
+    });
+
+    describe('saveMessage', () => {
+      test('saveMessage should return the saved message', async () => {
+        const mockMessage: Message = {
+          _id: new ObjectId(),
+          content: 'This is a test message',
+          sentBy: user1,
+          sentDateTime: new Date('2024-06-06'),
+        };
+
+        const result = (await saveMessage(mockMessage)) as Message;
+
+        expect(result._id).toBeDefined();
+        expect(result.content).toEqual(mockMessage.content);
+        expect(result.sentBy._id).toEqual(mockMessage.sentBy._id);
+        expect(result.sentDateTime).toEqual(mockMessage.sentDateTime);
+      });
+
+      test('saveMessage should return an object with error if create throws an error', async () => {
+        jest.spyOn(MessageModel, 'create').mockImplementationOnce(() => {
+          throw new Error('error');
+        });
+
+        const result = await saveMessage({
+          _id: new ObjectId(),
+          content: 'This is a test message',
+          sentBy: user1,
+          sentDateTime: new Date('2024-06-06'),
+        });
+
+        expect(result).toEqual({ error: 'Error saving a message' });
+      });
+    });
+
+    describe('updateMessage', () => {
+      beforeEach(() => {
+        mockingoose.resetAll();
+      });
+      test('updateMessage should return the updated message', async () => {
+        const mockMessage: Message = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          content: 'This is a test message',
+          sentBy: user1,
+          sentDateTime: new Date('2024-06-06'),
+        };
+
+        const updatedMessage: Message = {
+          ...mockMessage,
+          content: 'This is an updated test message',
+        };
+
+        jest.spyOn(MessageModel, 'findByIdAndUpdate').mockResolvedValueOnce(updatedMessage);
+
+        const result = (await updateMessage(mockMessage._id?.toString() as string, {
+          content: 'This is an updated test message',
+        })) as Message;
+
+        expect(result._id?.toString()).toEqual(updatedMessage._id?.toString());
+        expect(result.content).toEqual(updatedMessage.content);
+      });
+
+      test('updateMessage should return an error if message id is not provided', async () => {
+        const result = await updateMessage('', { content: 'This is an updated test message' });
+
+        expect(result).toEqual({ error: 'Error updating a message' });
+      });
+
+      test('updateMessage should return an error if findByIdAndUpdate throws an error', async () => {
+        const mockMessage: Message = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          content: 'This is a test message',
+          sentBy: user1,
+          sentDateTime: new Date('2024-06-06'),
+        };
+
+        mockingoose(MessageModel).toReturn(new Error('Database error'), 'findByIdAndUpdate');
+
+        const result = await updateMessage(mockMessage._id?.toString() as string, {
+          content: 'This is an updated test message',
+        });
+
+        expect(result).toEqual({ error: 'Error updating a message' });
+      });
+
+      test('updateMessage should return an error if findByIdAndUpdate returns null', async () => {
+        const mockMessage: Message = {
+          _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
+          content: 'This is a test message',
+          sentBy: user1,
+          sentDateTime: new Date('2024-06-06'),
+        };
+
+        mockingoose(MessageModel).toReturn(null, 'findByIdAndUpdate');
+
+        const result = await updateMessage(mockMessage._id?.toString() as string, {
+          content: 'This is an updated test message',
+        });
+
+        expect(result).toEqual({ error: 'Error updating a message' });
+      });
+    });
+
+    describe('deleteMessage', () => {
+      test('deleteMessage should return success when message is deleted', async () => {
+        const mockMessageId = '65e9b58910afe6e94fc6e6dc';
+
+        jest.spyOn(MessageModel, 'findByIdAndDelete').mockResolvedValueOnce(mockMessageId);
+
+        const result = await deleteMessage(mockMessageId);
+
+        expect(result).toEqual({ success: true });
+      });
+
+      test('deleteMessage should return an error if message id is not provided', async () => {
+        const result = await deleteMessage('');
+
+        expect(result).toEqual({ error: 'Error deleting a message' });
+      });
+
+      test('deleteMessage should return an error if findByIdAndDelete throws an error', async () => {
+        const mockMessageId = '65e9b58910afe6e94fc6e6dc';
+
+        mockingoose(MessageModel).toReturn(new Error('Database error'), 'findByIdAndDelete');
+
+        const result = await deleteMessage(mockMessageId);
+
+        expect(result).toEqual({ error: 'Error deleting a message' });
+      });
+
+      test('deleteMessage should return an error if findByIdAndDelete returns null', async () => {
+        const mockMessageId = '65e9b58910afe6e94fc6e6dc';
+
+        mockingoose(MessageModel).toReturn(null, 'findByIdAndDelete');
+
+        const result = await deleteMessage(mockMessageId);
+
+        expect(result).toEqual({ error: 'Error deleting a message' });
       });
     });
   });

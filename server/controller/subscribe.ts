@@ -22,10 +22,7 @@ const subscribeController = (socket: FakeSOSocket) => {
    * @returns `true` if the request is valid, otherwise `false`.
    */
   const isRequestValid = (req: ToggleSubscriberRequest): boolean =>
-    !!req.body.id &&
-    !!req.body.user &&
-    req.body.user.username !== undefined &&
-    req.body.user.email !== undefined;
+    !!req.body.id && !!req.body.user;
 
   /**
    * Validates the user object to ensure it is not empty.

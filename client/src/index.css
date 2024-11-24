@@ -1,17 +1,32 @@
-/* Add CSS */
-
-/* Add global CSS here */
-/* Add CSS stylesheet */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Poppins', 'Arial', sans-serif;
 }
 
 html {
   height: 99%;
 }
 
+:root {
+  --primary-purple: #322a88; /* Dark purple for main elements */
+  --accent-yellow: #efe8ca; /* Light yellow for accents */
+  --background-light: #f7f9fc; /* Light background */
+  --background-white: #ffffff; /* White for containers */
+  --text-dark: #333333; /* Dark text for readability */
+  --text-gray: #666666; /* Gray text for lower emphasis */
+  --text-light-gray: #999999; /* Lighter gray for Even lower emphasis! */
+  --border-gray: #ddd; /* Border color */
+  --hover-purple: #5e4fa2; /* Hover effect for dark purple elements */
+  --hover-yellow: #efe8ca; /* Hover effect for accents */
+}
+
+
 body,
 #root {
+  color: var(--text-dark);
+  background-color: var(--background-light);
+  margin: 0;
+  padding: 0;
   height: 100%;
 }

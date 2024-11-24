@@ -1,15 +1,18 @@
 import mongoose from 'mongoose';
 import supertest from 'supertest';
+import { ObjectId } from 'mongodb';
 import { app } from '../app';
 import * as util from '../models/application';
-import { Question, User } from '../types';
+import { PostNotification, Question, User } from '../types';
 
 const saveCommentSpy = jest.spyOn(util, 'saveComment');
 const addCommentSpy = jest.spyOn(util, 'addComment');
 const addVoteToCommentSpy = jest.spyOn(util, 'addVoteToComment');
 const popDocSpy = jest.spyOn(util, 'populateDocument');
+const postNotificationsSpy = jest.spyOn(util, 'postNotifications');
 
 const user1: User = {
+  _id: new ObjectId('ab53191e810c19729de860ea'),
   uid: 'ab53191e810c19729de860ea',
   username: 'user1',
   email: 'user1@email.com',
@@ -66,6 +69,15 @@ describe('POST /addComment', () => {
       downVotes: [],
     };
 
+    const mockNotification: PostNotification = {
+      _id: new ObjectId('65e9b5a995b6c7045a30d823'),
+      title: 'Mock notification',
+      text: 'Mock notification text',
+      notificationType: 'commentAdded',
+      postId: validQid,
+      fromUser: user1,
+    };
+
     saveCommentSpy.mockResolvedValueOnce(mockComment);
 
     addCommentSpy.mockResolvedValueOnce({
@@ -98,13 +110,15 @@ describe('POST /addComment', () => {
       subscribers: [],
     });
 
+    postNotificationsSpy.mockResolvedValueOnce(mockNotification);
+
     const response = await supertest(app).post('/comment/addComment').send(mockReqBody);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       _id: validCid.toString(),
       text: 'This is a test comment',
-      commentBy: user1,
+      commentBy: { ...user1, _id: user1._id?.toString() },
       commentDateTime: mockComment.commentDateTime.toISOString(),
       upVotes: [],
       downVotes: [],
@@ -161,7 +175,7 @@ describe('POST /addComment', () => {
     expect(response.body).toEqual({
       _id: validCid.toString(),
       text: 'This is a test comment',
-      commentBy: user1,
+      commentBy: { ...user1, _id: user1._id?.toString() },
       commentDateTime: mockComment.commentDateTime.toISOString(),
       upVotes: [],
       downVotes: [],
@@ -406,6 +420,134 @@ describe('POST /addComment', () => {
 
     expect(response.status).toBe(500);
     expect(response.text).toBe('Error when adding comment: Error when populating document');
+  });
+
+  it('should add a new comment to the question even if posting the notifications fails', async () => {
+    const validQid = new mongoose.Types.ObjectId();
+    const validCid = new mongoose.Types.ObjectId();
+    const mockReqBody = {
+      id: validQid.toString(),
+      type: 'question',
+      comment: {
+        text: 'This is a test comment',
+        commentBy: user1,
+        commentDateTime: new Date('2024-06-03'),
+      },
+    };
+
+    const mockComment = {
+      _id: validCid,
+      text: 'This is a test comment',
+      commentBy: user1,
+      commentDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
+    };
+
+    postNotificationsSpy.mockResolvedValueOnce({ error: 'Error when posting notifications' });
+
+    saveCommentSpy.mockResolvedValueOnce(mockComment);
+
+    addCommentSpy.mockResolvedValueOnce({
+      _id: validQid,
+      title: 'This is a test question',
+      text: 'This is a test question',
+      tags: [],
+      askedBy: user1,
+      askDateTime: new Date('2024-06-03'),
+      views: [],
+      upVotes: [],
+      downVotes: [],
+      answers: [],
+      comments: [mockComment._id],
+      subscribers: [],
+    } as Question);
+
+    popDocSpy.mockResolvedValueOnce({
+      _id: validQid,
+      title: 'This is a test question',
+      text: 'This is a test question',
+      tags: [],
+      askedBy: user1,
+      askDateTime: new Date('2024-06-03'),
+      views: [],
+      upVotes: [],
+      downVotes: [],
+      answers: [],
+      comments: [mockComment],
+      subscribers: [],
+    });
+
+    const response = await supertest(app).post('/comment/addComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      _id: validCid.toString(),
+      text: 'This is a test comment',
+      commentBy: { ...user1, _id: user1._id?.toString() },
+      commentDateTime: mockComment.commentDateTime.toISOString(),
+      upVotes: [],
+      downVotes: [],
+    });
+  });
+
+  it('should add a new comment to the answer even if posting the notifications fails', async () => {
+    const validAid = new mongoose.Types.ObjectId();
+    const validCid = new mongoose.Types.ObjectId();
+    const mockReqBody = {
+      id: validAid.toString(),
+      type: 'answer',
+      comment: {
+        text: 'This is a test comment',
+        commentBy: user1,
+        commentDateTime: new Date('2024-06-03'),
+      },
+    };
+
+    const mockComment = {
+      _id: validCid,
+      text: 'This is a test comment',
+      commentBy: user1,
+      commentDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
+    };
+
+    postNotificationsSpy.mockResolvedValueOnce({ error: 'Error when posting notifications' });
+
+    saveCommentSpy.mockResolvedValueOnce(mockComment);
+
+    addCommentSpy.mockResolvedValueOnce({
+      _id: validAid,
+      text: 'This is a test answer',
+      ansBy: user2,
+      ansDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
+      comments: [mockComment._id],
+    });
+
+    popDocSpy.mockResolvedValueOnce({
+      _id: validAid,
+      text: 'This is a test answer',
+      ansBy: user2,
+      ansDateTime: new Date('2024-06-03'),
+      upVotes: [],
+      downVotes: [],
+      comments: [mockComment],
+    });
+
+    const response = await supertest(app).post('/comment/addComment').send(mockReqBody);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      _id: validCid.toString(),
+      text: 'This is a test comment',
+      commentBy: { ...user1, _id: user1._id?.toString() },
+      commentDateTime: mockComment.commentDateTime.toISOString(),
+      upVotes: [],
+      downVotes: [],
+    });
   });
 });
 
