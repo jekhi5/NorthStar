@@ -1,13 +1,14 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { Question, User } from '../types';
 import { getUserByUid, updateUser } from '../services/userService';
-import UserContext from '../contexts/UserContext';
 import {
   getQuestionsByAnsweredByUserId,
   getQuestionsByAskedByUserId,
 } from '../services/questionService';
+import useUserContext from './useUserContext';
+import useLoginContext from './useLoginContext';
 
 /**
  * Custom hook to manage the state and logic for the profile page and profile page updates.
@@ -32,9 +33,10 @@ const useProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   // Get user, and subsequently user id
-  const context = useContext(UserContext);
-  const uid = context?.user?.uid;
-  const userId = context?.user?._id;
+  const { user: UserContext } = useUserContext();
+  const { setUser } = useLoginContext();
+  const uid = UserContext?.uid;
+  const userId = UserContext?._id;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -75,6 +77,7 @@ const useProfilePage = () => {
     if (editedProfile) {
       try {
         const updatedProfile = await updateUser(editedProfile);
+        setUser(updatedProfile);
         setProfile(updatedProfile);
         setIsEditing(false); // Exit edit mode
         setUpdateError(null);
