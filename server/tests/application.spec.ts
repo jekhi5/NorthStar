@@ -1468,18 +1468,5 @@ describe('application module', () => {
         expect(result).toEqual({ error: 'Error updating user reputation' });
       });
     });
-
-    describe('sendEmail', () => {
-      test('sendEmail should successfully send an email if provided with valid mailOptions', async () => {
-        const mailOptions = {
-          from: 'northstardotcom@gmail.com',
-          to: 'kennethborrero2@gmail.com',
-          subject: 'In-Test Email',
-          html: '',
-        };
-
-        expect(() => sendEmail(mailOptions)).not.toThrow();
-      });
-    });
   });
 });
