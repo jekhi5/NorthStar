@@ -11,6 +11,7 @@ const user1: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const tag1: Tag = {

@@ -19,8 +19,9 @@ import {
   addVoteToComment,
   saveUser,
   updateUserReputation,
+  sendEmail,
 } from '../models/application';
-import { Answer, Question, Tag, Comment, User } from '../types';
+import { Answer, Question, Tag, Comment, User, MailOptions } from '../types';
 import { T1_DESC, T2_DESC, T3_DESC } from '../data/posts_strings';
 import AnswerModel from '../models/answers';
 import CommentModel from '../models/comments';
@@ -1465,6 +1466,19 @@ describe('application module', () => {
         const result = await updateUserReputation('testUid', 5);
 
         expect(result).toEqual({ error: 'Error updating user reputation' });
+      });
+    });
+
+    describe('sendEmail', () => {
+      test('sendEmail should successfully send an email if provided with valid mailOptions', async () => {
+        const mailOptions = {
+          from: 'northstardotcom@gmail.com',
+          to: 'kennethborrero2@gmail.com',
+          subject: 'In-Test Email',
+          html: '',
+        };
+
+        expect(() => sendEmail(mailOptions)).not.toThrow();
       });
     });
   });

@@ -237,6 +237,20 @@ export interface Comment {
 }
 
 /**
+ * Interface representing a the components that go into an email, which contains:
+ * - from - email that the mail will be sent from.
+ * - to - email that will recieve the mail.
+ * - subject - The subject line of the mail
+ * - html - The content of the mail in html form.
+ */
+export interface MailOptions {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}
+
+/**
  * Interface representing a Message, which contains:
  * - _id - The unique identifier for the message. Optional field.
  * - content - The content of the message.

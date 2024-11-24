@@ -55,8 +55,6 @@ const useProfilePage = () => {
         const alist = await getQuestionsByAnsweredByUserId(userId as string);
         setUserAnswers(alist || []);
 
-        console.log('Profile data during UseEffect: ', profileData);
-
         setEmailOpted(userCanEmail as boolean);
         if (userCanEmail as boolean) {
           setOptButtonText('Disable Email Notifications');
@@ -85,23 +83,16 @@ const useProfilePage = () => {
   };
 
   const saveProfile = async () => {
-    console.log('saving profile');
     if (editedProfile) {
-      console.log('editedProfile: ', editedProfile);
       try {
         const updatedProfile = await updateUser(editedProfile);
-        console.log('updatedProfile: ', updatedProfile);
         setProfile(updatedProfile);
         setIsEditing(false); // Exit edit mode
         setUpdateError(null);
       } catch (err) {
-        console.log('errored in saveProfile');
         setUpdateError('Failed to update profile.');
       }
     }
-
-    console.log('new emailOpted value in SaveProfile: ', emailOpted);
-    console.log('new profile in SaveProfile: ', profile);
   };
 
   const toggleEmailOptIn = async () => {
