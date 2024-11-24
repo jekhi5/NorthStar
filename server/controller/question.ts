@@ -251,19 +251,22 @@ const questionController = (socket: FakeSOSocket) => {
 
       if (populatedQuestion._id) {
         try {
-          const newNotification: PostNotificationResponse = await postNotifications(
+          const newNotifications: PostNotificationResponse[] = await postNotifications(
             populatedQuestion._id?.toString(),
             populatedQuestion._id?.toString(),
             'questionPostedWithTag',
             askedBy,
+            processedTags,
           );
 
-          if (newNotification && !('error' in newNotification)) {
-            socket.emit('postNotificationUpdate', {
-              notification: newNotification,
-              type: 'newNotification',
-            });
-          }
+          newNotifications.forEach(newNotification => {
+            if (newNotification && !('error' in newNotification)) {
+              socket.emit('postNotificationUpdate', {
+                notification: newNotification,
+                type: 'newNotification',
+              });
+            }
+          });
         } catch (error) {
           // We log the errors here, but we do not throw an error as we do not want to block the adding
           // of a question just because the notification failed to post.

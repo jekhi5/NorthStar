@@ -1205,6 +1205,19 @@ const populate = async () => {
       [u21, u22],
     );
 
+    // Test user
+    await userCreate(
+      '6kULi0D0G7ZDp1XRn7XnjQZ6Ckk2', // From Firebase
+      'test',
+      'test@gmail.com',
+      'Not endorsed',
+      [],
+      0,
+      'test',
+      'test',
+      '',
+    );
+
     // Adding us as a users
     await userCreate(
       'LSF2vgdlbyVFpDd6KmbBs7Fwa5O2', // From Firebase
@@ -1220,7 +1233,7 @@ const populate = async () => {
 
     await userCreate(
       'Fm5O8RAHjqcxmNrip3luw0JF6mz1',
-      'ashleyydaviis',
+      'yashleydaviis',
       'ashley921davis@gmail.com',
       'Grandmaster',
       [],

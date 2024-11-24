@@ -591,7 +591,8 @@ export const postNotifications = async (
   associatedPostId: string,
   type: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag',
   user: User,
-): Promise<PostNotificationResponse> => {
+  tags?: Tag[],
+): Promise<PostNotificationResponse[]> => {
   try {
     const question: Question | null = await QuestionModel.findOne({ _id: qid }).populate({
       path: 'askedBy',
@@ -636,46 +637,100 @@ export const postNotifications = async (
       notificationToPost.text = `${user.username} said: "${comment.text}"`;
       notificationToPost.notificationType = 'commentAdded';
       notificationToPost.postId = comment._id;
-    } else if (type === 'questionPostedWithTag') {
-      notificationToPost.title = 'A Question Was Posted With a Tag You Subscribe to!';
-      notificationToPost.text = `The question: "${question.title}" was asked by ${user.username}`;
-      notificationToPost.notificationType = 'questionPostedWithTag';
-      notificationToPost.postId = question._id;
-    } else {
+
+      // We customize the notification to include the list of tags a given user is subscribed to
+      // when a question is posted with any tag they are subscribed to, which
+      // is done right before we send the notification, not statically
+    } else if (type !== 'questionPostedWithTag') {
       throw new Error('Invalid notification type');
     }
 
-    const postedNotification = await savePostNotification(notificationToPost);
+    let postedNotification: PostNotificationResponse;
 
-    if (!postedNotification || 'error' in postedNotification) {
-      throw new Error('Error when saving a postNotification');
+    if (type !== 'questionPostedWithTag') {
+      postedNotification = await savePostNotification(notificationToPost);
+
+      if (!postedNotification || 'error' in postedNotification) {
+        throw new Error('Error when saving a postNotification');
+      }
     }
 
-    question.subscribers.map(async subscriberId => {
-      // Don't send notifications to users about their own actions
-      if (user._id?.toString() !== subscriberId.toString()) {
-        await UserModel.findOneAndUpdate(
-          { _id: subscriberId },
-          {
-            $push: {
-              // The type of `postNotifications` is an array of objects with a `postNotification` field and a `read` field.
-              // The `read` field is set to `false` by default by MongoDB, so it isn't included here
-              postNotifications: {
-                postNotification: postedNotification,
-              },
-            },
-          },
-          { new: true },
-        );
-      }
-    });
+    const postedNotifications: PostNotificationResponse[] = [];
 
-    return postedNotification;
+    await Promise.all(
+      question.subscribers.map(async subscriberId => {
+        // Don't send notifications to users about their own actions
+        if (
+          subscriberId instanceof ObjectId &&
+          subscriberId !== undefined &&
+          user._id !== undefined &&
+          user._id.toString() !== subscriberId.toString()
+        ) {
+          if (type === 'questionPostedWithTag') {
+            const tagsThisUserSubscribesTo: Tag[] | undefined = tags?.filter(({ subscribers }) =>
+              subscribers.map(sub => sub._id?.toString()).includes(subscriberId.toString()),
+            );
+
+            const stringListOfTags = tagsThisUserSubscribesTo
+              ?.map(tag => tag.name.charAt(0).toUpperCase() + tag.name.slice(1))
+              .join(', ');
+
+            const tagsForNotificationTitle = tagsThisUserSubscribesTo
+              ? `${tagsThisUserSubscribesTo.length === 1 ? 'the tag:' : 'the tags:'} ${stringListOfTags}, Which`
+              : 'a Tag That';
+
+            notificationToPost.title = `A Question Was Posted With ${tagsForNotificationTitle} You Subscribe to!`;
+            notificationToPost.text = `The question: "${question.title}" was asked by ${user.username}`;
+            notificationToPost.notificationType = 'questionPostedWithTag';
+
+            // If this wasn't an `ObjectId`, the function would have thrown an error
+            // above when we checked to see if it was a valid question
+            notificationToPost.postId = question._id as ObjectId;
+
+            const existingNotification: PostNotification | null =
+              await PostNotificationModel.findOne({
+                title: notificationToPost.title,
+                text: notificationToPost.text,
+                postId: notificationToPost.postId,
+              });
+
+            postedNotification =
+              existingNotification ?? (await savePostNotification(notificationToPost));
+
+            if (!postedNotification || 'error' in postedNotification) {
+              throw new Error('Error when saving a postNotification');
+            }
+          }
+
+          if (postedNotification !== undefined) {
+            const updatedUser = await UserModel.findOneAndUpdate(
+              { _id: subscriberId },
+              {
+                $push: {
+                  // The type of `postNotifications` is an array of objects with a `postNotification` field and a `read` field.
+                  // The `read` field is set to `false` by default by MongoDB, so it isn't included here
+                  postNotifications: {
+                    postNotification: postedNotification,
+                  },
+                },
+              },
+              { new: true },
+            );
+
+            if (updatedUser) {
+              postedNotifications.push(postedNotification);
+            }
+          }
+        }
+      }),
+    );
+
+    return postedNotifications;
   } catch (error) {
     if (error instanceof Error) {
-      return { error: `Error when posting notification: ${error.message}` };
+      return [{ error: `Error when posting notification: ${error.message}` }];
     }
-    return { error: 'Error when posting notification' };
+    return [{ error: 'Error when posting notification' }];
   }
 };
 
@@ -875,7 +930,7 @@ export const processTags = async (tags: Tag[]): Promise<Tag[]> => {
     // Use Promise.all to asynchronously process each unique tag.
     const processedTags = await Promise.all(
       uniqueTags.map(async tag => {
-        const existingTag = await TagModel.findOne({ name: tag.name });
+        const existingTag = await TagModel.findOne({ name: tag.name }).populate('subscribers');
 
         if (existingTag) {
           return existingTag; // If tag exists, return it as part of the processed tags

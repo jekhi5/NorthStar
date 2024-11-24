@@ -83,19 +83,21 @@ const answerController = (socket: FakeSOSocket) => {
       }
 
       if (populatedAns._id) {
-        const newNotification: PostNotificationResponse = await postNotifications(
+        const newNotifications: PostNotificationResponse[] = await postNotifications(
           qid,
           populatedAns._id.toString(),
           'questionAnswered',
           ansInfo.ansBy,
         );
 
-        if (newNotification && !('error' in newNotification)) {
-          socket.emit('postNotificationUpdate', {
-            notification: newNotification,
-            type: 'newNotification',
-          });
-        }
+        newNotifications.forEach(newNotification => {
+          if (newNotification && !('error' in newNotification)) {
+            socket.emit('postNotificationUpdate', {
+              notification: newNotification,
+              type: 'newNotification',
+            });
+          }
+        });
       }
 
       // Populates the fields of the answer that was added and emits the new object
