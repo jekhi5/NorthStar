@@ -11,7 +11,7 @@ const Login = ({
   showLogIn: boolean;
   setShowLogIn: (showLogIn: boolean) => void;
 }) => {
-  const { email, password, handleSubmit, handleInputChange, error } = useLogin();
+  const { email, password, handleSubmit, handleInputChange, handleGoogleLogin, error } = useLogin();
 
   return (
     <div className='container'>
@@ -47,6 +47,7 @@ const Login = ({
           </button>
         </div>
       </form>
+      <button onClick={handleGoogleLogin}>Sign in with Google</button>
       {error && <p className='error-text'>{error}</p>}
     </div>
   );
