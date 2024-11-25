@@ -64,6 +64,11 @@ const userSchema = new mongoose.Schema(
       default: 0,
       required: true,
     },
+    emailsEnabled: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   { collection: 'User' },
 );
