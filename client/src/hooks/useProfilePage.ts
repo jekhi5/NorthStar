@@ -32,11 +32,15 @@ const useProfilePage = () => {
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  const [emailOpted, setEmailOpted] = useState<boolean | null>(null);
+  const [optButtonText, setOptButtonText] = useState<string | null>(null);
+
   // Get user, and subsequently user id
   const { user: UserContext } = useUserContext();
   const { setUser } = useLoginContext();
   const uid = UserContext?.uid;
   const userId = UserContext?._id;
+  const userCanEmail = UserContext?.emailsEnabled;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -52,6 +56,13 @@ const useProfilePage = () => {
         setUserQuestions(qlist || []);
         const alist = await getQuestionsByAnsweredByUserId(userId as string);
         setUserAnswers(alist || []);
+
+        setEmailOpted(userCanEmail as boolean);
+        if (userCanEmail as boolean) {
+          setOptButtonText('Disable Email Notifications');
+        } else {
+          setOptButtonText('Enable Email Notifications');
+        }
         setEditedProfile(profileData); // Initialize editedProfile with fetched data
       } catch (err) {
         setError('Failed to load profile.');
@@ -59,7 +70,7 @@ const useProfilePage = () => {
     };
 
     fetchProfile();
-  }, [uid, userId]);
+  }, [uid, userId, userCanEmail]);
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
@@ -85,6 +96,18 @@ const useProfilePage = () => {
         setUpdateError('Failed to update profile.');
       }
     }
+  };
+
+  const toggleEmailOptIn = async () => {
+    const newEmailOpted = !(emailOpted as boolean);
+    setEmailOpted(newEmailOpted);
+
+    const updatedProfile = { ...(profile as User), emailsEnabled: newEmailOpted };
+    setProfile(updatedProfile);
+
+    await updateUser(updatedProfile);
+
+    setOptButtonText(newEmailOpted ? 'Disable Email Notifications' : 'Enable Email Notifications');
   };
 
   // TODO THIS CURRENTLY DOES NOT WORK!!! NEED TO CHANGE THE WAY FILES ARE STORED IN FIREBASE
@@ -140,11 +163,14 @@ const useProfilePage = () => {
     userAnswers,
     updateError,
     isEditing,
+    emailOpted,
+    optButtonText,
     toggleEditing,
     handleChange,
     saveProfile,
     handleProfilePictureUpload,
     calculateReputationPercentage,
+    toggleEmailOptIn,
   };
 };
 

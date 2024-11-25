@@ -14,6 +14,7 @@ const user1: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const tag1 = {
@@ -62,6 +63,7 @@ const user2: User = {
   status: 'Not endorsed',
   postNotifications: [{ postNotification: mockNotification, read: false }],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 describe('PUT /postNotification/markAsRead', () => {

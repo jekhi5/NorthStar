@@ -5,6 +5,7 @@ import {
   AnswerResponse,
   Comment,
   CommentResponse,
+  MailOptions,
   OrderType,
   PostNotification,
   PostNotificationResponse,
@@ -575,6 +576,65 @@ export const savePostNotification = async (
     return result;
   } catch (error) {
     return { error: 'Error when saving a postNotification' };
+  }
+};
+
+/**
+ * Set up OATH2 authentication and send an email detailing with the provided email/notification info.
+ * @param mailOptions a collection of details to go into the email (i.e. from, to, subject, text, etc.)
+ */
+const sendEmail = async (mailOptions: MailOptions) => {
+  // When attempting to convert these requires into imports and incorporating them into the project dependencies,
+  // the github checks fail. All functionality worked perfectly fine on local, but the server would fail to start in the github check.
+  // So, we reverted back to this to comply with the checks, even if it's an lint-disable solution.
+  // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
+  const nodemailer = require('nodemailer');
+  // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
+  const { google } = require('googleapis');
+  // This is a constructor, so it should be TitleCase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { OAuth2 } = google.auth;
+  try {
+    if (!mailOptions) {
+      throw new Error('Mail Options provided were invalid.');
+    }
+
+    const createTransporter = async () => {
+      const oauth2Client = new OAuth2(
+        process.env.CLIENT_ID,
+        process.env.CLIENT_SECRET,
+        'https://developers.google.com/oauthplayground',
+      );
+      oauth2Client.setCredentials({
+        refresh_token: process.env.REFRESH_TOKEN,
+      });
+      const accessToken = await new Promise((resolve, reject) => {
+        oauth2Client.getAccessToken((err: unknown, token: unknown) => {
+          if (err) {
+            reject();
+          }
+          resolve(token);
+        });
+      });
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAuth2',
+          user: process.env.EMAIL,
+          accessToken,
+          clientId: process.env.CLIENT_ID,
+          clientSecret: process.env.CLIENT_SECRET,
+          refreshToken: process.env.REFRESH_TOKEN,
+        },
+      });
+      return transporter;
+    };
+
+    const emailTransporter = await createTransporter();
+    const sentmail = await emailTransporter.sendMail(mailOptions);
+    return sentmail;
+  } catch (error) {
+    return { error: `Error when sending email notification: ${(error as Error).message}` };
   }
 };
 
