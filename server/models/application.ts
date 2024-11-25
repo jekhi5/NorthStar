@@ -593,7 +593,7 @@ export const postNotifications = async (
   associatedPostId?: string,
   upvoteTotal?: number,
   tags?: Tag[],
-): Promise<PostNotificationResponse[]> => {
+): Promise<{ postNotification: PostNotificationResponse; forUserUid?: string }[]> => {
   try {
     const question: Question | null = await QuestionModel.findOne({ _id: qid }).populate({
       path: 'askedBy',
@@ -680,14 +680,17 @@ export const postNotifications = async (
         );
 
         if (updatedUser) {
-          return [postedNotification];
+          return [{ postNotification: postedNotification }];
         }
 
         throw new Error('Error when updating user with postNotification');
       }
     }
 
-    const postedNotifications: PostNotificationResponse[] = [];
+    const postedNotifications: {
+      postNotification: PostNotificationResponse;
+      forUserUid?: string;
+    }[] = [];
 
     await Promise.all(
       question.subscribers.map(async subscriberId => {
@@ -758,8 +761,13 @@ export const postNotifications = async (
             { new: true },
           );
 
+          const subscriberUser = await UserModel.findOne({ _id: subscriberId });
+
           if (updatedUser) {
-            postedNotifications.push(postedNotification);
+            postedNotifications.push({
+              postNotification: postedNotification,
+              ...(subscriberUser?.uid && { forUserUid: subscriberUser.uid }),
+            });
           }
         }
       }),
@@ -768,9 +776,9 @@ export const postNotifications = async (
     return postedNotifications;
   } catch (error) {
     if (error instanceof Error) {
-      return [{ error: `Error when posting notification: ${error.message}` }];
+      return [{ postNotification: { error: `Error when posting notification: ${error.message}` } }];
     }
-    return [{ error: 'Error when posting notification' }];
+    return [{ postNotification: { error: 'Error when posting notification' } }];
   }
 };
 
@@ -1020,7 +1028,8 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
       throw new Error('Question not found');
     }
 
-    let newNotifications: PostNotificationResponse[] = [];
+    let newNotifications: { postNotification: PostNotificationResponse; forUserUid?: string }[] =
+      [];
 
     // First upvote notification is sent on the first upvote
     if (question.upVotes.length === 1) {
@@ -1086,13 +1095,14 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
       newNotifications === undefined ||
       newNotifications.length !== 1 ||
       !newNotifications[0] ||
-      'error' in newNotifications[0]
+      newNotifications[0].postNotification === undefined ||
+      'error' in newNotifications[0].postNotification
     ) {
       throw new Error('Error when posting notification');
     }
 
     // There should only be one upvote notification
-    return newNotifications[0];
+    return newNotifications[0].postNotification;
   } catch (error) {
     if (error instanceof Error) {
       return { error: `Error when posting notification: ${error.message}` };

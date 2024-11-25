@@ -386,6 +386,7 @@ export interface AnswerUpdatePayload {
 export interface PostNotificationUpdatePayload {
   notification?: PostNotification;
   type: 'markRead' | 'newNotification';
+  forUserUid?: string;
 }
 
 /**

@@ -251,7 +251,10 @@ const questionController = (socket: FakeSOSocket) => {
 
       if (populatedQuestion._id) {
         try {
-          const newNotifications: PostNotificationResponse[] = await postNotifications(
+          const newNotifications: {
+            postNotification: PostNotificationResponse;
+            forUserUid?: string;
+          }[] = await postNotifications(
             populatedQuestion._id?.toString(),
             'questionPostedWithTag',
             askedBy,
@@ -261,10 +264,15 @@ const questionController = (socket: FakeSOSocket) => {
           );
 
           newNotifications.forEach(newNotification => {
-            if (newNotification && !('error' in newNotification)) {
+            if (
+              newNotification &&
+              newNotification.postNotification &&
+              !('error' in newNotification.postNotification)
+            ) {
               socket.emit('postNotificationUpdate', {
-                notification: newNotification,
+                notification: newNotification.postNotification,
                 type: 'newNotification',
+                ...(newNotification.forUserUid && { forUserUid: newNotification.forUserUid }),
               });
             }
           });

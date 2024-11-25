@@ -83,7 +83,10 @@ const answerController = (socket: FakeSOSocket) => {
       }
 
       if (populatedAns._id) {
-        const newNotifications: PostNotificationResponse[] = await postNotifications(
+        const newNotifications: {
+          postNotification: PostNotificationResponse;
+          forUserUid?: string;
+        }[] = await postNotifications(
           qid,
           'questionAnswered',
           ansInfo.ansBy,
@@ -91,9 +94,9 @@ const answerController = (socket: FakeSOSocket) => {
         );
 
         newNotifications.forEach(newNotification => {
-          if (newNotification && !('error' in newNotification)) {
+          if (newNotification.postNotification && !('error' in newNotification.postNotification)) {
             socket.emit('postNotificationUpdate', {
-              notification: newNotification,
+              notification: newNotification.postNotification,
               type: 'newNotification',
             });
           }
