@@ -108,7 +108,7 @@ describe('POST /addComment', () => {
       subscribers: [],
     });
 
-    postNotificationsSpy.mockResolvedValueOnce(mockNotification);
+    postNotificationsSpy.mockResolvedValueOnce([]);
 
     const response = await supertest(app).post('/comment/addComment').send(mockReqBody);
 
@@ -442,7 +442,9 @@ describe('POST /addComment', () => {
       downVotes: [],
     };
 
-    postNotificationsSpy.mockResolvedValueOnce({ error: 'Error when posting notifications' });
+    postNotificationsSpy.mockResolvedValueOnce([
+      { postNotification: { error: 'Error when posting notifications' }, forUserUid: null },
+    ]);
 
     saveCommentSpy.mockResolvedValueOnce(mockComment);
 
@@ -511,7 +513,9 @@ describe('POST /addComment', () => {
       downVotes: [],
     };
 
-    postNotificationsSpy.mockResolvedValueOnce({ error: 'Error when posting notifications' });
+    postNotificationsSpy.mockResolvedValueOnce([
+      { postNotification: { error: 'Error when posting notifications' }, forUserUid: null },
+    ]);
 
     saveCommentSpy.mockResolvedValueOnce(mockComment);
 

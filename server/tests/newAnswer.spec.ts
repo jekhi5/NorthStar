@@ -57,16 +57,7 @@ describe('POST /addAnswer', () => {
       comments: [],
     };
 
-    const mockNotification: PostNotification = {
-      _id: new ObjectId(),
-      title: 'Mock Notification',
-      text: 'This is a mock notification',
-      notificationType: 'questionAnswered',
-      postId: mockAnswer._id,
-      fromUser: user1,
-    };
-
-    postNotificationSpy.mockResolvedValueOnce(mockNotification);
+    postNotificationSpy.mockResolvedValueOnce([]);
 
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
 
@@ -268,7 +259,7 @@ describe('POST /addAnswer', () => {
       fromUser: user1,
     };
 
-    postNotificationSpy.mockResolvedValueOnce(mockNotification);
+    postNotificationSpy.mockResolvedValueOnce([]);
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
     addAnswerToQuestionSpy.mockResolvedValueOnce(mockQuestion);
     popDocSpy.mockResolvedValueOnce({ error: 'Error when populating document' });
@@ -300,7 +291,7 @@ describe('POST /addAnswer', () => {
       comments: [],
     };
 
-    postNotificationSpy.mockResolvedValueOnce({ error: 'Error when posting notifications' });
+    postNotificationSpy.mockResolvedValueOnce([]);
 
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
 

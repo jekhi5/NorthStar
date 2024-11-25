@@ -358,6 +358,7 @@ const questionController = (socket: FakeSOSocket) => {
         upVotes: status.upVotes,
         downVotes: status.downVotes,
         upvoteNotification: status.upvoteNotification,
+        forUserUid: status.forUserUid,
       });
     } catch (err) {
       res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
