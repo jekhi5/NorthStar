@@ -260,9 +260,9 @@ async function userCreate(
 
   // Find the welcome notification in the database
   const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
-    title: 'Welcome to Fake Stack Overflow!',
-    text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-    notificationType: 'questionPostedWithTag',
+    title: 'Welcome to NorthStar!',
+    text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
+    notificationType: 'welcomeNotification',
   });
 
   // If the welcome notification exists, add it to the user's postNotifications prior to creation
