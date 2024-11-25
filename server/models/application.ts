@@ -584,10 +584,14 @@ export const savePostNotification = async (
  * @param mailOptions a collection of details to go into the email (i.e. from, to, subject, text, etc.)
  */
 const sendEmail = async (mailOptions: MailOptions) => {
+  // When attempting to convert these requires into imports and incorporating them into the project dependencies,
+  // the github checks fail. All functionality worked perfectly fine on local, but the server would fail to start in the github check.
+  // So, we reverted back to this to comply with the checks, even if it's an lint-disable solution.
   // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
   const nodemailer = require('nodemailer');
   // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
   const { google } = require('googleapis');
+  // This is a constructor, so it should be TitleCase
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { OAuth2 } = google.auth;
   try {
