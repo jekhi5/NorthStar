@@ -47,6 +47,7 @@
     "@eslint/js": "^8.57.0",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^22.9.0",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
