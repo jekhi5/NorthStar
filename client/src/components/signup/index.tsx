@@ -5,6 +5,9 @@ import starImage from '../../images/image.png';
 import googleIcon from '../../images/google.png';
 import githubIcon from '../../images/github.png';
 
+/**
+ * Sign Up Component contains a form for Firebase email/password authentication.
+ */
 const SignUp = ({
   showLogIn,
   setShowLogIn,
