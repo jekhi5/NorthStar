@@ -21,6 +21,7 @@ const SignUp = ({
     handleInputChange,
     error,
     username,
+    handleGoogleSignUp,
   } = useSignUp();
 
   return (
@@ -102,6 +103,7 @@ const SignUp = ({
           </button>
         </div>
       </form>
+      <button onClick={handleGoogleSignUp}>Sign Up With Google</button>
       {error && (
         <p className='error-text' style={{ textAlign: 'center', marginLeft: '15px' }}>
           {error}
