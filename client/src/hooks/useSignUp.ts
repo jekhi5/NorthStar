@@ -177,6 +177,7 @@ const useSignUp = () => {
           status: 'Not endorsed',
           postNotifications: [],
           reputation: 0,
+          emailsEnabled: false,
         };
 
         // Check if email is available (it should be, but better to be safe)
