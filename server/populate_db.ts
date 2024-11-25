@@ -204,21 +204,30 @@ async function tagCreate(name: string, description: string, subscribers: User[])
   return await TagModel.create(tag);
 }
 
+/**
+ * Creates a new PostNotification document in the database.
+ * @param title The title of the post notification
+ * @param text The text of the post notification
+ * @param notificationType The type of the post notification
+ * @param postId The id of the associated post
+ * @param fromUser The user who triggered the post notification
+ * @returns
+ */
 async function postNotificationCreate(
   title: string,
   text: string,
   notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag',
-  postId: ObjectId,
-  fromUser: User,
+  postId?: ObjectId,
+  fromUser?: User,
 ): Promise<PostNotification> {
-  if (title === '' || text === '' || fromUser.uid === '')
+  if (title === '' || text === '' || fromUser?.uid === '')
     throw new Error('Invalid PostNotification Format');
   const postNotification: PostNotification = {
     title,
     text,
     notificationType,
-    postId,
-    fromUser,
+    ...(postId && { postId }),
+    ...(fromUser && { fromUser }),
   };
   return await PostNotificationModel.create(postNotification);
 }
@@ -347,6 +356,8 @@ async function questionCreate(
   views: string[],
   comments: Comment[],
   subscribers: User[],
+  upVotes: string[] = [],
+  downVotes: string[] = [],
 ): Promise<Question> {
   if (
     title === '' ||
@@ -370,16 +381,16 @@ async function questionCreate(
     ),
   ];
   const questionDetail: Question = {
-    title: title,
-    text: text,
-    tags: tags,
-    askedBy: askedBy,
-    answers: answers,
-    views: views,
-    askDateTime: askDateTime,
-    upVotes: [],
-    downVotes: [],
-    comments: comments,
+    title,
+    text,
+    tags,
+    askedBy,
+    answers,
+    views,
+    askDateTime,
+    upVotes,
+    downVotes,
+    comments,
     subscribers: subscribersFromTags.includes(askedBy)
       ? [...subscribers, ...subscribersFromTags]
       : [...subscribers, askedBy, ...subscribersFromTags],
@@ -393,45 +404,11 @@ async function questionCreate(
  */
 const populate = async () => {
   try {
-    // Put the code for the welcome notification at the top so that all
-    // subsequent user creations will be populated with the welcome notification
-
-    // Add fake stack overflow team user for welcome notification
-    const fakeStackOverflowTeamUser = await userCreate(
-      'QyOuDOnKEfMX4vlARweFSGrj9ft1', // From Firebase
-      'FakeStackOverflowTeam',
-      'FakeStackOverflowTeam@gmail.com',
-      'Endorsed',
-      [],
-      0,
-    );
-
-    // Add tag for bogus question that is pointed to by the welcome notification
-    const t1 = await tagCreate(T1_NAME, T1_DESC, []);
-
-    // Bogus question posted to the database that is pointed to by the welcome notification
-    const fakeStackOverflowWelcomeQuestion = await questionCreate(
-      'Welcome to Fake Stack Overflow!',
-      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      [t1],
-      [],
-      fakeStackOverflowTeamUser,
-      new Date('1776-04-07T03:30:00'),
-      [],
-      [],
-      [],
-    );
-
-    if (fakeStackOverflowWelcomeQuestion._id === undefined) {
-      throw new Error('Error creating welcome notification; question ID is undefined');
-    }
-
+    // Create the welcome notification so it can be added to users being created
     await postNotificationCreate(
       'Welcome to Fake Stack Overflow!',
       'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
       'questionPostedWithTag',
-      fakeStackOverflowWelcomeQuestion._id,
-      fakeStackOverflowTeamUser,
     );
 
     const u1 = await userCreate(
@@ -716,6 +693,7 @@ const populate = async () => {
       'Chain',
     );
 
+    const t1 = await tagCreate(T1_NAME, T1_DESC, []);
     const t2 = await tagCreate(T2_NAME, T2_DESC, [u1, u2, u3]);
     const t3 = await tagCreate(T3_NAME, T3_DESC, []);
     const t4 = await tagCreate(T4_NAME, T4_DESC, []);
@@ -1219,7 +1197,7 @@ const populate = async () => {
     );
 
     // Adding us as a users
-    await userCreate(
+    const jacob = await userCreate(
       'LSF2vgdlbyVFpDd6KmbBs7Fwa5O2', // From Firebase
       'jekhi5',
       'jacobk513@gmail.com',
@@ -1229,6 +1207,82 @@ const populate = async () => {
       'Jacob',
       'Kline',
       '',
+    );
+
+    await questionCreate(
+      'Question with 0 upvotes',
+      'This question has 0 upvotes',
+      [t1],
+      [],
+      jacob,
+      new Date('2023-01-20T03:00:00'),
+      [],
+      [],
+      [],
+      [],
+      [],
+    );
+
+    await questionCreate(
+      'Question with 4 upvotes',
+      'This question has 4 upvotes',
+      [t1],
+      [],
+      jacob,
+      new Date('2023-01-20T03:00:00'),
+      [],
+      [],
+      [],
+      [u1.uid, u2.uid, u3.uid, u4.uid],
+      [],
+    );
+
+    await questionCreate(
+      'Question with 9 upvotes',
+      'This question has 9 upvotes',
+      [t1],
+      [],
+      jacob,
+      new Date('2023-01-20T03:00:00'),
+      [],
+      [],
+      [],
+      [u1.uid, u2.uid, u3.uid, u4.uid, u5.uid, u6.uid, u7.uid, u8.uid, u9.uid],
+      [],
+    );
+
+    await questionCreate(
+      'Question with 19 upvotes',
+      'This question has 19 upvotes',
+      [t1],
+      [],
+      jacob,
+      new Date('2023-01-20T03:00:00'),
+      [],
+      [],
+      [],
+      [
+        u1.uid,
+        u2.uid,
+        u3.uid,
+        u4.uid,
+        u5.uid,
+        u6.uid,
+        u7.uid,
+        u8.uid,
+        u9.uid,
+        u10.uid,
+        u11.uid,
+        u1.uid,
+        u2.uid,
+        u3.uid,
+        u4.uid,
+        u5.uid,
+        u6.uid,
+        u7.uid,
+        u8.uid,
+      ],
+      [],
     );
 
     await userCreate(

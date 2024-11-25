@@ -630,24 +630,33 @@ describe('application module', () => {
     });
 
     describe('addVoteToQuestion', () => {
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
       test('addVoteToQuestion should upvote a question', async () => {
         const mockQuestion = {
           _id: 'someQuestionId',
+          title: 'Some question',
           upVotes: [],
           downVotes: [],
+          askedBy: user1,
         };
 
         mockingoose(QuestionModel).toReturn(
-          { ...mockQuestion, upVotes: ['testUser'], downVotes: [] },
+          { ...mockQuestion, upVotes: ['testUser1'], downVotes: [] },
           'findOneAndUpdate',
         );
 
-        const result = await addVoteToQuestion('someQuestionId', 'testUser', 'upvote');
+        // The user has already received the upvote notification for reaching 1 upvote
+        jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(user1);
+
+        const result = await addVoteToQuestion('someQuestionId', 'testUser1', 'upvote');
 
         expect(result).toEqual({
           msg: 'Question upvoted successfully',
-          upVotes: ['testUser'],
+          upVotes: ['testUser1'],
           downVotes: [],
+          upvoteNotification: null,
         });
       });
 
@@ -655,20 +664,25 @@ describe('application module', () => {
         const mockQuestion = {
           _id: 'someQuestionId',
           upVotes: [],
-          downVotes: ['testUser'],
+          downVotes: ['testUser1'],
+          askedBy: user1,
         };
 
         mockingoose(QuestionModel).toReturn(
-          { ...mockQuestion, upVotes: ['testUser'], downVotes: [] },
+          { ...mockQuestion, upVotes: ['testUser1'], downVotes: [] },
           'findOneAndUpdate',
         );
 
-        const result = await addVoteToQuestion('someQuestionId', 'testUser', 'upvote');
+        // The user has already received the upvote notification for reaching 1 upvote
+        jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(user1);
+
+        const result = await addVoteToQuestion('someQuestionId', 'testUser1', 'upvote');
 
         expect(result).toEqual({
           msg: 'Question upvoted successfully',
-          upVotes: ['testUser'],
+          upVotes: ['testUser1'],
           downVotes: [],
+          upvoteNotification: null,
         });
       });
 
@@ -690,6 +704,7 @@ describe('application module', () => {
           msg: 'Upvote cancelled successfully',
           upVotes: [],
           downVotes: [],
+          upvoteNotification: null,
         });
       });
 
@@ -714,6 +729,7 @@ describe('application module', () => {
           _id: 'someQuestionId',
           upVotes: [],
           downVotes: [],
+          upvoteNotification: null,
         };
 
         mockingoose(QuestionModel).toReturn(
@@ -727,6 +743,7 @@ describe('application module', () => {
           msg: 'Question downvoted successfully',
           upVotes: [],
           downVotes: ['testUser'],
+          upvoteNotification: null,
         });
       });
 
@@ -748,6 +765,7 @@ describe('application module', () => {
           msg: 'Question downvoted successfully',
           upVotes: [],
           downVotes: ['testUser'],
+          upvoteNotification: null,
         });
       });
 
@@ -769,6 +787,7 @@ describe('application module', () => {
           msg: 'Downvote cancelled successfully',
           upVotes: [],
           downVotes: [],
+          upvoteNotification: null,
         });
       });
 
@@ -1751,9 +1770,9 @@ describe('application module', () => {
         expect(result.title).toEqual(mockPostNotification.title);
         expect(result.text).toEqual(mockPostNotification.text);
         expect(result.notificationType).toEqual(mockPostNotification.notificationType);
-        expect(result.postId.toString()).toEqual(mockPostNotification.postId.toString());
-        expect(result.fromUser._id?.toString()).toEqual(
-          mockPostNotification.fromUser._id?.toString(),
+        expect(result.postId?.toString()).toEqual(mockPostNotification.postId?.toString());
+        expect(result.fromUser?._id?.toString()).toEqual(
+          mockPostNotification.fromUser?._id?.toString(),
         );
       });
 
@@ -1807,19 +1826,26 @@ describe('application module', () => {
         );
         mockingoose(PostNotificationModel).toReturn(mockNotification, 'create');
 
+        if (!mockNotification.postId) {
+          expect(true).toBeFalsy();
+          return;
+        }
+
         const result = (await postNotifications(
           mockQuestion._id.toString(),
-          mockNotification.postId.toString(),
           'questionAnswered',
           user1,
+          mockNotification.postId.toString(),
         )) as PostNotification;
 
         expect(result._id).toBeDefined();
         expect(result.title).toEqual(mockNotification.title);
         expect(result.text).toEqual(mockNotification.text);
         expect(result.notificationType).toEqual(mockNotification.notificationType);
-        expect(result.postId.toString()).toEqual(mockNotification.postId.toString());
-        expect(result.fromUser._id?.toString()).toEqual(mockNotification.fromUser._id?.toString());
+        expect(result.postId?.toString()).toEqual(mockNotification.postId?.toString());
+        expect(result.fromUser?._id?.toString()).toEqual(
+          mockNotification.fromUser?._id?.toString(),
+        );
       });
 
       test('postNotifications should return an error if question is not found', async () => {
@@ -1827,9 +1853,9 @@ describe('application module', () => {
 
         const result = (await postNotifications(
           'nonExistentQuestionId',
-          'somePostId',
           'questionAnswered',
           user1,
+          'somePostId',
         )) as { error: string };
 
         expect(result.error).toEqual(
@@ -1861,9 +1887,9 @@ describe('application module', () => {
 
         const result = (await postNotifications(
           mockQuestion._id.toString(),
-          'somePostId',
           'questionAnswered',
           user1,
+          'somePostId',
         )) as { error: string };
 
         expect(result.error).toEqual(
@@ -1891,9 +1917,9 @@ describe('application module', () => {
 
         const result = (await postNotifications(
           mockQuestion._id.toString(),
-          'somePostId',
           'invalidType' as 'questionAnswered',
           user1,
+          'somePostId',
         )) as { error: string };
 
         expect(result.error).toEqual('Error when posting notification: Invalid notification type');
@@ -1919,9 +1945,9 @@ describe('application module', () => {
 
         const result = (await postNotifications(
           mockQuestion._id.toString(),
-          'somePostId',
           'questionAnswered',
           user1,
+          'somePostId',
         )) as { error: string };
 
         expect(result.error).toEqual(
@@ -1958,19 +1984,26 @@ describe('application module', () => {
         mockingoose(CommentModel).toReturn(com1, 'findOne');
         mockingoose(PostNotificationModel).toReturn(mockNotification, 'create');
 
+        if (!mockNotification.postId) {
+          expect(true).toBeFalsy();
+          return;
+        }
+
         const result = (await postNotifications(
           mockQuestion._id.toString(),
-          mockNotification.postId.toString(),
           'commentAdded',
           user1,
+          mockNotification.postId.toString(),
         )) as PostNotification;
 
         expect(result._id).toBeDefined();
         expect(result.title).toEqual(mockNotification.title);
         expect(result.text).toEqual(mockNotification.text);
         expect(result.notificationType).toEqual(mockNotification.notificationType);
-        expect(result.postId.toString()).toEqual(mockNotification.postId.toString());
-        expect(result.fromUser._id?.toString()).toEqual(mockNotification.fromUser._id?.toString());
+        expect(result.postId?.toString()).toEqual(mockNotification.postId.toString());
+        expect(result.fromUser?._id?.toString()).toEqual(
+          mockNotification.fromUser?._id?.toString(),
+        );
       });
 
       test('postNotifications should return an error if comment is not found for commentAdded', async () => {
@@ -1994,9 +2027,9 @@ describe('application module', () => {
 
         const result = (await postNotifications(
           mockQuestion._id.toString(),
-          'nonExistentCommentId',
           'commentAdded',
           user1,
+          'nonExistentCommentId',
         )) as { error: string };
 
         expect(result.error).toEqual(
@@ -2028,9 +2061,9 @@ describe('application module', () => {
 
         const result = (await postNotifications(
           mockQuestion._id.toString(),
-          'somePostId',
           'commentAdded',
           user1,
+          'somePostId',
         )) as { error: string };
 
         expect(result.error).toEqual(
@@ -2066,19 +2099,26 @@ describe('application module', () => {
         mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
         mockingoose(PostNotificationModel).toReturn(mockNotification, 'create');
 
+        if (!mockNotification.postId) {
+          expect(true).toBeTruthy();
+          return;
+        }
+
         const result = (await postNotifications(
           mockQuestion._id.toString(),
-          mockNotification.postId.toString(),
           'questionPostedWithTag',
           user1,
+          mockNotification.postId.toString(),
         )) as PostNotification;
 
         expect(result._id).toBeDefined();
         expect(result.title).toEqual(mockNotification.title);
         expect(result.text).toEqual(mockNotification.text);
         expect(result.notificationType).toEqual(mockNotification.notificationType);
-        expect(result.postId.toString()).toEqual(mockNotification.postId.toString());
-        expect(result.fromUser._id?.toString()).toEqual(mockNotification.fromUser._id?.toString());
+        expect(result.postId?.toString()).toEqual(mockNotification.postId?.toString());
+        expect(result.fromUser?._id?.toString()).toEqual(
+          mockNotification.fromUser?._id?.toString(),
+        );
       });
 
       test('postNotifications should return an error if question is not found for questionPostedWithTag', async () => {
@@ -2086,9 +2126,9 @@ describe('application module', () => {
 
         const result = (await postNotifications(
           'nonExistentQuestionId',
-          'somePostId',
           'questionPostedWithTag',
           user1,
+          'somePostId',
         )) as { error: string };
 
         expect(result.error).toEqual(
@@ -2119,9 +2159,9 @@ describe('application module', () => {
 
         const result = (await postNotifications(
           mockQuestion._id.toString(),
-          'somePostId',
           'questionPostedWithTag',
           user1,
+          'somePostId',
         )) as { error: string };
 
         expect(result.error).toEqual(

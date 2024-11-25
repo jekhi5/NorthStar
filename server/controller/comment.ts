@@ -107,9 +107,9 @@ const commentController = (socket: FakeSOSocket) => {
         if (commentBy._id) {
           const newNotifications: PostNotificationResponse[] = await postNotifications(
             id,
-            comFromDb._id?.toString(),
             'commentAdded',
             commentBy,
+            comFromDb._id?.toString(),
           );
 
           newNotifications.forEach(newNotification => {

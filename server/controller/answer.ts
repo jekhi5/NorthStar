@@ -85,9 +85,9 @@ const answerController = (socket: FakeSOSocket) => {
       if (populatedAns._id) {
         const newNotifications: PostNotificationResponse[] = await postNotifications(
           qid,
-          populatedAns._id.toString(),
           'questionAnswered',
           ansInfo.ansBy,
+          populatedAns._id.toString(),
         );
 
         newNotifications.forEach(newNotification => {
