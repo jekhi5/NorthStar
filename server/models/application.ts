@@ -1,5 +1,3 @@
-import nodemailer from 'nodemailer';
-import google from 'googleapis';
 import { ObjectId } from 'mongodb';
 import mongoose, { QueryOptions } from 'mongoose';
 import {
@@ -586,7 +584,10 @@ export const savePostNotification = async (
  * @param mailOptions a collection of details to go into the email (i.e. from, to, subject, text, etc.)
  */
 const sendEmail = async (mailOptions: MailOptions) => {
-  // This is a constructor, so it should be TitleCase
+  // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
+  const nodemailer = require('nodemailer');
+  // eslint-disable-next-line import/no-extraneous-dependencies, global-require, @typescript-eslint/no-var-requires
+  const { google } = require('googleapis');
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { OAuth2 } = google.auth;
   try {
