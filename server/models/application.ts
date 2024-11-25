@@ -1024,7 +1024,7 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
       throw new Error('Question not found');
     }
 
-    let newNotifications;
+    let newNotifications: PostNotificationResponse[] = [];
 
     // First upvote notification is sent on the first upvote
     if (question.upVotes.length === 1) {
@@ -1041,10 +1041,6 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
             question._id.toString(),
             1,
           );
-
-          if (!newNotifications || 'error' in newNotifications) {
-            throw new Error('Error when posting notification');
-          }
         }
       }
 
@@ -1062,10 +1058,6 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
           question._id.toString(),
           5,
         );
-
-        if (!newNotifications || 'error' in newNotifications) {
-          throw new Error('Error when posting notification');
-        }
       }
 
       // All subsequent notifications are sent at every 10 upvotes
@@ -1088,20 +1080,23 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
             question._id.toString(),
             upvoteNumber,
           );
-
-          if (!newNotifications || 'error' in newNotifications) {
-            throw new Error('Error when posting notification');
-          }
         }
       }
+    } else {
+      throw new Error('No upvote notification to send');
     }
 
-    if (!newNotifications || 'error' in newNotifications || newNotifications.length !== 1) {
+    if (
+      newNotifications === undefined ||
+      newNotifications.length !== 1 ||
+      !newNotifications[0] ||
+      'error' in newNotifications[0]
+    ) {
       throw new Error('Error when posting notification');
     }
 
     // There should only be one upvote notification
-    return newNotifications[0] as PostNotification;
+    return newNotifications[0];
   } catch (error) {
     if (error instanceof Error) {
       return { error: `Error when posting notification: ${error.message}` };
