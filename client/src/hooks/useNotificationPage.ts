@@ -67,8 +67,6 @@ const useNotificationPage = () => {
               ? [...prevNotifications, { postNotification: notification, read: false }]
               : [{ postNotification: notification, read: false }],
           );
-        } else {
-          setError('Error fetching new notification');
         }
       }
     };

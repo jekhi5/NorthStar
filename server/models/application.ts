@@ -715,19 +715,19 @@ export const postNotifications = async (
           );
 
           const stringListOfTags = tagsThisUserSubscribesTo
-            ?.map((tag, index, array) => {
-              const tagName = `'${tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}'`;
-              if (array.length === 2 && index === 1) {
-                return `and ${tagName}`;
+            ?.map(tag => `'${tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}'`)
+            .reduce((acc, tag, index, array) => {
+              if (index === 0) {
+                return tag;
               }
-
-              if (array.length > 2 && index === array.length - 1) {
-                return `, and ${tagName}`;
+              if (index === array.length - 1 && array.length === 2) {
+                return `${acc} and ${tag}`;
               }
-
-              return tagName;
-            })
-            .join(', ');
+              if (index === array.length - 1 && array.length > 2) {
+                return `${acc}, and ${tag}`;
+              }
+              return `${acc}, ${tag}`;
+            }, '');
 
           const tagsForNotificationTitle = tagsThisUserSubscribesTo
             ? `${tagsThisUserSubscribesTo.length === 1 ? 'the Tag' : 'the Tags'} ${stringListOfTags}, Which`
