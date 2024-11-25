@@ -628,7 +628,7 @@ export const postNotifications = async (
           throw new Error('Could not find answer that was posted');
         }
 
-        notificationToPost.title = `Your question: "${question.title}" has a new answer!`;
+        notificationToPost.title = `"${question.title}" has a new answer!`;
         notificationToPost.text = `${answer.ansBy.username} said: "${answer.text}"`;
         notificationToPost.notificationType = 'questionAnswered';
         notificationToPost.postId = answer._id;
@@ -641,7 +641,7 @@ export const postNotifications = async (
           throw new Error('Could not find comment that was posted');
         }
 
-        notificationToPost.title = 'A Comment Was Added to a Post You Subscribe to!';
+        notificationToPost.title = `A Comment Was Added to the Question "${question.title}"!`;
         notificationToPost.text = `${user.username} said: "${comment.text}"`;
         notificationToPost.notificationType = 'commentAdded';
         notificationToPost.postId = comment._id;
@@ -663,6 +663,28 @@ export const postNotifications = async (
       if (!postedNotification || 'error' in postedNotification) {
         throw new Error('Error when saving a postNotification');
       }
+
+      if (type === 'questionUpvoted') {
+        const updatedUser = await UserModel.findOneAndUpdate(
+          { _id: question.askedBy._id },
+          {
+            $push: {
+              // The type of `postNotifications` is an array of objects with a `postNotification` field and a `read` field.
+              // The `read` field is set to `false` by default by MongoDB, so it isn't included here
+              postNotifications: {
+                postNotification: postedNotification,
+              },
+            },
+          },
+          { new: true },
+        );
+
+        if (updatedUser) {
+          return [postedNotification];
+        }
+
+        throw new Error('Error when updating user with postNotification');
+      }
     }
 
     const postedNotifications: PostNotificationResponse[] = [];
@@ -670,19 +692,7 @@ export const postNotifications = async (
     await Promise.all(
       question.subscribers.map(async subscriberId => {
         // We only send the questionUpvoted question to the asker of the question
-        if (type === 'questionUpvoted') {
-          await UserModel.findOneAndUpdate(
-            { _id: question.askedBy._id },
-            {
-              $push: {
-                postNotifications: {
-                  postNotification: postedNotification,
-                },
-              },
-            },
-            { new: true },
-          );
-        } else if (type === 'questionPostedWithTag') {
+        if (type === 'questionPostedWithTag') {
           if (
             !(
               subscriberId &&
@@ -699,11 +709,17 @@ export const postNotifications = async (
           );
 
           const stringListOfTags = tagsThisUserSubscribesTo
-            ?.map(tag => tag.name.charAt(0).toUpperCase() + tag.name.slice(1))
+            ?.map((tag, index, array) => {
+              const tagName = `'${tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}'`;
+              if (array.length > 1 && index === array.length - 1) {
+                return `and ${tagName}`;
+              }
+              return tagName;
+            })
             .join(', ');
 
           const tagsForNotificationTitle = tagsThisUserSubscribesTo
-            ? `${tagsThisUserSubscribesTo.length === 1 ? 'the tag:' : 'the tags:'} ${stringListOfTags}, Which`
+            ? `${tagsThisUserSubscribesTo.length === 1 ? 'the tag' : 'the tags'} ${stringListOfTags}, Which`
             : 'a Tag That';
 
           notificationToPost.title = `A Question Was Posted With ${tagsForNotificationTitle} You Subscribe to!`;
@@ -993,9 +1009,7 @@ const checkIfUpvoteNotificationExists = (user: User, postId: ObjectId, upvoteNum
       notificationObj.postNotification.text.includes(`${upvoteNumber} upvote`),
   );
 
-const handleUpvoteNotification = async (
-  question: Question,
-): Promise<PostNotificationResponse[]> => {
+const handleUpvoteNotification = async (question: Question): Promise<PostNotificationResponse> => {
   try {
     const user = await UserModel.findOne({ _id: question.askedBy }).populate(
       'postNotifications.postNotification',
@@ -1081,7 +1095,13 @@ const handleUpvoteNotification = async (
         }
       }
     }
-    return newNotifications as PostNotification[];
+
+    if (!newNotifications || 'error' in newNotifications || newNotifications.length !== 1) {
+      throw new Error('Error when posting notification');
+    }
+
+    // There should only be one upvote notification
+    return newNotifications[0] as PostNotification;
   } catch (error) {
     if (error instanceof Error) {
       return { error: `Error when posting notification: ${error.message}` };
