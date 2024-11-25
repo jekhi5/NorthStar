@@ -1,6 +1,9 @@
 import './index.css';
 import { useState } from 'react';
 import starImage from '../../images/image.png';
+import googleIcon from '../../images/google.png';
+import githubIcon from '../../images/github.png';
+
 import useLogin from '../../hooks/useLogin';
 
 /**
@@ -13,6 +16,8 @@ const Login = ({
   showLogIn: boolean;
   setShowLogIn: (showLogIn: boolean) => void;
 }) => {
+  const [isSpinning, setIsSpinning] = useState<boolean>(false);
+  const [isPopping, setIsPopping] = useState(true);
   const {
     email,
     password,
@@ -20,16 +25,19 @@ const Login = ({
     handleInputChange,
     error,
     handleGoogleLogin,
+    handleGithubLogin,
     handlePlanetClick,
     handleAnimationEnd,
     wobble,
   } = useLogin();
-  const [isSpinning, setIsSpinning] = useState(false);
 
   const handleToggle = () => {
     setIsSpinning(true);
-    setTimeout(() => setIsSpinning(false), 500); // Remove class after animation
-    setShowLogIn(!showLogIn);
+    setIsPopping(false);
+    setTimeout(() => {
+      setIsSpinning(false);
+      setShowLogIn(!showLogIn);
+    }, 1000);
   };
 
   return (
@@ -43,7 +51,7 @@ const Login = ({
           onAnimationEnd={handleAnimationEnd}
         />
       </div>
-      <div className='right-content'>
+      <div className={`right-content ${isPopping ? 'popup' : 'popdown'}`}>
         <h2>Welcome to North Star!</h2>
         <h4>Please log in with your email and password.</h4>
         <form onSubmit={handleSubmit}>
@@ -67,17 +75,30 @@ const Login = ({
               id='passwordInput'
             />
           </div>
-          <div className='button-group'>
-            <button type='submit' className='login-button'>
-              Log In
-            </button>
-            <button type='button' onClick={handleToggle} className='login-button'>
-              Sign Up
-            </button>
-          </div>
+          <button type='submit' className='login-button'>
+            Log In
+          </button>
         </form>
-        <button onClick={handleGoogleLogin}>Sign in with Google</button>
-      {error && <p className='error-text'>{error}</p>}
+        <div className='or-section'>
+          <hr className='line' />
+          <span>or</span>
+          <hr className='line' />
+        </div>
+        <div className='icon-login-buttons'>
+          <button onClick={handleGithubLogin} className='icon-button'>
+            <img src={githubIcon} alt='Github' />
+          </button>
+          <button onClick={handleGoogleLogin} className='icon-button'>
+            <img src={googleIcon} alt='Google' />
+          </button>
+        </div>
+        {error && <p className='error-text'>{error}</p>}
+        <span className='inline-span'>
+          <p>Don&apos;t already have an account?</p>
+          <button type='button' onClick={handleToggle} className='login-button'>
+            Sign Up
+          </button>
+        </span>
       </div>
     </div>
   );

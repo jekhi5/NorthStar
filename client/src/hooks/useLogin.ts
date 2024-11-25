@@ -142,6 +142,8 @@ const useLogin = () => {
     }
   };
 
+  const handleGithubLogin = async () => {};
+
   return {
     email,
     password,
@@ -153,6 +155,7 @@ const useLogin = () => {
     handlePlanetClick,
     handleAnimationEnd,
     handleGoogleLogin,
+    handleGithubLogin,
   };
 };
 

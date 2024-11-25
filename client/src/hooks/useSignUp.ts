@@ -31,8 +31,19 @@ const useSignUp = () => {
     passwordConfirmation: '',
   });
   const [error, setError] = useState<string | null>(null);
+  const [wobble, setWobble] = useState<number>(0);
   const { setUser } = useLoginContext();
   const navigate = useNavigate();
+
+  // New function to handle planet click
+  const handlePlanetClick = () => {
+    setWobble(1);
+  };
+
+  // New function to handle animation end
+  const handleAnimationEnd = () => {
+    setWobble(0);
+  };
 
   /**
    * Function to handle the input change event.
@@ -206,6 +217,9 @@ const useSignUp = () => {
     handleInputChange,
     handleSubmit,
     handleGoogleSignUp,
+    wobble,
+    handlePlanetClick,
+    handleAnimationEnd,
     error,
   };
 };

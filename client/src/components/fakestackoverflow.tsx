@@ -15,7 +15,6 @@ import AnswerPage from './main/answerPage';
 import ProfilePage from './main/profilePage';
 import NotificationPage from './main/notificationPage';
 import Chatroom from './main/chatroom';
-import starImage from '../../images/image.png';
 import { getUserByUid } from '../services/userService';
 
 const ProtectedRoute = ({
