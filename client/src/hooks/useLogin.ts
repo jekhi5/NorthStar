@@ -1,6 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, useState, useEffect, useCallback } from 'react';
-import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import {
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from 'firebase/auth';
 import Cookies from 'js-cookie';
 import { auth } from '../firebase'; // Firebase initialization
 import useLoginContext from './useLoginContext';
@@ -19,10 +24,12 @@ const useLogin = () => {
   const [email, setEmail] = useState<string>(''); // Ensure it's initialized as an empty string
   const [password, setPassword] = useState<string>(''); // Same for password
   const [error, setError] = useState<string | null>(null); // Error state can remain string | null
+  const [wobble, setWobble] = useState<number>(0);
   const { setUser } = useLoginContext();
   const navigate = useNavigate();
 
   const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
 
   /**
    * Function to attempt auto login with the provided UID.
@@ -99,6 +106,16 @@ const useLogin = () => {
     }
   };
 
+  // New function to handle planet click
+  const handlePlanetClick = () => {
+    setWobble(1);
+  };
+
+  // New function to handle animation end
+  const handleAnimationEnd = () => {
+    setWobble(0);
+  };
+
   /**
    * Function to handle the Google login event.
    * Authenticates the user with Google and navigates to the home page on success.
@@ -131,6 +148,37 @@ const useLogin = () => {
     }
   };
 
+  /**
+   * Function to handle the GitHub login event.
+   * Authenticates the user with GitHub and navigates to the home page on success.
+   *
+   * @returns error - An error message, if any - else successfully logs in.
+   */
+  const handleGithubLogin = async () => {
+    setError(null);
+
+    try {
+      const userCredential = await signInWithPopup(auth, githubProvider);
+      const { user } = userCredential;
+
+      // Check if user exists in database
+      const dbUser = await getUserByUid(user.uid);
+
+      if (dbUser) {
+        setUser(dbUser);
+        Cookies.set('auth', user.uid, { expires: 3 });
+      } else {
+        throw new Error('User not found in database');
+      }
+
+      navigate('/home');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('GitHub sign-in error:', err);
+      setError("Account not found - if you aren't registered, please sign up!");
+    }
+  };
+
   return {
     email,
     password,
@@ -138,7 +186,11 @@ const useLogin = () => {
     handleSubmit,
     error,
     autoLogin,
+    wobble,
+    handlePlanetClick,
+    handleAnimationEnd,
     handleGoogleLogin,
+    handleGithubLogin,
   };
 };
 
