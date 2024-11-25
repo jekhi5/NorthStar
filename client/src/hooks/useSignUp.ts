@@ -239,7 +239,6 @@ const useSignUp = () => {
         if (existingUser) {
           // User already exists, ask them to log in instead
           setError('User already exists - please log in!');
-          return;
         }
       } catch (err) {
         // User doesn't exist, create a new user in database
@@ -252,6 +251,7 @@ const useSignUp = () => {
           status: 'Not endorsed',
           postNotifications: [],
           reputation: 0,
+          emailsEnabled: false,
         };
 
         // Check if email is available

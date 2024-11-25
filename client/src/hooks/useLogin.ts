@@ -173,6 +173,7 @@ const useLogin = () => {
 
       navigate('/home');
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('GitHub sign-in error:', err);
       setError("Account not found - if you aren't registered, please sign up!");
     }
