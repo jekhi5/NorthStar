@@ -264,6 +264,7 @@ const questionController = (socket: FakeSOSocket) => {
               socket.emit('postNotificationUpdate', {
                 notification: newNotification,
                 type: 'newNotification',
+                forUser: newNotification.forUser,
               });
             }
           });
