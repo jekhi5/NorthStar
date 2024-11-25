@@ -697,13 +697,14 @@ export const postNotifications = async (
             !(
               subscriberId &&
               subscriberId instanceof ObjectId &&
-              user !== undefined &&
+              user &&
               user._id &&
               user._id.toString() !== subscriberId.toString()
             )
           ) {
             throw new Error('Invalid subscriber ID');
           }
+
           const tagsThisUserSubscribesTo: Tag[] | undefined = tags?.filter(({ subscribers }) =>
             subscribers.map(sub => sub._id?.toString()).includes(subscriberId.toString()),
           );
@@ -711,15 +712,20 @@ export const postNotifications = async (
           const stringListOfTags = tagsThisUserSubscribesTo
             ?.map((tag, index, array) => {
               const tagName = `'${tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}'`;
-              if (array.length > 1 && index === array.length - 1) {
+              if (array.length === 2 && index === 1) {
                 return `and ${tagName}`;
               }
+
+              if (array.length > 2 && index === array.length - 1) {
+                return `, and ${tagName}`;
+              }
+
               return tagName;
             })
             .join(', ');
 
           const tagsForNotificationTitle = tagsThisUserSubscribesTo
-            ? `${tagsThisUserSubscribesTo.length === 1 ? 'the tag' : 'the tags'} ${stringListOfTags}, Which`
+            ? `${tagsThisUserSubscribesTo.length === 1 ? 'the Tag' : 'the Tags'} ${stringListOfTags}, Which`
             : 'a Tag That';
 
           notificationToPost.title = `A Question Was Posted With ${tagsForNotificationTitle} You Subscribe to!`;
@@ -730,24 +736,14 @@ export const postNotifications = async (
           // above when we checked to see if it was a valid question
           notificationToPost.postId = question._id as ObjectId;
 
-          const existingNotification: PostNotification | null = await PostNotificationModel.findOne(
-            {
-              title: notificationToPost.title,
-              text: notificationToPost.text,
-              postId: notificationToPost.postId,
-            },
-          );
-
-          postedNotification =
-            existingNotification ??
-            (await savePostNotification(notificationToPost as PostNotification));
+          postedNotification = await savePostNotification(notificationToPost as PostNotification);
 
           if (!postedNotification || 'error' in postedNotification) {
             throw new Error('Error when saving a postNotification');
           }
         }
 
-        if (postedNotification !== undefined) {
+        if (postedNotification) {
           const updatedUser = await UserModel.findOneAndUpdate(
             { _id: subscriberId },
             {
