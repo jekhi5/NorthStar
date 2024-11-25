@@ -99,9 +99,19 @@ body {
   }
 }
 
-.spin-animation {
-  animation: spin 2s linear infinite;
+.spin {
+  animation: spin-animation 0.5s ease-in-out;
 }
+
+@keyframes spin-animation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 
 .container h2 {
   font-size: 2.5rem;
