@@ -19,6 +19,7 @@ const Login = ({
     handleSubmit,
     handleInputChange,
     error,
+    handleGoogleLogin,
     handlePlanetClick,
     handleAnimationEnd,
     wobble,
@@ -75,7 +76,8 @@ const Login = ({
             </button>
           </div>
         </form>
-        {error && <p className='error-text'>{error}</p>}
+        <button onClick={handleGoogleLogin}>Sign in with Google</button>
+      {error && <p className='error-text'>{error}</p>}
       </div>
     </div>
   );

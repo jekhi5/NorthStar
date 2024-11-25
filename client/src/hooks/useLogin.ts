@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, useState, useEffect, useCallback } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import Cookies from 'js-cookie';
 import { auth } from '../firebase'; // Firebase initialization
 import useLoginContext from './useLoginContext';
@@ -22,6 +22,8 @@ const useLogin = () => {
   const [wobble, setWobble] = useState<number>(0);
   const { setUser } = useLoginContext();
   const navigate = useNavigate();
+
+  const googleProvider = new GoogleAuthProvider();
 
   /**
    * Function to attempt auto login with the provided UID.
@@ -108,6 +110,38 @@ const useLogin = () => {
     setWobble(0);
   };
 
+  /**
+   * Function to handle the Google login event.
+   * Authenticates the user with Google and navigates to the home page on success.
+   *
+   * @returns error - An error message, if any - else successfully logs in.
+   */
+  const handleGoogleLogin = async () => {
+    setError(null);
+
+    try {
+      // Firebase authentication with google email and password
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      const { user } = userCredential;
+
+      // Check if user exists in database
+      const dbUser = await getUserByUid(user.uid);
+
+      if (dbUser) {
+        setUser(dbUser); // Set the user context
+        Cookies.set('auth', user.uid, { expires: 3 }); // Set the auth cookie to expire every 3 days
+      } else {
+        throw new Error('User not found in database');
+      }
+
+      navigate('/home');
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('Google sign-in error:', err);
+      setError("Account not found - if you aren't registered, please sign up!");
+    }
+  };
+
   return {
     email,
     password,
@@ -118,6 +152,7 @@ const useLogin = () => {
     wobble,
     handlePlanetClick,
     handleAnimationEnd,
+    handleGoogleLogin,
   };
 };
 
