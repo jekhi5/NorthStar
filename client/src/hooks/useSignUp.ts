@@ -1,6 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, useState } from 'react';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth';
 import Cookies from 'js-cookie';
 import { auth } from '../firebase';
 import useLoginContext from './useLoginContext';
@@ -212,11 +217,69 @@ const useSignUp = () => {
     }
   };
 
+  const handleGithubSignUp = async () => {
+    setError(null);
+    const githubProvider = new GithubAuthProvider();
+    githubProvider.setCustomParameters({ prompt: 'select_account' });
+
+    try {
+      const result = await signInWithPopup(auth, githubProvider);
+      const { user: firebaseUser } = result;
+
+      if (!firebaseUser) {
+        throw new Error('Failed to sign up with GitHub');
+      }
+
+      // Check if the user already exists in your database
+      try {
+        const existingUser = await getUserByUid(firebaseUser.uid);
+
+        if (existingUser) {
+          // User already exists, ask them to log in instead
+          setError('User already exists - please log in!');
+          return;
+        }
+      } catch (err) {
+        // User doesn't exist, create a new user in database
+        const newUser: User = {
+          uid: firebaseUser.uid,
+          firstName: firebaseUser.displayName?.split(' ')[0] || '',
+          lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
+          username: `user_${firebaseUser.uid.slice(0, 8)}`,
+          email: firebaseUser.email || '',
+          status: 'Not endorsed',
+          postNotifications: [],
+          reputation: 0,
+        };
+
+        // Check if email is available
+        const isUserValid = await checkValidUser(newUser.username, newUser.email);
+        if (!isUserValid.available) {
+          throw new Error(isUserValid.message);
+        }
+
+        await addUser(newUser);
+        const dbUser = await getUserByUid(newUser.uid);
+
+        if (dbUser) {
+          setUser(dbUser);
+          Cookies.set('auth', firebaseUser.uid, { expires: 3 });
+          navigate('/home');
+        } else {
+          throw new Error('User not found in database after creation');
+        }
+      }
+    } catch (err) {
+      setError('Failed to sign up with GitHub. Please try again.');
+    }
+  };
+
   return {
     ...formData,
     handleInputChange,
     handleSubmit,
     handleGoogleSignUp,
+    handleGithubSignUp,
     wobble,
     handlePlanetClick,
     handleAnimationEnd,

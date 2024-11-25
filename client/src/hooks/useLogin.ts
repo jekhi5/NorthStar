@@ -1,6 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { ChangeEvent, useState, useEffect, useCallback } from 'react';
-import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import {
+  GithubAuthProvider,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from 'firebase/auth';
 import Cookies from 'js-cookie';
 import { auth } from '../firebase'; // Firebase initialization
 import useLoginContext from './useLoginContext';
@@ -24,6 +29,7 @@ const useLogin = () => {
   const navigate = useNavigate();
 
   const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
 
   /**
    * Function to attempt auto login with the provided UID.
@@ -142,7 +148,35 @@ const useLogin = () => {
     }
   };
 
-  const handleGithubLogin = async () => {};
+  /**
+   * Function to handle the GitHub login event.
+   * Authenticates the user with GitHub and navigates to the home page on success.
+   *
+   * @returns error - An error message, if any - else successfully logs in.
+   */
+  const handleGithubLogin = async () => {
+    setError(null);
+
+    try {
+      const userCredential = await signInWithPopup(auth, githubProvider);
+      const { user } = userCredential;
+
+      // Check if user exists in database
+      const dbUser = await getUserByUid(user.uid);
+
+      if (dbUser) {
+        setUser(dbUser);
+        Cookies.set('auth', user.uid, { expires: 3 });
+      } else {
+        throw new Error('User not found in database');
+      }
+
+      navigate('/home');
+    } catch (err) {
+      console.error('GitHub sign-in error:', err);
+      setError("Account not found - if you aren't registered, please sign up!");
+    }
+  };
 
   return {
     email,

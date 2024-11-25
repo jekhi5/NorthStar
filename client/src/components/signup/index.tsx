@@ -2,10 +2,9 @@ import './index.css';
 import { useState } from 'react';
 import useSignUp from '../../hooks/useSignUp';
 import starImage from '../../images/image.png';
+import googleIcon from '../../images/google.png';
+import githubIcon from '../../images/github.png';
 
-/**
- * Sign Up Component contains a form for Firebase email/password authentication.
- */
 const SignUp = ({
   showLogIn,
   setShowLogIn,
@@ -27,6 +26,7 @@ const SignUp = ({
     handleAnimationEnd,
     wobble,
     handleGoogleSignUp,
+    handleGithubSignUp,
   } = useSignUp();
 
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
@@ -120,10 +120,22 @@ const SignUp = ({
             Sign Up
           </button>
         </form>
-        <button onClick={handleGoogleSignUp}>Sign Up With Google</button>
+        <div className='or-section'>
+          <hr className='line' />
+          <span>or</span>
+          <hr className='line' />
+        </div>
+        <div className='icon-login-buttons'>
+          <button onClick={handleGithubSignUp} className='icon-button'>
+            <img src={githubIcon} alt='Github' />
+          </button>
+          <button onClick={handleGoogleSignUp} className='icon-button'>
+            <img src={googleIcon} alt='Google' />
+          </button>
+        </div>
         {error && <p className='error-text'>{error}</p>}
         <span className='inline-span'>
-          <p>Aready have an account?</p>
+          <p>Already have an account?</p>
           <button type='button' onClick={handleToggle} className='login-button'>
             Log In
           </button>
