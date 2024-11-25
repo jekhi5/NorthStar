@@ -14,6 +14,7 @@ const answer1User: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const answer2User: User = {
@@ -23,6 +24,7 @@ const answer2User: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const answer3User: User = {
@@ -32,6 +34,7 @@ const answer3User: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const answer4User: User = {
@@ -41,6 +44,7 @@ const answer4User: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const question1User: User = {
@@ -50,6 +54,7 @@ const question1User: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const question2User: User = {
@@ -59,6 +64,7 @@ const question2User: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const question3User: User = {
@@ -68,6 +74,7 @@ const question3User: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const tag1: Tag = {

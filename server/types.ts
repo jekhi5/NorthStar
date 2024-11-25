@@ -38,6 +38,7 @@ export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed' | 'mos
  * - profilePicture - The URL of the user's profile picture.
  * - status - The status of the user, either 'Not endorsed' or 'Endorsed'.
  * - postNotifications - An array of post notifications associated with the user.
+ * - emailsEnabled - boolean checking if this user has email notfications enabled.
  **/
 export interface User {
   _id?: ObjectId;
@@ -50,6 +51,7 @@ export interface User {
   status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster';
   postNotifications: { postNotification: PostNotification; read: boolean }[];
   reputation: number;
+  emailsEnabled: boolean;
 }
 
 /**
@@ -232,6 +234,20 @@ export interface Comment {
   commentDateTime: Date;
   upVotes: string[];
   downVotes: string[];
+}
+
+/**
+ * Interface representing a the components that go into an email, which contains:
+ * - from - email that the mail will be sent from.
+ * - to - email that will recieve the mail.
+ * - subject - The subject line of the mail
+ * - html - The content of the mail in html form.
+ */
+export interface MailOptions {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
 }
 
 /**

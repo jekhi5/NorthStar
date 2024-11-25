@@ -27,6 +27,7 @@ const user1: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user2: User = {
@@ -36,6 +37,7 @@ const user2: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user3: User = {
@@ -45,6 +47,7 @@ const user3: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user4: User = {
@@ -54,6 +57,7 @@ const user4: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const tag1 = {
