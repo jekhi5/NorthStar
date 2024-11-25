@@ -99,13 +99,22 @@ const userController = () => {
     try {
       try {
         const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
-          title: 'Welcome to Fake Stack Overflow!',
-          text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
+          title: 'Welcome to NorthStar!',
+          text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
           notificationType: 'welcomeNotification',
         });
 
         if (welcomeNotification) {
           user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
+        } else {
+          const newWelcomeNotification = await PostNotificationModel.create({
+            title: 'Welcome to NorthStar!',
+            text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
+            notificationType: 'welcomeNotification',
+          });
+          if (newWelcomeNotification) {
+            user.postNotifications = [{ postNotification: newWelcomeNotification, read: false }];
+          }
         }
       } catch (error) {
         // We log the errors here, but we do not throw an error as we do not want to block the

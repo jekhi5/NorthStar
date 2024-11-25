@@ -593,7 +593,7 @@ export const postNotifications = async (
   associatedPostId?: string,
   upvoteTotal?: number,
   tags?: Tag[],
-): Promise<{ postNotification: PostNotificationResponse; forUserUid?: string }[]> => {
+): Promise<{ postNotification: PostNotificationResponse; forUserUid: string | null }[]> => {
   try {
     const question: Question | null = await QuestionModel.findOne({ _id: qid }).populate({
       path: 'askedBy',
@@ -665,7 +665,7 @@ export const postNotifications = async (
       }
 
       if (type === 'questionUpvoted') {
-        const updatedUser = await UserModel.findOneAndUpdate(
+        const updatedUser: User | null = await UserModel.findOneAndUpdate(
           { _id: question.askedBy._id },
           {
             $push: {
@@ -680,7 +680,7 @@ export const postNotifications = async (
         );
 
         if (updatedUser) {
-          return [{ postNotification: postedNotification }];
+          return [{ postNotification: postedNotification, forUserUid: updatedUser.uid }];
         }
 
         throw new Error('Error when updating user with postNotification');
@@ -689,7 +689,7 @@ export const postNotifications = async (
 
     const postedNotifications: {
       postNotification: PostNotificationResponse;
-      forUserUid?: string;
+      forUserUid: string;
     }[] = [];
 
     await Promise.all(
@@ -705,7 +705,9 @@ export const postNotifications = async (
               user._id.toString() !== subscriberId.toString()
             )
           ) {
-            throw new Error('Invalid subscriber ID');
+            // Go to next iteration of the loop
+            // Do not error, as this would cause all future notifications to not be sent to users
+            return;
           }
 
           const tagsThisUserSubscribesTo: Tag[] | undefined = tags?.filter(({ subscribers }) =>
@@ -742,12 +744,12 @@ export const postNotifications = async (
           postedNotification = await savePostNotification(notificationToPost as PostNotification);
 
           if (!postedNotification || 'error' in postedNotification) {
-            throw new Error('Error when saving a postNotification');
+            return;
           }
         }
 
         if (postedNotification) {
-          const updatedUser = await UserModel.findOneAndUpdate(
+          const updatedUser: User | null = await UserModel.findOneAndUpdate(
             { _id: subscriberId },
             {
               $push: {
@@ -761,12 +763,10 @@ export const postNotifications = async (
             { new: true },
           );
 
-          const subscriberUser = await UserModel.findOne({ _id: subscriberId });
-
           if (updatedUser) {
             postedNotifications.push({
               postNotification: postedNotification,
-              ...(subscriberUser?.uid && { forUserUid: subscriberUser.uid }),
+              forUserUid: updatedUser.uid,
             });
           }
         }
@@ -776,9 +776,14 @@ export const postNotifications = async (
     return postedNotifications;
   } catch (error) {
     if (error instanceof Error) {
-      return [{ postNotification: { error: `Error when posting notification: ${error.message}` } }];
+      return [
+        {
+          postNotification: { error: `Error when posting notification: ${error.message}` },
+          forUserUid: null,
+        },
+      ];
     }
-    return [{ postNotification: { error: 'Error when posting notification' } }];
+    return [{ postNotification: { error: 'Error when posting notification' }, forUserUid: null }];
   }
 };
 
@@ -1013,7 +1018,9 @@ const checkIfUpvoteNotificationExists = (user: User, postId: ObjectId, upvoteNum
       notificationObj.postNotification.text.includes(`${upvoteNumber} upvote`),
   );
 
-const handleUpvoteNotification = async (question: Question): Promise<PostNotificationResponse> => {
+const handleUpvoteNotification = async (
+  question: Question,
+): Promise<{ postNotification: PostNotificationResponse; forUserUid: string | null }> => {
   try {
     const user = await UserModel.findOne({ _id: question.askedBy }).populate(
       'postNotifications.postNotification',
@@ -1028,8 +1035,10 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
       throw new Error('Question not found');
     }
 
-    let newNotifications: { postNotification: PostNotificationResponse; forUserUid?: string }[] =
-      [];
+    let newNotifications: {
+      postNotification: PostNotificationResponse;
+      forUserUid: string | null;
+    }[] = [];
 
     // First upvote notification is sent on the first upvote
     if (question.upVotes.length === 1) {
@@ -1102,12 +1111,15 @@ const handleUpvoteNotification = async (question: Question): Promise<PostNotific
     }
 
     // There should only be one upvote notification
-    return newNotifications[0].postNotification;
+    return newNotifications[0];
   } catch (error) {
     if (error instanceof Error) {
-      return { error: `Error when posting notification: ${error.message}` };
+      return {
+        postNotification: { error: `Error when posting notification: ${error.message}` },
+        forUserUid: null,
+      };
     }
-    return { error: 'Error when posting notification' };
+    return { postNotification: { error: 'Error when posting notification' }, forUserUid: null };
   }
 };
 
@@ -1130,7 +1142,8 @@ export const addVoteToQuestion = async (
       msg: string;
       upVotes: string[];
       downVotes: string[];
-      upvoteNotification: PostNotification | null;
+      upvoteNotification: PostNotificationResponse | null;
+      forUserUid: string | null;
     }
   | { error: string }
 > => {
@@ -1201,22 +1214,23 @@ export const addVoteToQuestion = async (
         : 'Downvote cancelled successfully';
     }
 
-    let upvoteNotification = null;
+    let upvoteNotification;
 
     // If the user upvoted the question, handle sending an upvote notification to the poster
     if (result.upVotes.includes(uid)) {
-      const handleUpvoteResponse = await handleUpvoteNotification(result);
-
-      if (handleUpvoteResponse && !('error' in handleUpvoteResponse)) {
-        upvoteNotification = handleUpvoteResponse;
-      }
+      upvoteNotification = await handleUpvoteNotification(result);
     }
 
     return {
       msg,
       upVotes: result.upVotes || [],
       downVotes: result.downVotes || [],
-      upvoteNotification,
+      upvoteNotification:
+        upvoteNotification && upvoteNotification.postNotification
+          ? upvoteNotification.postNotification
+          : null,
+      forUserUid:
+        upvoteNotification && upvoteNotification.forUserUid ? upvoteNotification.forUserUid : null,
     };
   } catch (err) {
     return {

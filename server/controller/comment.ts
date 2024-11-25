@@ -107,17 +107,19 @@ const commentController = (socket: FakeSOSocket) => {
         if (commentBy._id) {
           const newNotifications: {
             postNotification: PostNotificationResponse;
-            forUserUid?: string;
+            forUserUid: string | null;
           }[] = await postNotifications(id, 'commentAdded', commentBy, comFromDb._id?.toString());
 
           newNotifications.forEach(newNotification => {
             if (
               newNotification.postNotification &&
-              !('error' in newNotification.postNotification)
+              !('error' in newNotification.postNotification) &&
+              newNotification.forUserUid
             ) {
               socket.emit('postNotificationUpdate', {
                 notification: newNotification.postNotification,
                 type: 'newNotification',
+                forUserUid: newNotification.forUserUid,
               });
             }
           });

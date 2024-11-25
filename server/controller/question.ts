@@ -253,7 +253,7 @@ const questionController = (socket: FakeSOSocket) => {
         try {
           const newNotifications: {
             postNotification: PostNotificationResponse;
-            forUserUid?: string;
+            forUserUid: string | null;
           }[] = await postNotifications(
             populatedQuestion._id?.toString(),
             'questionPostedWithTag',
@@ -267,12 +267,13 @@ const questionController = (socket: FakeSOSocket) => {
             if (
               newNotification &&
               newNotification.postNotification &&
-              !('error' in newNotification.postNotification)
+              !('error' in newNotification.postNotification) &&
+              newNotification.forUserUid
             ) {
               socket.emit('postNotificationUpdate', {
                 notification: newNotification.postNotification,
                 type: 'newNotification',
-                ...(newNotification.forUserUid && { forUserUid: newNotification.forUserUid }),
+                forUserUid: newNotification.forUserUid,
               });
             }
           });
@@ -341,10 +342,15 @@ const questionController = (socket: FakeSOSocket) => {
         type: 'Question',
       });
 
-      if (status.upvoteNotification) {
+      if (
+        status.upvoteNotification &&
+        !('error' in status.upvoteNotification) &&
+        status.forUserUid
+      ) {
         socket.emit('postNotificationUpdate', {
           notification: status.upvoteNotification,
           type: 'newNotification',
+          forUserUid: status.forUserUid,
         });
       }
       res.json({

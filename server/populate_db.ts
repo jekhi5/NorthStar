@@ -216,7 +216,11 @@ async function tagCreate(name: string, description: string, subscribers: User[])
 async function postNotificationCreate(
   title: string,
   text: string,
-  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag',
+  notificationType:
+    | 'questionAnswered'
+    | 'commentAdded'
+    | 'questionPostedWithTag'
+    | 'welcomeNotification',
   postId?: ObjectId,
   fromUser?: User,
 ): Promise<PostNotification> {
@@ -260,9 +264,9 @@ async function userCreate(
 
   // Find the welcome notification in the database
   const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
-    title: 'Welcome to Fake Stack Overflow!',
-    text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-    notificationType: 'questionPostedWithTag',
+    title: 'Welcome to NorthStar!',
+    text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
+    notificationType: 'welcomeNotification',
   });
 
   // If the welcome notification exists, add it to the user's postNotifications prior to creation
@@ -406,9 +410,9 @@ const populate = async () => {
   try {
     // Create the welcome notification so it can be added to users being created
     await postNotificationCreate(
-      'Welcome to Fake Stack Overflow!',
-      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      'questionPostedWithTag',
+      'Welcome to NorthStar!',
+      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
+      'welcomeNotification',
     );
 
     const u1 = await userCreate(
