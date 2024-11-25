@@ -586,13 +586,15 @@ export const savePostNotification = async (
  * @param mailOptions a collection of details to go into the email (i.e. from, to, subject, text, etc.)
  */
 const sendEmail = async (mailOptions: MailOptions) => {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const { OAuth2 } = google.auth;
   try {
     if (!mailOptions) {
       throw new Error('Mail Options provided were invalid.');
     }
 
     const createTransporter = async () => {
-      const oauth2Client = new google.auth.OAuth2(
+      const oauth2Client = new OAuth2(
         process.env.CLIENT_ID,
         process.env.CLIENT_SECRET,
         'https://developers.google.com/oauthplayground',
