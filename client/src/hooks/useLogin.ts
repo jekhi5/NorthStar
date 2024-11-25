@@ -101,7 +101,6 @@ const useLogin = () => {
 
   /**
    * Function to handle the Google login event.
-   *
    * Authenticates the user with Google and navigates to the home page on success.
    *
    * @returns error - An error message, if any - else successfully logs in.
