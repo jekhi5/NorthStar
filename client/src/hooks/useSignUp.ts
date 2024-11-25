@@ -219,6 +219,12 @@ const useSignUp = () => {
     }
   };
 
+  /**
+   * Function to handle the GitHub sign-up event.
+   * Authenticates the user with GitHub and navigates to the home page on success.
+   *
+   * @returns error - An error message, if any - else successfully signs up.
+   */
   const handleGithubSignUp = async () => {
     setError(null);
     const githubProvider = new GithubAuthProvider();
