@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import { ObjectId } from 'mongodb';
 import { app } from '../app';
 import * as util from '../models/application';
-import { PostNotification, User } from '../types';
+import { User } from '../types';
 
 const saveAnswerSpy = jest.spyOn(util, 'saveAnswer');
 const addAnswerToQuestionSpy = jest.spyOn(util, 'addAnswerToQuestion');
