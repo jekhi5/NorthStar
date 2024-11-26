@@ -639,6 +639,28 @@ const sendEmail = async (mailOptions: MailOptions) => {
 };
 
 /**
+ * Handle sending a notification email to a user if they have email notifications enabled.
+ * @param userToSend The user to send the email to (if they have email notifications enabled)
+ * @param notification The notification to send to the user
+ */
+const handleSendEmail = (userToSend: User, notification: PostNotification): void => {
+  if (!userToSend) {
+    return;
+  }
+
+  if (userToSend.emailsEnabled) {
+    const mailOptions = {
+      from: 'northstardotcom.com',
+      to: userToSend.email,
+      subject: `New North Star Notification: ${notification.title}`,
+      html: `<p>New Notification for ${userToSend?.firstName}<p><h1>${notification.title}</h1><p>${notification.text}</p>`,
+    };
+
+    sendEmail(mailOptions);
+  }
+};
+
+/**
  * Populate notifications to all the subscribers to the question with the given ID.
  * @param qid the qid of the question with action taken on it.
  * @param type the kinda of notification, either 'questionAnswered', 'commentAdded', or 'questionPostedWithTag'.
@@ -742,6 +764,7 @@ export const postNotifications = async (
         );
 
         if (updatedUser) {
+          handleSendEmail(updatedUser, postedNotification);
           return [{ postNotification: postedNotification, forUserUid: updatedUser.uid }];
         }
 
@@ -826,6 +849,9 @@ export const postNotifications = async (
           );
 
           if (updatedUser) {
+            if (postedNotification && !('error' in postedNotification)) {
+              handleSendEmail(updatedUser, postedNotification);
+            }
             postedNotifications.push({
               postNotification: postedNotification,
               forUserUid: updatedUser.uid,
