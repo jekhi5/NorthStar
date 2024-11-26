@@ -1,0 +1,67 @@
+name: Run Database Scripts on Server Changes
+
+# `on` the action of `push` (in our case, when a PR merges), when any files have
+# been changed in the /server/models dir, run the jobs in sequence listed below:
+on:
+  push:
+    paths:
+      - 'server/models/**'
+
+# The jobs, just one, called 'run-database-scripts'
+jobs:
+  run-database-scripts:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          # The version of node we use
+          node-version: '22'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Run the script to remove the database
+      - name: Remove the database
+        # Pass the Database URI securely, set up in the repository secrets in settings
+        env:
+          DATABASE_URI: ${{ secrets.DATABASE_URI }}
+        # Stop on errors
+        run: |
+          set -e
+          npx ts-node ./server/remove_db.ts $DATABASE_URI
+
+      # Step 5: Run the script to populate the database
+      - name: Populate the database
+        env:
+          DATABASE_URI: ${{ secrets.DATABASE_URI }}
+        run: |
+          set -e # Stop execution on errors
+          npx ts-node ./server/populate_db.ts $DATABASE_URI
+
+      # Step 6: Always send a success or failure notification
+      - name: Send email on failure
+        # Only runs if any of the previous steps fail
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          # Stored in GitHub Secrets for the repositoryr
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: 'URGENT! Repopulating Database Failure'
+          body: |
+            IMPORTANT: Removing and repopulating the database had a failure on a merge to Main.
+            The remote website will not function without a fix.
+            Please check the logs and resolve the issue.
+          to: jacobk513@gmail.com, ashley921davis@gmail.com, kennethhenneth@gmail.com, gracelyntheobald@gmail.com
+          from: 'NorthStarDotCom@gmail.com'
