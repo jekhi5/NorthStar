@@ -251,19 +251,32 @@ const questionController = (socket: FakeSOSocket) => {
 
       if (populatedQuestion._id) {
         try {
-          const newNotification: PostNotificationResponse = await postNotifications(
+          const newNotifications: {
+            postNotification: PostNotificationResponse;
+            forUserUid: string | null;
+          }[] = await postNotifications(
             populatedQuestion._id?.toString(),
             'questionPostedWithTag',
             askedBy,
             populatedQuestion._id?.toString(),
+            0,
+            processedTags,
           );
 
-          if (newNotification && !('error' in newNotification)) {
-            socket.emit('postNotificationUpdate', {
-              notification: newNotification,
-              type: 'newNotification',
-            });
-          }
+          newNotifications.forEach(newNotification => {
+            if (
+              newNotification &&
+              newNotification.postNotification &&
+              !('error' in newNotification.postNotification) &&
+              newNotification.forUserUid
+            ) {
+              socket.emit('postNotificationUpdate', {
+                notification: newNotification.postNotification,
+                type: 'newNotification',
+                forUserUid: newNotification.forUserUid,
+              });
+            }
+          });
         } catch (error) {
           // We log the errors here, but we do not throw an error as we do not want to block the adding
           // of a question just because the notification failed to post.
@@ -329,10 +342,15 @@ const questionController = (socket: FakeSOSocket) => {
         type: 'Question',
       });
 
-      if (status.upvoteNotification) {
+      if (
+        status.upvoteNotification &&
+        !('error' in status.upvoteNotification) &&
+        status.forUserUid
+      ) {
         socket.emit('postNotificationUpdate', {
           notification: status.upvoteNotification,
           type: 'newNotification',
+          forUserUid: status.forUserUid,
         });
       }
       res.json({
@@ -340,6 +358,7 @@ const questionController = (socket: FakeSOSocket) => {
         upVotes: status.upVotes,
         downVotes: status.downVotes,
         upvoteNotification: status.upvoteNotification,
+        forUserUid: status.forUserUid,
       });
     } catch (err) {
       res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
