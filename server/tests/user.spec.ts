@@ -21,6 +21,7 @@ const user1: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user2: User = {
@@ -31,6 +32,7 @@ const user2: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 describe('GET /getUserByUid/:uid', () => {
