@@ -46,14 +46,14 @@ const ProfilePage = () => {
           </div>
           <p className='profile-username'>Username: {profile.username}</p>
           <p className='profile-email'>Email: {profile.email}</p>
-
-          <button onClick={toggleEditing}>Edit Profile</button>
-          <p></p>
-          <button
-            className={`${emailOpted ? 'emailopt-button-disable' : 'emailopt-button-enable'}`}
-            onClick={toggleEmailOptIn}>
-            {optButtonText}
-          </button>
+          <div className='profile-button-group'>
+            <button onClick={toggleEditing}>Edit Profile</button>
+            <button
+              className={`${emailOpted ? 'emailopt-button-disable' : 'emailopt-button-enable'}`}
+              onClick={toggleEmailOptIn}>
+              {optButtonText}
+            </button>
+          </div>
         </div>
         <div className='profile-details'>
           {isEditing ? (
@@ -63,24 +63,28 @@ const ProfilePage = () => {
                 value={editedProfile?.firstName || ''}
                 onChange={e => handleChange('firstName', e.target.value)}
                 placeholder='First Name'
+                className='profile-edit-input'
               />
               <input
                 type='text'
                 value={editedProfile?.lastName || ''}
                 onChange={e => handleChange('lastName', e.target.value)}
                 placeholder='Last Name'
+                className='profile-edit-input'
               />
               <input
                 type='text'
                 value={editedProfile?.username || ''}
                 onChange={e => handleChange('username', e.target.value)}
                 placeholder='Username'
+                className='profile-edit-input'
               />
               <input
                 type='email'
                 value={editedProfile?.email || ''}
                 onChange={e => handleChange('email', e.target.value)}
                 placeholder='Email'
+                className='profile-edit-input'
               />
               <input
                 type='file'
@@ -91,8 +95,10 @@ const ProfilePage = () => {
                   }
                 }}
               />
-              <button onClick={saveProfile}>Save Changes</button>
-              <button onClick={toggleEditing}>Cancel</button>
+              <div className='edit-profile-buttons'>
+                <button onClick={saveProfile}>Save Changes</button>
+                <button onClick={toggleEditing}>Cancel</button>
+              </div>
               {updateError && <p>{updateError}</p>}
             </div>
           ) : (
@@ -177,43 +183,49 @@ const ProfilePage = () => {
         </div>
         {!isEditing ? (
           <div className='questions-section'>
-            <h2 className='profile-questionsasked'>Questions Asked</h2>
-            <ul className='questions-list'>
-              {userQuestions.length > 0 ? (
-                userQuestions.map((q, index) => (
-                  <li key={index} className='question-item'>
-                    <NavLink
-                      to={`/question/${q._id}`}
-                      id='question_view'
-                      className={({ isActive }) =>
-                        `question_button ${isActive ? 'question_selected' : ''}`
-                      }>
-                      {q.title}
-                    </NavLink>
-                  </li>
-                ))
-              ) : (
-                <p className='no-questions'>No questions yet.</p>
-              )}
-            </ul>
+            <div className='profile-questionsasked-group'>
+              <h2 className='profile-questionsasked'>Questions Asked</h2>
+              <ul className='questions-list'>
+                {userQuestions.length > 0 ? (
+                  userQuestions.map((q, index) => (
+                    <li key={index} className='question-item'>
+                      <NavLink
+                        to={`/question/${q._id}`}
+                        id='question_view'
+                        className={({ isActive }) =>
+                          `question_button ${isActive ? 'question_selected' : ''}`
+                        }>
+                        {q.title}
+                      </NavLink>
+                    </li>
+                  ))
+                ) : (
+                  <p className='no-questions'>No questions yet.</p>
+                )}
+              </ul>
+            </div>
 
-            <h2 className='profile-questionsanswered'>Questions Answered</h2>
-            <ul className='questions-list'>
-              {userAnswers.length > 0 ? (
-                userAnswers.map((a, index) => (
-                  <li key={index} className='question-item'>
-                    <NavLink
-                      to={`/question/${a._id}`}
-                      id='answered_view'
-                      className={({ isActive }) => `answered_button ${isActive ? 'answered' : ''}`}>
-                      {a.title}
-                    </NavLink>
-                  </li>
-                ))
-              ) : (
-                <p className='no-answers'>No answers yet.</p>
-              )}
-            </ul>
+            <div className='profile-questionsanswered-group'>
+              <h2 className='profile-questionsanswered'>Questions Answered</h2>
+              <ul className='questions-list'>
+                {userAnswers.length > 0 ? (
+                  userAnswers.map((a, index) => (
+                    <li key={index} className='question-item'>
+                      <NavLink
+                        to={`/question/${a._id}`}
+                        id='answered_view'
+                        className={({ isActive }) =>
+                          `answered_button ${isActive ? 'answered' : ''}`
+                        }>
+                        {a.title}
+                      </NavLink>
+                    </li>
+                  ))
+                ) : (
+                  <p className='no-answers'>No answers yet.</p>
+                )}
+              </ul>
+            </div>
           </div>
         ) : (
           <p></p>
