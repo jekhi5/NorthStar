@@ -10,7 +10,6 @@ export type FakeSOSocket = Server<ServerToClientEvents>;
  * - title - The title of the PostNotification.
  * - text - The content of the PostNotification.
  * - notificationType - The type of the PostNotification.
- * - postType - The type of the post that the PostNotification is about.
  * - postId - The unique identifier of the post that the PostNotification is about.
  * - fromUser - The user who triggered the PostNotification.
  */

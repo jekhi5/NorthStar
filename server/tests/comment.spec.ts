@@ -69,15 +69,6 @@ describe('POST /addComment', () => {
       downVotes: [],
     };
 
-    const mockNotification: PostNotification = {
-      _id: new ObjectId('65e9b5a995b6c7045a30d823'),
-      title: 'Mock notification',
-      text: 'Mock notification text',
-      notificationType: 'commentAdded',
-      postId: validQid,
-      fromUser: user1,
-    };
-
     saveCommentSpy.mockResolvedValueOnce(mockComment);
 
     addCommentSpy.mockResolvedValueOnce({

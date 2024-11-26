@@ -251,15 +251,6 @@ describe('POST /addAnswer', () => {
       subscribers: [],
     };
 
-    const mockNotification: PostNotification = {
-      _id: new ObjectId(),
-      title: 'Mock Notification',
-      text: 'This is a mock notification',
-      notificationType: 'questionPostedWithTag',
-      postId: mockQuestion._id,
-      fromUser: user1,
-    };
-
     postNotificationSpy.mockResolvedValueOnce([]);
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
     addAnswerToQuestionSpy.mockResolvedValueOnce(mockQuestion);
