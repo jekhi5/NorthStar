@@ -76,7 +76,10 @@ const checkTagInQuestion = (q: Question, taglist: string[]): boolean => {
  */
 const checkKeywordInQuestion = (q: Question, keywordlist: string[]): boolean => {
   for (const w of keywordlist) {
-    if (q.title.includes(w) || q.text.includes(w)) {
+    if (
+      q.title.toLowerCase().includes(w.toLowerCase()) ||
+      q.text.toLowerCase().includes(w.toLowerCase())
+    ) {
       return true;
     }
   }
