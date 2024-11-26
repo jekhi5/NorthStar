@@ -30,7 +30,7 @@ const notificationController = (socket: FakeSOSocket) => {
       if ('error' in updatedUser) {
         throw new Error(updatedUser.error);
       }
-      socket.emit('postNotificationUpdate', { type: 'markRead' });
+      socket.emit('postNotificationUpdate', { type: 'markRead', forUserUid: updatedUser.uid });
       res.sendStatus(200);
     } catch (error) {
       res
