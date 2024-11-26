@@ -12,7 +12,6 @@ const Header = () => {
 
   return (
     <div id='header' className='header'>
-      <div></div>
       <div className='title'>Read It</div>
       <div className='headerNav'>
         <NavLink

@@ -660,20 +660,24 @@ describe('application module', () => {
           msg: 'Question upvoted successfully',
           upVotes: ['testUser1'],
           downVotes: [],
-          upvoteNotification: null,
+          upvoteNotification: {
+            error:
+              'Error when posting notification: user_1.default.findOne(...).populate is not a function',
+          },
+          forUserUid: null,
         });
       });
 
       test('If a downvoter upvotes, add them to upvotes and remove them from downvotes', async () => {
         const mockQuestion = {
           _id: 'someQuestionId',
-          upVotes: [],
+          upVotes: ['testUser2'],
           downVotes: ['testUser1'],
           askedBy: user1,
         };
 
         mockingoose(QuestionModel).toReturn(
-          { ...mockQuestion, upVotes: ['testUser1'], downVotes: [] },
+          { ...mockQuestion, upVotes: ['testUser2', 'testUser1'], downVotes: [] },
           'findOneAndUpdate',
         );
 
@@ -684,9 +688,14 @@ describe('application module', () => {
 
         expect(result).toEqual({
           msg: 'Question upvoted successfully',
-          upVotes: ['testUser1'],
+          upVotes: ['testUser2', 'testUser1'],
           downVotes: [],
-          upvoteNotification: null,
+          // Due to the nature of jest tests, we are unable to test functions that use MongoDB's `populate` function. This is a byproduct of that
+          upvoteNotification: {
+            error:
+              'Error when posting notification: user_1.default.findOne(...).populate is not a function',
+          },
+          forUserUid: null,
         });
       });
 
@@ -709,6 +718,7 @@ describe('application module', () => {
           upVotes: [],
           downVotes: [],
           upvoteNotification: null,
+          forUserUid: null,
         });
       });
 
@@ -748,6 +758,7 @@ describe('application module', () => {
           upVotes: [],
           downVotes: ['testUser'],
           upvoteNotification: null,
+          forUserUid: null,
         });
       });
 
@@ -770,6 +781,7 @@ describe('application module', () => {
           upVotes: [],
           downVotes: ['testUser'],
           upvoteNotification: null,
+          forUserUid: null,
         });
       });
 
@@ -792,6 +804,7 @@ describe('application module', () => {
           upVotes: [],
           downVotes: [],
           upvoteNotification: null,
+          forUserUid: null,
         });
       });
 
@@ -1844,16 +1857,9 @@ describe('application module', () => {
           'questionAnswered',
           user1,
           mockNotification.postId.toString(),
-        )) as PostNotification;
+        )) as [{ postNotification: PostNotification; forUserUid: string }];
 
-        expect(result._id).toBeDefined();
-        expect(result.title).toEqual(mockNotification.title);
-        expect(result.text).toEqual(mockNotification.text);
-        expect(result.notificationType).toEqual(mockNotification.notificationType);
-        expect(result.postId?.toString()).toEqual(mockNotification.postId?.toString());
-        expect(result.fromUser?._id?.toString()).toEqual(
-          mockNotification.fromUser?._id?.toString(),
-        );
+        expect(result.length).toEqual(0);
       });
 
       test('postNotifications should return an error if question is not found', async () => {
@@ -1864,9 +1870,10 @@ describe('application module', () => {
           'questionAnswered',
           user1,
           'somePostId',
-        )) as { error: string };
+        )) as [{ postNotification: { error: string }; forUserUid: null }];
 
-        expect(result.error).toEqual(
+        expect(result.length).toEqual(1);
+        expect(result[0].postNotification.error).toEqual(
           'Error when posting notification: Could not find question that had action taken',
         );
       });
@@ -1898,9 +1905,10 @@ describe('application module', () => {
           'questionAnswered',
           user1,
           'somePostId',
-        )) as { error: string };
+        )) as [{ postNotification: { error: string }; forUserUid: null }];
 
-        expect(result.error).toEqual(
+        expect(result.length).toEqual(1);
+        expect(result[0].postNotification.error).toEqual(
           'Error when posting notification: Error when saving a postNotification',
         );
       });
@@ -1928,9 +1936,12 @@ describe('application module', () => {
           'invalidType' as 'questionAnswered',
           user1,
           'somePostId',
-        )) as { error: string };
+        )) as [{ postNotification: { error: string }; forUserUid: null }];
 
-        expect(result.error).toEqual('Error when posting notification: Invalid notification type');
+        expect(result.length).toEqual(1);
+        expect(result[0].postNotification.error).toEqual(
+          'Error when posting notification: Invalid notification type',
+        );
       });
 
       test('postNotifications should return an error if question cannot be found', async () => {
@@ -1956,9 +1967,10 @@ describe('application module', () => {
           'questionAnswered',
           user1,
           'somePostId',
-        )) as { error: string };
+        )) as [{ postNotification: { error: string }; forUserUid: null }];
 
-        expect(result.error).toEqual(
+        expect(result.length).toEqual(1);
+        expect(result[0].postNotification.error).toEqual(
           'Error when posting notification: Could not find answer that was posted',
         );
       });
@@ -1989,8 +2001,16 @@ describe('application module', () => {
         };
 
         mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
+
         mockingoose(CommentModel).toReturn(com1, 'findOne');
+
         mockingoose(PostNotificationModel).toReturn(mockNotification, 'create');
+
+        jest.spyOn(util, 'savePostNotification').mockResolvedValueOnce(mockNotification);
+
+        mockingoose(UserModel)
+          .toReturn(user3, 'findOneAndUpdate')
+          .toReturn(user2, 'findOneAndUpdate');
 
         if (!mockNotification.postId) {
           expect(true).toBeFalsy();
@@ -2002,14 +2022,36 @@ describe('application module', () => {
           'commentAdded',
           user1,
           mockNotification.postId.toString(),
-        )) as PostNotification;
+        )) as [
+          { postNotification: PostNotification; forUserUid: string },
+          { postNotification: PostNotification; forUserUid: string },
+        ];
 
-        expect(result._id).toBeDefined();
-        expect(result.title).toEqual(mockNotification.title);
-        expect(result.text).toEqual(mockNotification.text);
-        expect(result.notificationType).toEqual(mockNotification.notificationType);
-        expect(result.postId?.toString()).toEqual(mockNotification.postId.toString());
-        expect(result.fromUser?._id?.toString()).toEqual(
+        expect(result.length).toEqual(2);
+
+        expect(result[0].postNotification._id).toBeDefined();
+        expect(result[0].postNotification.title).toEqual(mockNotification.title);
+        expect(result[0].postNotification.text).toEqual(mockNotification.text);
+        expect(result[0].postNotification.notificationType).toEqual(
+          mockNotification.notificationType,
+        );
+        expect(result[0].postNotification.postId?.toString()).toEqual(
+          mockNotification.postId.toString(),
+        );
+        expect(result[0].postNotification.fromUser?._id?.toString()).toEqual(
+          mockNotification.fromUser?._id?.toString(),
+        );
+
+        expect(result[1].postNotification._id).toBeDefined();
+        expect(result[1].postNotification.title).toEqual(mockNotification.title);
+        expect(result[1].postNotification.text).toEqual(mockNotification.text);
+        expect(result[1].postNotification.notificationType).toEqual(
+          mockNotification.notificationType,
+        );
+        expect(result[1].postNotification.postId?.toString()).toEqual(
+          mockNotification.postId.toString(),
+        );
+        expect(result[1].postNotification.fromUser?._id?.toString()).toEqual(
           mockNotification.fromUser?._id?.toString(),
         );
       });
@@ -2038,14 +2080,15 @@ describe('application module', () => {
           'commentAdded',
           user1,
           'nonExistentCommentId',
-        )) as { error: string };
+        )) as [{ postNotification: { error: string }; forUserUid: null }];
 
-        expect(result.error).toEqual(
+        expect(result.length).toEqual(1);
+        expect(result[0].postNotification.error).toEqual(
           'Error when posting notification: Could not find comment that was posted',
         );
       });
 
-      test('postNotifications should return an error if savePostNotification throws an error for commentAdded', async () => {
+      test('postNotifications should return just one error notifications if savePostNotification throws an error for commentAdded', async () => {
         const mockQuestion = {
           _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
           title: 'Quick question about storage on android',
@@ -2072,11 +2115,12 @@ describe('application module', () => {
           'commentAdded',
           user1,
           'somePostId',
-        )) as { error: string };
+        )) as [{ postNotification: { error: string }; forUserUid: null }];
 
-        expect(result.error).toEqual(
-          'Error when posting notification: Error when saving a postNotification',
-        );
+        expect(result.length).toEqual(1);
+        expect(result[0].postNotification).toEqual({
+          error: 'Error when posting notification: Error when saving a postNotification',
+        });
       });
 
       test('postNotifications should return the posted notification for questionPostedWithTag', async () => {
@@ -2095,9 +2139,18 @@ describe('application module', () => {
           subscribers: [user2._id, user3._id],
         };
 
-        const mockNotification: PostNotification = {
+        const mockNotificationTag3: PostNotification = {
           _id: new ObjectId(),
-          title: 'A Question Was Posted With a Tag You Subscribe to!',
+          title: "A Question Was Posted With the Tag 'Android', Which You Subscribe to!",
+          text: `The question: "${mockQuestion.title}" was asked by ${user1.username}`,
+          notificationType: 'questionPostedWithTag',
+          postId: mockQuestion._id,
+          fromUser: user1,
+        };
+
+        const mockNotificationTag2: PostNotification = {
+          _id: new ObjectId(),
+          title: "A Question Was Posted With the Tag 'Javascript', Which You Subscribe to!",
           text: `The question: "${mockQuestion.title}" was asked by ${user1.username}`,
           notificationType: 'questionPostedWithTag',
           postId: mockQuestion._id,
@@ -2105,9 +2158,26 @@ describe('application module', () => {
         };
 
         mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
-        mockingoose(PostNotificationModel).toReturn(mockNotification, 'create');
 
-        if (!mockNotification.postId) {
+        mockingoose(PostNotificationModel)
+          .toReturn(mockNotificationTag3, 'create')
+          .toReturn(mockNotificationTag2, 'create');
+
+        jest
+          .spyOn(util, 'savePostNotification')
+          .mockResolvedValueOnce(mockNotificationTag3)
+          .mockResolvedValueOnce(mockNotificationTag2);
+
+        mockingoose(UserModel)
+          .toReturn(user3, 'findOneAndUpdate')
+          .toReturn(user2, 'findOneAndUpdate');
+
+        if (!mockNotificationTag3.postId) {
+          expect(true).toBeTruthy();
+          return;
+        }
+
+        if (!mockNotificationTag2.postId) {
           expect(true).toBeTruthy();
           return;
         }
@@ -2116,17 +2186,46 @@ describe('application module', () => {
           mockQuestion._id.toString(),
           'questionPostedWithTag',
           user1,
-          mockNotification.postId.toString(),
-        )) as PostNotification;
+          mockQuestion._id.toString(),
+          undefined,
+          [
+            { ...tag3, subscribers: [user3] },
+            { ...tag2, subscribers: [user2] },
+          ],
+        )) as [
+          { postNotification: PostNotification; forUserUid: string },
+          { postNotification: PostNotification; forUserUid: string },
+        ];
 
-        expect(result._id).toBeDefined();
-        expect(result.title).toEqual(mockNotification.title);
-        expect(result.text).toEqual(mockNotification.text);
-        expect(result.notificationType).toEqual(mockNotification.notificationType);
-        expect(result.postId?.toString()).toEqual(mockNotification.postId?.toString());
-        expect(result.fromUser?._id?.toString()).toEqual(
-          mockNotification.fromUser?._id?.toString(),
+        expect(result.length).toEqual(2);
+
+        expect(result[0].postNotification._id).toBeDefined();
+        expect(result[0].postNotification.title).toEqual(mockNotificationTag2.title);
+        expect(result[0].postNotification.text).toEqual(mockNotificationTag2.text);
+        expect(result[0].postNotification.notificationType).toEqual(
+          mockNotificationTag2.notificationType,
         );
+        expect(result[0].postNotification.postId?.toString()).toEqual(
+          mockNotificationTag2.postId.toString(),
+        );
+        expect(result[0].postNotification.fromUser?._id?.toString()).toEqual(
+          mockNotificationTag2.fromUser?._id?.toString(),
+        );
+        expect(result[0].forUserUid).toEqual(user2.uid);
+
+        expect(result[1].postNotification._id).toBeDefined();
+        expect(result[1].postNotification.title).toEqual(mockNotificationTag2.title);
+        expect(result[1].postNotification.text).toEqual(mockNotificationTag2.text);
+        expect(result[1].postNotification.notificationType).toEqual(
+          mockNotificationTag2.notificationType,
+        );
+        expect(result[1].postNotification.postId?.toString()).toEqual(
+          mockNotificationTag2.postId.toString(),
+        );
+        expect(result[1].postNotification.fromUser?._id?.toString()).toEqual(
+          mockNotificationTag2.fromUser?._id?.toString(),
+        );
+        expect(result[1].forUserUid).toEqual(user2.uid);
       });
 
       test('postNotifications should return an error if question is not found for questionPostedWithTag', async () => {
@@ -2137,14 +2236,15 @@ describe('application module', () => {
           'questionPostedWithTag',
           user1,
           'somePostId',
-        )) as { error: string };
+        )) as [{ postNotification: { error: string }; forUserUid: null }];
 
-        expect(result.error).toEqual(
+        expect(result.length).toEqual(1);
+        expect(result[0].postNotification.error).toEqual(
           'Error when posting notification: Could not find question that had action taken',
         );
       });
 
-      test('postNotifications should return an error if savePostNotification throws an error for questionPostedWithTag', async () => {
+      test('should not return any notifications if savePostNotification throws an error for questionPostedWithTag', async () => {
         const mockQuestion = {
           _id: new ObjectId('65e9b58910afe6e94fc6e6dc'),
           title: 'Quick question about storage on android',
@@ -2163,18 +2263,16 @@ describe('application module', () => {
         mockingoose(QuestionModel).toReturn(mockQuestion, 'findOne');
         jest
           .spyOn(util, 'savePostNotification')
-          .mockResolvedValueOnce({ error: 'Error when saving a postNotification' });
+          .mockResolvedValue({ error: 'Error when saving a postNotification' });
 
         const result = (await postNotifications(
           mockQuestion._id.toString(),
           'questionPostedWithTag',
           user1,
           'somePostId',
-        )) as { error: string };
+        )) as [];
 
-        expect(result.error).toEqual(
-          'Error when posting notification: Error when saving a postNotification',
-        );
+        expect(result.length).toEqual(0);
       });
     });
 

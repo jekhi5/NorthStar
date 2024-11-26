@@ -216,7 +216,11 @@ async function tagCreate(name: string, description: string, subscribers: User[])
 async function postNotificationCreate(
   title: string,
   text: string,
-  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag',
+  notificationType:
+    | 'questionAnswered'
+    | 'commentAdded'
+    | 'questionPostedWithTag'
+    | 'welcomeNotification',
   postId?: ObjectId,
   fromUser?: User,
 ): Promise<PostNotification> {
@@ -408,9 +412,9 @@ const populate = async () => {
   try {
     // Create the welcome notification so it can be added to users being created
     await postNotificationCreate(
-      'Welcome to Fake Stack Overflow!',
-      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      'questionPostedWithTag',
+      'Welcome to NorthStar!',
+      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
+      'welcomeNotification',
     );
 
     const u1 = await userCreate(
@@ -1211,6 +1215,20 @@ const populate = async () => {
       [u21, u22],
     );
 
+    // Test user
+    await userCreate(
+      '6kULi0D0G7ZDp1XRn7XnjQZ6Ckk2', // From Firebase
+      'test',
+      'test@gmail.com',
+      'Not endorsed',
+      [],
+      0,
+      false,
+      'test',
+      'test',
+      '',
+    );
+
     // Adding us as a users
     const jacob = await userCreate(
       'LSF2vgdlbyVFpDd6KmbBs7Fwa5O2', // From Firebase
@@ -1323,6 +1341,32 @@ const populate = async () => {
       20,
       false,
       'Kenneth',
+      'Borrero',
+      '',
+    );
+
+    await userCreate(
+      '0vgcq4iw9Xc0x2GcB0Y7xYhgt6C2',
+      'BigKenDog',
+      'kenborrero2@gmail.com',
+      'Not endorsed',
+      [],
+      20,
+      false,
+      'Ken',
+      'Borrero',
+      '',
+    );
+
+    await userCreate(
+      'BQN4AeEXOsV6ocDfR0Z3KyJ7URo2',
+      'KenBobanna',
+      'kennethborrero2@gmail.com',
+      'Not endorsed',
+      [],
+      20,
+      false,
+      'Ken',
       'Borrero',
       '',
     );
