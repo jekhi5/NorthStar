@@ -5,7 +5,7 @@ name: Run Database Scripts on Server Changes
 on:
   push:
     paths:
-      - 'server/models/**'
+      - 'server/models/schema/**'
 
 # The jobs, just one, called 'run-database-scripts'
 jobs:
