@@ -8,13 +8,13 @@ export default function PostNotificationComponent({
 }: {
   title: string;
   text: string;
-  fromUser: User;
+  fromUser?: User;
 }) {
   return (
     <div className='post-notification'>
       <h3>{title}</h3>
       <p>{text}</p>
-      <p className='from-user'>From: {fromUser.username}</p>
+      {fromUser ? <p className='from-user'>From: {fromUser.username}</p> : null}
     </div>
   );
 }

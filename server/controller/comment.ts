@@ -107,9 +107,9 @@ const commentController = (socket: FakeSOSocket) => {
         if (commentBy._id) {
           const newNotification: PostNotificationResponse = await postNotifications(
             id,
-            comFromDb._id?.toString(),
             'commentAdded',
             commentBy,
+            comFromDb._id?.toString(),
           );
 
           if (newNotification && !('error' in newNotification)) {

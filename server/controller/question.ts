@@ -253,9 +253,9 @@ const questionController = (socket: FakeSOSocket) => {
         try {
           const newNotification: PostNotificationResponse = await postNotifications(
             populatedQuestion._id?.toString(),
-            populatedQuestion._id?.toString(),
             'questionPostedWithTag',
             askedBy,
+            populatedQuestion._id?.toString(),
           );
 
           if (newNotification && !('error' in newNotification)) {
@@ -328,7 +328,19 @@ const questionController = (socket: FakeSOSocket) => {
         downVotes: status.downVotes,
         type: 'Question',
       });
-      res.json({ msg: status.msg, upVotes: status.upVotes, downVotes: status.downVotes });
+
+      if (status.upvoteNotification) {
+        socket.emit('postNotificationUpdate', {
+          notification: status.upvoteNotification,
+          type: 'newNotification',
+        });
+      }
+      res.json({
+        msg: status.msg,
+        upVotes: status.upVotes,
+        downVotes: status.downVotes,
+        upvoteNotification: status.upvoteNotification,
+      });
     } catch (err) {
       res.status(500).send(`Error when ${type}ing: ${(err as Error).message}`);
     }

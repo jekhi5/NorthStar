@@ -17,6 +17,7 @@ interface MockResponse {
   msg: string;
   upVotes: string[];
   downVotes: string[];
+  upvoteNotification: PostNotification | null;
 }
 
 const user1: User = {
@@ -832,6 +833,7 @@ describe('POST /upvoteQuestion', () => {
       msg: 'Question upvoted successfully',
       upVotes: [user1.uid],
       downVotes: [],
+      upvoteNotification: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
@@ -852,6 +854,7 @@ describe('POST /upvoteQuestion', () => {
       msg: 'Upvote cancelled successfully',
       upVotes: [],
       downVotes: [],
+      upvoteNotification: null,
     };
 
     await supertest(app).post('/question/upvoteQuestion').send(mockReqBody);
@@ -875,6 +878,7 @@ describe('POST /upvoteQuestion', () => {
       msg: 'Question upvoted successfully',
       upVotes: [user3.uid],
       downVotes: [],
+      upvoteNotification: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
@@ -889,6 +893,7 @@ describe('POST /upvoteQuestion', () => {
       msg: 'Question downvoted successfully',
       downVotes: [user3.uid],
       upVotes: [],
+      upvoteNotification: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
@@ -939,6 +944,7 @@ describe('POST /downvoteQuestion', () => {
       msg: 'Question upvoted successfully',
       downVotes: [user2.uid],
       upVotes: [],
+      upvoteNotification: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
@@ -959,6 +965,7 @@ describe('POST /downvoteQuestion', () => {
       msg: 'Downvote cancelled successfully',
       downVotes: [],
       upVotes: [],
+      upvoteNotification: null,
     };
 
     await supertest(app).post('/question/downvoteQuestion').send(mockReqBody);
@@ -982,6 +989,7 @@ describe('POST /downvoteQuestion', () => {
       msg: 'Question downvoted successfully',
       downVotes: [user2.uid],
       upVotes: [],
+      upvoteNotification: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
@@ -996,6 +1004,7 @@ describe('POST /downvoteQuestion', () => {
       msg: 'Question upvoted successfully',
       downVotes: [],
       upVotes: [user2.uid],
+      upvoteNotification: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
