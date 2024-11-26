@@ -1328,6 +1328,32 @@ const populate = async () => {
     );
 
     await userCreate(
+      '0vgcq4iw9Xc0x2GcB0Y7xYhgt6C2',
+      'BigKenDog',
+      'kenborrero2@gmail.com',
+      'Not endorsed',
+      [],
+      20,
+      false,
+      'Ken',
+      'Borrero',
+      '',
+    );
+
+    await userCreate(
+      'BQN4AeEXOsV6ocDfR0Z3KyJ7URo2',
+      'KenBobanna',
+      'kennethborrero2@gmail.com',
+      'Not endorsed',
+      [],
+      20,
+      false,
+      'Ken',
+      'Borrero',
+      '',
+    );
+
+    await userCreate(
       '1LHJdANB6bXmgh1aDks2o8pWCJ22',
       'grace',
       'gracelyntheobald@gmail.com',
