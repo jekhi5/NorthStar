@@ -221,6 +221,7 @@ async function postNotificationCreate(
     | 'commentAdded'
     | 'questionPostedWithTag'
     | 'welcomeNotification',
+  questionId?: ObjectId,
   postId?: ObjectId,
   fromUser?: User,
 ): Promise<PostNotification> {
@@ -232,6 +233,7 @@ async function postNotificationCreate(
     notificationType,
     ...(postId && { postId }),
     ...(fromUser && { fromUser }),
+    ...(questionId && { questionId }),
   };
   return await PostNotificationModel.create(postNotification);
 }

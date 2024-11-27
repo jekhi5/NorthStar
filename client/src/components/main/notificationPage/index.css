@@ -31,3 +31,7 @@
 .notifications-list {
   list-style-type: ''
 }
+
+.linked-notif {
+  text-decoration: none;
+}

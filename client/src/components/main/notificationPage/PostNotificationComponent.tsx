@@ -6,12 +6,16 @@ export default function PostNotificationComponent({
   title,
   text,
   fromUser,
+  questionId,
 }: {
   title: string;
   text: string;
   fromUser?: User;
+  questionId?: string;
 }) {
-  return (
+  // If the notification is for a post, it will be clickable and redirect to the
+  // question that this post belongs to (or the question itself if it is one)
+  const notificationInfo = (
     <div className='post-notification'>
       <h3>{title}</h3>
       <p>{text}</p>
@@ -21,5 +25,13 @@ export default function PostNotificationComponent({
         </p>
       ) : null}
     </div>
+  );
+
+  return questionId ? (
+    <NavLink to={`/question/${questionId}`} className='linked-notif'>
+      {notificationInfo}
+    </NavLink>
+  ) : (
+    notificationInfo
   );
 }
