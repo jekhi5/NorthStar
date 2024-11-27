@@ -40,7 +40,13 @@ const ProfilePage = () => {
 
   return (
     <div className='profile-page'>
-      <h1 className='profile-title'>Hey there {profile.firstName}!</h1>
+      {isCurrentUser ? (
+        <h1 className='profile-title'>Hey there {profile.firstName}!</h1>
+      ) : (
+        <h1 className='profile-title'>
+          {profile.firstName} {profile.lastName}&apos;s profile
+        </h1>
+      )}
       <div className='profile-container'>
         <div className='profile-left'>
           <img src={profilePic ?? defaultProfilePic} alt='Profile' className='profile-picture' />
