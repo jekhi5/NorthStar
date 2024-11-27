@@ -9,10 +9,12 @@ on:
     paths:
       - 'server/models/schema/**'
 
+  workflow_dispatch:
+
 # The jobs, just one, called 'run-database-scripts'
 jobs:
   run-database-scripts:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Git Checkout
