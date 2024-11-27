@@ -15,32 +15,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository
-      - name: Checkout code
+      - name: Git Checkout
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Set up Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          # The version of node we use
-          node-version: '22'
+          node-version: '20.x'
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
+      - name: Build backend service
+        if: ${{ always() }}
         run: cd server; npm i
 
-      # Step 4: Run the script to remove the database
       - name: Remove the database
-        # Pass the Database URI securely, set up in the repository secrets in settings
         env:
           DATABASE_URI: ${{ secrets.DATABASE_URI }}
-        # Stop on errors
         run: |
           set -e
           npx ts-node ./server/remove_db.ts $DATABASE_URI
 
-      # Step 5: Run the script to populate the database
       - name: Populate the database
         env:
           DATABASE_URI: ${{ secrets.DATABASE_URI }}
