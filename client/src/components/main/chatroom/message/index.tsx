@@ -20,7 +20,7 @@ const MessageComponent = ({ message, currentUser }: MessageProps) => {
 
   return (
     <div className='message'>
-      <NavLink to={`/profile/${message.sentBy?.uid}`} className='user'>
+      <NavLink to={`/profile/${message.sentBy?.username}`} className='user'>
         <span>{isCurrentUser ? `${currentUser.username} (me)` : message.sentBy.username}</span>
       </NavLink>
       : {message.content}

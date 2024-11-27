@@ -6,9 +6,9 @@ import useUserContext from '../../../hooks/useUserContext';
 
 const ProfilePage = () => {
   // Get uid from route to determine if this is the page of the current user
-  const { uid } = useParams<{ uid: string }>();
+  const { username } = useParams<{ username: string }>();
   const { user: currentUser } = useUserContext();
-  const isCurrentUser = uid === currentUser?.uid;
+  const isCurrentUser = username === currentUser?.username;
 
   const {
     profile,
@@ -26,7 +26,7 @@ const ProfilePage = () => {
     handleProfilePictureUpload,
     calculateReputationPercentage,
     toggleEmailOptIn,
-  } = useProfilePage(uid);
+  } = useProfilePage(username);
 
   if (error) {
     return <p>{error}</p>;
