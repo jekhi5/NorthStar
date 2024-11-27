@@ -13,7 +13,8 @@ export default function PostNotificationComponent({
   fromUser?: User;
   questionId?: string;
 }) {
-  // If the notification is for a post, it will be clickable and redirect to the post
+  // If the notification is for a post, it will be clickable and redirect to the
+  // question that this post belongs to (or the question itself if it is one)
   const notificationInfo = (
     <div className='post-notification'>
       <h3>{title}</h3>
