@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import { User } from '../../../types';
 import './PostNotificationComponent.css';
 
@@ -14,7 +15,11 @@ export default function PostNotificationComponent({
     <div className='post-notification'>
       <h3>{title}</h3>
       <p>{text}</p>
-      {fromUser ? <p className='from-user'>From: {fromUser.username}</p> : null}
+      {fromUser ? (
+        <p className='from-user'>
+          From: <NavLink to={`/profile/${fromUser.username}`}>{fromUser.username}</NavLink>
+        </p>
+      ) : null}
     </div>
   );
 }
