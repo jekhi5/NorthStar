@@ -28,7 +28,9 @@ jobs:
 
       # Step 3: Install dependencies
       - name: Install dependencies
-        run: cd server; npm install
+        run: |
+          cd server
+          npm install
 
       # Step 4: Run the script to remove the database
       - name: Remove the database
