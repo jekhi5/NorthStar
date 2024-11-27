@@ -4,6 +4,8 @@ name: Run Database Scripts on Server Changes
 # been changed in the /server/models dir, run the jobs in sequence listed below:
 on:
   push:
+    branches:
+      - main
     paths:
       - 'server/models/schema/**'
 
