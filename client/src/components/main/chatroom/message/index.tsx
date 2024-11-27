@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { Message, User } from '../../../../types';
+import './index.css';
 
 /**
  * Parameters for Message component, which takes in the message and user information.

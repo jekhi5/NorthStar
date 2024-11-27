@@ -53,14 +53,17 @@ const ProfilePage = () => {
           <p className='profile-username'>Username: {profile.username}</p>
           <p className='profile-email'>Email: {profile.email}</p>
 
-          {/* Only allow profile edits only if this is the current user's profile */}
-          {isCurrentUser && <button onClick={toggleEditing}>Edit Profile</button>}
-          <p></p>
-          <button
-            className={`${emailOpted ? 'emailopt-button-disable' : 'emailopt-button-enable'}`}
-            onClick={toggleEmailOptIn}>
-            {optButtonText}
-          </button>
+          {/* Only allow edits and email opt in if this is the current user's profile */}
+          {isCurrentUser && (
+            <>
+              <button onClick={toggleEditing}>Edit Profile</button>
+              <button
+                className={`${emailOpted ? 'emailopt-button-disable' : 'emailopt-button-enable'}`}
+                onClick={toggleEmailOptIn}>
+                {optButtonText}
+              </button>
+            </>
+          )}
         </div>
         <div className='profile-details'>
           {isEditing ? (
