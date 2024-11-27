@@ -23,6 +23,7 @@ export interface PostNotification {
     | 'welcomeNotification';
   postId?: string;
   fromUser?: User;
+  questionId?: string;
 }
 
 /**
