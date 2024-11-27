@@ -20,7 +20,7 @@ const MessageComponent = ({ message, currentUser }: MessageProps) => {
   return (
     <div className='message'>
       <NavLink to={`/profile/${message.sentBy?.uid}`} className='user'>
-        {isCurrentUser ? `${currentUser.username} (me)` : message.sentBy.username}
+        <span>{isCurrentUser ? `${currentUser.username} (me)` : message.sentBy.username}</span>
       </NavLink>
       : {message.content}
       <div className='timestamp'>
