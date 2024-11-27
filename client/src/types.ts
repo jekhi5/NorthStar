@@ -44,6 +44,21 @@ export interface User {
 }
 
 /**
+ * Interface represents the data for a user.
+ *
+ * uid - The unique identifier of the user.
+ * username - The username of the user.
+ * profilePicture - The profile picture of the user.
+ * status - The status of the user.
+ */
+export interface UserData {
+  uid: string;
+  username: string;
+  profilePicture: string;
+  status: string;
+}
+
+/**
  * Enum representing the possible ordering options for questions.
  * and their display names.
  */

@@ -32,6 +32,12 @@ const Header = () => {
           className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
           Chatroom
         </NavLink>
+        <NavLink
+          to='/users'
+          id='menu_users'
+          className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
+          All Users
+        </NavLink>
       </div>
       <input
         id='searchBar'

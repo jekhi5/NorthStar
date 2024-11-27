@@ -1,4 +1,4 @@
-import { User } from '../types';
+import { User, UserData } from '../types';
 import api from './config';
 
 const USER_API_URL = `${process.env.REACT_APP_SERVER_URL}/user`;
@@ -74,4 +74,17 @@ const updateUser = async (user: User): Promise<User> => {
   return res.data;
 };
 
-export { addUser, checkValidUser, getUserByUid, updateUser };
+/**
+ * Function to get tags with the number of associated questions.
+ *
+ * @throws Error if there is an issue fetching tags with the question number.
+ */
+const getUsers = async (): Promise<UserData[]> => {
+  const res = await api.get(`${USER_API_URL}/getUsers`);
+  if (res.status !== 200) {
+    throw new Error('Error when fetching users');
+  }
+  return res.data;
+};
+
+export { addUser, checkValidUser, getUserByUid, updateUser, getUsers };
