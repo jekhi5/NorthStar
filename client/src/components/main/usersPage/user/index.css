@@ -34,7 +34,7 @@
 .user_list {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1rem; /* 16px -> 1rem */
+  gap: 1rem;
 }
 
 .userNode {
@@ -57,18 +57,19 @@
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  margin-right: 0.5rem;
+  margin: auto 0;
 }
 
 .userNode .user-info {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: auto 0;
 }
 
 .userNode .username {
   font-weight: bold;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.01rem;
   text-decoration: none;
   color: inherit;
 }
