@@ -15,9 +15,14 @@ export interface PostNotification {
   _id?: string;
   title: string;
   text: string;
-  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag';
-  postId: string;
-  fromUser: User;
+  notificationType:
+    | 'questionAnswered'
+    | 'commentAdded'
+    | 'questionPostedWithTag'
+    | 'questionUpvoted'
+    | 'welcomeNotification';
+  postId?: string;
+  fromUser?: User;
 }
 
 /**
@@ -213,6 +218,7 @@ export interface SubscriberUpdatePayload {
 export interface PostNotificationUpdatePayload {
   notification?: PostNotification;
   type: 'markRead' | 'newNotification';
+  forUserUid: string;
 }
 
 /**

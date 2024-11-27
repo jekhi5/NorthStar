@@ -9,7 +9,7 @@ export type FakeSOSocket = Server<ServerToClientEvents>;
  * - _id - The unique identifier for the PostNotification. Optional field.
  * - title - The title of the PostNotification.
  * - text - The content of the PostNotification.
- * - postType - The type of the post that the PostNotification is about.
+ * - notificationType - The type of the PostNotification.
  * - postId - The unique identifier of the post that the PostNotification is about.
  * - fromUser - The user who triggered the PostNotification.
  */
@@ -17,9 +17,14 @@ export interface PostNotification {
   _id?: ObjectId;
   title: string;
   text: string;
-  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag';
-  postId: ObjectId;
-  fromUser: User;
+  notificationType:
+    | 'questionAnswered'
+    | 'commentAdded'
+    | 'questionPostedWithTag'
+    | 'questionUpvoted'
+    | 'welcomeNotification';
+  postId?: ObjectId;
+  fromUser?: User;
 }
 
 /**
@@ -396,6 +401,7 @@ export interface AnswerUpdatePayload {
 export interface PostNotificationUpdatePayload {
   notification?: PostNotification;
   type: 'markRead' | 'newNotification';
+  forUserUid: string;
 }
 
 /**

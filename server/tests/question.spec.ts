@@ -17,6 +17,8 @@ interface MockResponse {
   msg: string;
   upVotes: string[];
   downVotes: string[];
+  upvoteNotification: PostNotification | null;
+  forUserUid: string | null;
 }
 
 const user1: User = {
@@ -570,10 +572,19 @@ describe('POST /addQuestion', () => {
       subscribers: [],
     };
 
-    const mockNotification: PostNotification = {
+    const mockNotificationTag1: PostNotification = {
       _id: new ObjectId(),
-      title: 'Mock Notification',
-      text: 'Mock Notification Text',
+      title: "A Question Was Posted With 'Tag1', Which You Subscribe to!",
+      text: 'The question: "Question 4 Title" was asked by User4',
+      notificationType: 'questionPostedWithTag',
+      postId: mockReqBody._id ?? new ObjectId(),
+      fromUser: user4,
+    };
+
+    const mockNotificationTag2: PostNotification = {
+      _id: new ObjectId(),
+      title: "A Question Was Posted With 'Tag2', Which You Subscribe to!",
+      text: 'The question: "Question 4 Title" was asked by User4',
       notificationType: 'questionPostedWithTag',
       postId: mockReqBody._id ?? new ObjectId(),
       fromUser: user4,
@@ -582,7 +593,11 @@ describe('POST /addQuestion', () => {
     processTagsSpy.mockResolvedValueOnce([tag1, tag2]);
     saveQuestionSpy.mockResolvedValueOnce(mockReqBody);
     populateDocumentSpy.mockResolvedValueOnce(mockReqBody);
-    postNotificationsSpy.mockResolvedValueOnce(mockNotification);
+    postNotificationsSpy.mockResolvedValueOnce([
+      { postNotification: mockNotificationTag1, forUserUid: user1.uid },
+      { postNotification: mockNotificationTag1, forUserUid: user3.uid },
+      { postNotification: mockNotificationTag2, forUserUid: user2.uid },
+    ]);
 
     const response = await supertest(app).post('/question/addQuestion').send(mockReqBody);
 
@@ -832,6 +847,8 @@ describe('POST /upvoteQuestion', () => {
       msg: 'Question upvoted successfully',
       upVotes: [user1.uid],
       downVotes: [],
+      upvoteNotification: null,
+      forUserUid: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
@@ -852,6 +869,8 @@ describe('POST /upvoteQuestion', () => {
       msg: 'Upvote cancelled successfully',
       upVotes: [],
       downVotes: [],
+      upvoteNotification: null,
+      forUserUid: null,
     };
 
     await supertest(app).post('/question/upvoteQuestion').send(mockReqBody);
@@ -875,6 +894,8 @@ describe('POST /upvoteQuestion', () => {
       msg: 'Question upvoted successfully',
       upVotes: [user3.uid],
       downVotes: [],
+      upvoteNotification: null,
+      forUserUid: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
@@ -889,6 +910,8 @@ describe('POST /upvoteQuestion', () => {
       msg: 'Question downvoted successfully',
       downVotes: [user3.uid],
       upVotes: [],
+      upvoteNotification: null,
+      forUserUid: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponseWithBothVotes);
@@ -939,6 +962,8 @@ describe('POST /downvoteQuestion', () => {
       msg: 'Question upvoted successfully',
       downVotes: [user2.uid],
       upVotes: [],
+      upvoteNotification: null,
+      forUserUid: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
@@ -959,6 +984,8 @@ describe('POST /downvoteQuestion', () => {
       msg: 'Downvote cancelled successfully',
       downVotes: [],
       upVotes: [],
+      upvoteNotification: null,
+      forUserUid: null,
     };
 
     await supertest(app).post('/question/downvoteQuestion').send(mockReqBody);
@@ -982,6 +1009,8 @@ describe('POST /downvoteQuestion', () => {
       msg: 'Question downvoted successfully',
       downVotes: [user2.uid],
       upVotes: [],
+      upvoteNotification: null,
+      forUserUid: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);
@@ -996,6 +1025,8 @@ describe('POST /downvoteQuestion', () => {
       msg: 'Question upvoted successfully',
       downVotes: [],
       upVotes: [user2.uid],
+      upvoteNotification: null,
+      forUserUid: null,
     };
 
     addVoteToQuestionSpy.mockResolvedValueOnce(mockResponse);

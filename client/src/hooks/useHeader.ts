@@ -60,12 +60,13 @@ const useHeader = () => {
     const handleNotificationUpdate = async ({
       notification,
       type,
+      forUserUid,
     }: PostNotificationUpdatePayload) => {
       // We mark notifications as read immediately after loading the page, but we don't want to
       // visually mark them as read until the user reloads the page, that way the user can see
       // which ones are unread.
       if (type === 'newNotification') {
-        if (notification) {
+        if (notification && forUserUid === uid) {
           setNotifications(prevNotifications =>
             prevNotifications
               ? [...prevNotifications, { postNotification: notification, read: false }]
