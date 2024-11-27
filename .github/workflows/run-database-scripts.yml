@@ -42,3 +42,19 @@ jobs:
         run: |
           set -e # Stop execution on errors
           npx ts-node ./server/populate_db.ts $DATABASE_URI
+
+      - name: Send email on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: 'URGENT! Repopulating Database Failure'
+          body: |
+            IMPORTANT: Removing and repopulating the database had a failure on a merge to Main.
+            The remote website will not function without a fix.
+            Please check the logs and resolve the issue.
+          to: jacobk513@gmail.com, ashley921davis@gmail.com, kennethhenneth@gmail.com, gracelyntheobald@gmail.com
+          from: 'NorthStarDotCom@gmail.com'
