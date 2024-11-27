@@ -1,0 +1,36 @@
+.user_list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.userNode {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.userNode:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.userNode img.profile-picture {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.userNode .username {
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.userNode .question_author_status {
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}

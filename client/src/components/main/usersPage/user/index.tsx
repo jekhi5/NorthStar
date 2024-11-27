@@ -17,16 +17,18 @@ const UserView = ({ userData }: { userData: UserData }) => {
   const profilePic = user.profilePicture === '' ? defaultProfilePic : user.profilePicture;
 
   return (
-    <div className='userNode'>
-      <NavLink to={`/profile/${user.uid}`}>
-        <div className='username'>{user.username}</div>
+    <NavLink to={`/profile/${user.uid}`} className='userLink'>
+      <div className='userNode'>
         <img src={profilePic ?? defaultProfilePic} alt='Profile' className='profile-picture' />
-        <div
-          className={`question_author_status status-${user.status.toLowerCase().replace(' ', '-')}`}>
-          {user.status}
+        <div className='user-info'>
+          <div className='username'>{user.username}</div>
+          <div
+            className={`question_author_status status-${user.status.toLowerCase().replace(' ', '-')}`}>
+            {user.status}
+          </div>
         </div>
-      </NavLink>
-    </div>
+      </div>
+    </NavLink>
   );
 };
 
