@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import { Message, User } from '../../../../types';
 
 /**
@@ -18,9 +19,9 @@ const MessageComponent = ({ message, currentUser }: MessageProps) => {
 
   return (
     <div className='message'>
-      <span className='user'>
+      <NavLink to={`/profile/${message.sentBy?.uid}`} className='user'>
         {isCurrentUser ? `${currentUser.username} (me)` : message.sentBy.username}
-      </span>
+      </NavLink>
       : {message.content}
       <div className='timestamp'>
         {new Date(message.sentDateTime).toLocaleString('en-US', {

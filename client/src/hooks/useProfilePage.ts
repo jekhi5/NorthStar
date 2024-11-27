@@ -23,7 +23,7 @@ import useLoginContext from './useLoginContext';
  * @returns saveProfile - Function to save edited profile.
  * @returns handleProfilePictureUpload - Function to upload profile picture.
  */
-const useProfilePage = () => {
+const useProfilePage = (uid?: string) => {
   const [profile, setProfile] = useState<User | null>(null);
   const [editedProfile, setEditedProfile] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -38,19 +38,19 @@ const useProfilePage = () => {
   // Get user, and subsequently user id
   const { user: UserContext } = useUserContext();
   const { setUser } = useLoginContext();
-  const uid = UserContext?.uid;
+  const profileUid = uid || UserContext?.uid;
   const userId = UserContext?._id;
   const userCanEmail = UserContext?.emailsEnabled;
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!uid) {
+      if (!profileUid) {
         setError('Uid not available.');
         return;
       }
 
       try {
-        const profileData = await getUserByUid(uid);
+        const profileData = await getUserByUid(profileUid);
         setProfile(profileData);
         const qlist = await getQuestionsByAskedByUserId(userId as string);
         setUserQuestions(qlist || []);
@@ -70,7 +70,7 @@ const useProfilePage = () => {
     };
 
     fetchProfile();
-  }, [uid, userId, userCanEmail]);
+  }, [profileUid, userId, userCanEmail]);
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);

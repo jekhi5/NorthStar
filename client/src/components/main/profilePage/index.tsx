@@ -1,9 +1,15 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import useProfilePage from '../../../hooks/useProfilePage';
 import './index.css';
 import defaultProfilePic from '../../../images/default-profile-pic.png';
+import useUserContext from '../../../hooks/useUserContext';
 
 const ProfilePage = () => {
+  // Get uid from route to determine if this is the page of the current user
+  const { uid } = useParams<{ uid: string }>();
+  const { user: currentUser } = useUserContext();
+  const isCurrentUser = uid === currentUser?.uid;
+
   const {
     profile,
     editedProfile,
@@ -20,7 +26,7 @@ const ProfilePage = () => {
     handleProfilePictureUpload,
     calculateReputationPercentage,
     toggleEmailOptIn,
-  } = useProfilePage();
+  } = useProfilePage(uid);
 
   if (error) {
     return <p>{error}</p>;
@@ -47,7 +53,8 @@ const ProfilePage = () => {
           <p className='profile-username'>Username: {profile.username}</p>
           <p className='profile-email'>Email: {profile.email}</p>
 
-          <button onClick={toggleEditing}>Edit Profile</button>
+          {/* Only allow profile edits only if this is the current user's profile */}
+          {isCurrentUser && <button onClick={toggleEditing}>Edit Profile</button>}
           <p></p>
           <button
             className={`${emailOpted ? 'emailopt-button-disable' : 'emailopt-button-enable'}`}
