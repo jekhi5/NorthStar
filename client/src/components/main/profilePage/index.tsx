@@ -43,9 +43,7 @@ const ProfilePage = () => {
       {isCurrentUser ? (
         <h1 className='profile-title'>Hey there {profile.firstName}!</h1>
       ) : (
-        <h1 className='profile-title'>
-          {profile.firstName} {profile.lastName}&apos;s profile
-        </h1>
+        <h1 className='profile-title'>@{profile.username}</h1>
       )}
       <div className='profile-container'>
         <div className='profile-left'>
@@ -56,11 +54,11 @@ const ProfilePage = () => {
           <div className='profile-status'>
             <p>{profile.status}</p>
           </div>
-          <p className='profile-username'>Username: {profile.username}</p>
 
-          {/* Only show email & allow edits & email opt in if this is current user's profile */}
+          {/* Only show info & allow edits & email opt in if this is current user's profile */}
           {isCurrentUser && (
             <>
+              <p className='profile-username'>Username: {profile.username}</p>
               <p className='profile-email'>Email: {profile.email}</p>
               <button onClick={toggleEditing}>Edit Profile</button>
               <button
