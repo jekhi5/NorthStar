@@ -61,6 +61,26 @@ const getUserByUid = async (uid: string): Promise<User | null> => {
 };
 
 /**
+ * Retrieves a user from the database by their username.
+ *
+ * @param username - The unique username of the user.
+ * @throws Error Throws an error if the request fails or the response status is not 200.
+ *
+ * @returns The user object.
+ */
+const getUserByUsername = async (username: string): Promise<User | null> => {
+  const res = await api.get(`${USER_API_URL}/getUserByUsername/${username}`);
+  if (res.status === 404) {
+    throw new Error(`Could not find user ${username}`);
+  }
+  if (res.status === 500) {
+    throw new Error('Error while fetching user');
+  }
+
+  return res.data;
+};
+
+/**
  * Updates an existing user in the database.
  *
  * @param user - The user object containing the updated user details.
@@ -74,4 +94,4 @@ const updateUser = async (user: User): Promise<User> => {
   return res.data;
 };
 
-export { addUser, checkValidUser, getUserByUid, updateUser };
+export { addUser, checkValidUser, getUserByUid, getUserByUsername, updateUser };
