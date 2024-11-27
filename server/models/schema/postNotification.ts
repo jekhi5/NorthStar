@@ -45,6 +45,12 @@ const postNotificationSchema: Schema = new Schema(
       ref: 'User',
       required: false,
     },
+    // Used to store the associated question ID, if present, to hyperlink
+    questionId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Question',
+      required: false,
+    },
   },
   { collection: 'PostNotification' },
 );

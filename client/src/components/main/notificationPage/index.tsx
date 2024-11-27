@@ -34,7 +34,7 @@ const NotificationPage = () => {
                   title={postNotification.title}
                   text={postNotification.text}
                   fromUser={postNotification.fromUser}
-                  postId={postNotification.postId}
+                  questionId={postNotification.questionId}
                 />
               </li>
             ))}
