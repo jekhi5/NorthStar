@@ -3,6 +3,7 @@ import { ChangeEvent, useState, useEffect, useCallback } from 'react';
 import {
   GithubAuthProvider,
   GoogleAuthProvider,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
@@ -30,6 +31,20 @@ const useLogin = () => {
 
   const googleProvider = new GoogleAuthProvider();
   const githubProvider = new GithubAuthProvider();
+
+  /**
+   * Function to handle the forgot password event.
+   */
+  const handleForgotPassword = async () => {
+    setError(null);
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setError('Password reset email sent');
+    } catch (err) {
+      setError('Invalid email');
+    }
+  };
 
   /**
    * Function to attempt auto login with the provided UID.
@@ -185,12 +200,14 @@ const useLogin = () => {
     handleInputChange,
     handleSubmit,
     error,
+    setError,
     autoLogin,
     wobble,
     handlePlanetClick,
     handleAnimationEnd,
     handleGoogleLogin,
     handleGithubLogin,
+    handleForgotPassword,
   };
 };
 

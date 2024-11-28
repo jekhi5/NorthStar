@@ -62,7 +62,7 @@ body {
 }
 
 .left-content {
-  width: 20% !important;
+  width: 50% !important;
   flex: 1;
   display: flex;
   justify-content: center;
@@ -70,27 +70,28 @@ body {
 }
 
 .right-content {
-  width: 80% !important;
+  width: 40% !important;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 3rem;
+  padding: 1rem !important;
   z-index: 2;
   background-color: rgba(60, 30, 90, 0.3);
   backdrop-filter: blur(5px);
   border-radius: 24px;
-  max-width: 500px;
+  max-width: 450px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Floating Object Animation*/
 .spinning-star {
-  width: 750px;
-  height:  750px;
+  width: 500px;
+  height:  500px;
   animation: bounce 3s ease-in-out infinite;
   z-index: 2;
+  position: relative;
   transition: all 0.6s ease-in-out;
   cursor: pointer;
   margin-left: 6vw;
@@ -142,25 +143,25 @@ body {
 
 
 .container h2 {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
   text-align: center;
 }
 
 .container h4 {
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
 .input-text {
-  padding: 1rem;    
-  font-size: 1.2rem;
+  padding: 0.75rem;    
+  font-size: 0.9rem;
   width: 100%;
-  max-width: 400px; 
+  max-width: 300px; 
   border: 2px solid rgba(255,255,255,0.5);
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
 }
 
 .input-text:focus {
@@ -170,52 +171,60 @@ body {
 }
 
 .login-button {
-  padding: 1rem 2rem;
-  font-size: 1.2rem; 
-  border-radius: 8px;
-  width: 100%;
+  padding: 0.5rem !important;
+  font-size: 1rem; 
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
   box-shadow: 0 0 10px rgba(163, 89, 191, 0.5);
   background-color: #a359bf;
   margin: 0;
-  font-size: 18pt;
+  font-size: 12pt !important;
 }
 
 .login-button:hover {
   background-color: #c486d8;
 }
 
+.forgot-button {
+  margin: 0;
+  border: none;
+  background-color: #a359bf;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
 .error-text {
-  font-size: 1.2rem;
-  margin-top: 1rem;
+  font-size: 1rem;
+  margin-top: 0.75rem;
   text-align: center;
 }
 
 .input-group {
   width: 100%;
-  max-width: 400px;
+  max-width: 350px;
 }
 
 form {
   width: 100%;
-  max-width: 400px; 
+  max-width: 350px; 
   display: flex;
   flex-direction: column !important;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .inline-span {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
 .inline-span > p {
   margin: 0;
-  padding-right: 2rem;
+  padding-right: 1.5rem;
   white-space: nowrap;
 }
 
@@ -223,8 +232,8 @@ form {
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 400px;
-  margin: 3.5rem 0 1rem 0;
+  max-width: 300px;
+  margin: 1.5rem 0 ;
 }
 
 .or-section .line {
@@ -236,32 +245,33 @@ form {
 }
 
 .or-section span {
-  padding: 0 1rem;
+  padding: 0 0.75rem;
   color: rgba(255, 255, 255, 0.8);
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
 }
 
 .icon-login-buttons {
   display: flex;
-  gap: 3rem;
+  gap: 1rem;
   justify-content: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 350px;
 }
 
 .icon-button {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  width: 8rem;
-  height: 8rem;
+  /* width: 3.5rem !important; */
+  height: 3.5rem !important;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
   padding: 0;
+  margin: 0;
 }
 
 .icon-button:hover {
@@ -271,9 +281,116 @@ form {
 }
 
 .icon-button img {
-  width: 5rem;
-  height: 5rem;
+  width: 1.5rem;
+  height: 1.5rem;
   object-fit: contain;
   filter: brightness(0) invert(1);
   -webkit-filter: brightness(0) invert(1);
 }
+
+/* Update and add these styles in your CSS file */
+
+@keyframes flyIn {
+  0% {
+    transform: translateX(-100%) translateY(100%);
+    opacity: 0;
+  }
+  10%, 90% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes flyAway {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100%) translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  20%, 80% { opacity: 1; }
+}
+
+@keyframes peekaboo {
+  0%, 100% {
+    transform: translate(-100%, -50%);
+    opacity: 0;
+  }
+  20%, 80% {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+
+@keyframes speechBubble {
+  0%, 100% { 
+    opacity: 0; 
+    transform: translateX(-50%) scale(0.8); 
+  }
+  20%, 80% { 
+    opacity: 1; 
+    transform: translateX(-50%) scale(1); 
+  }
+}
+
+
+.alien-ship-container {
+  position: absolute;
+  top: 40%;  /* Adjusted higher */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  animation: peekaboo 5s ease-in-out;
+}
+
+
+.alien-ship-container.fly-away {
+  animation: flyAway 1s ease-in forwards;
+}
+
+.alien-ship {
+  width: 175px;
+  height: auto;
+}
+
+.speech-bubble {
+  position: absolute;
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px 20px;
+  max-width: 200px;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 
+    0 0 20px rgba(163, 89, 191, 0.8),
+    0 0 30px rgba(163, 89, 191, 0.4),
+    inset 0 0 10px rgba(163, 89, 191, 0.3);
+  animation: speechBubble 5s ease-in-out;
+  text-align: center;
+}
+
+.speech-bubble:after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 20px;
+  border-width: 20px 0 0 20px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+

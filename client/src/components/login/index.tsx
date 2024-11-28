@@ -1,10 +1,12 @@
 import './index.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import starImage from '../../images/image.png';
 import googleIcon from '../../images/google.png';
 import githubIcon from '../../images/github.png';
 
 import useLogin from '../../hooks/useLogin';
+
+import alienShipImage from '../../images/alien-ship.png';
 
 /**
  * Login Component contains a form for Firebase email/password authentication.
@@ -18,16 +20,21 @@ const Login = ({
 }) => {
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const [isPopping, setIsPopping] = useState(true);
+  const [showAlienShip, setShowAlienShip] = useState(false);
+  const [showSpeechBubble, setShowSpeechBubble] = useState(false);
+
   const {
     email,
     password,
     handleSubmit,
     handleInputChange,
     error,
+    setError,
     handleGoogleLogin,
     handleGithubLogin,
     handlePlanetClick,
     handleAnimationEnd,
+    handleForgotPassword,
     wobble,
   } = useLogin();
 
@@ -40,9 +47,28 @@ const Login = ({
     }, 1000);
   };
 
+  useEffect(() => {
+    if (error) {
+      setShowAlienShip(true);
+      const timer = setTimeout(() => {
+        setShowAlienShip(false);
+        setError('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   return (
     <div className='container'>
       <div className='left-content'>
+        {showAlienShip && (
+          <div className='alien-ship-container'>
+            <img src={alienShipImage} alt='Alien Spaceship' className='alien-ship' />
+            <div className='speech-bubble'>
+              <p>{error}</p>
+            </div>
+          </div>
+        )}
         <img
           src={starImage}
           alt='Planet'
@@ -78,6 +104,9 @@ const Login = ({
           <button type='submit' className='login-button'>
             Log In
           </button>
+          <button className='forgot-button' onClick={handleForgotPassword}>
+            Forgot Password
+          </button>
         </form>
         <div className='or-section'>
           <hr className='line' />
@@ -92,7 +121,7 @@ const Login = ({
             <img src={googleIcon} alt='Google' />
           </button>
         </div>
-        {error && <p className='error-text'>{error}</p>}
+        {/* {error && <p className='error-text'>{error}</p>} */}
         <span className='inline-span'>
           <p>Don&apos;t already have an account?</p>
           <button type='button' onClick={handleToggle} className='login-button'>
