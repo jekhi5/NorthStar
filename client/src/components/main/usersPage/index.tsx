@@ -3,10 +3,10 @@ import './index.css';
 import UserView from './user';
 
 /**
- * Represents the UserPage component which displays a grid of all users
+ * Represents the UsersPage component which displays a grid of all users
  * and provides functionality to handle user clicks.
  */
-const UserPage = () => {
+const UsersPage = () => {
   const { userList } = useUserPage();
 
   return (
@@ -16,12 +16,10 @@ const UserPage = () => {
         <div className='bold_title'>All Users</div>
       </div>
       <div className='user_list right_padding'>
-        {userList.map((user, index) => (
-          <UserView key={index} userData={user} />
-        ))}
+        {userList.map((user, index) => (user ? <UserView key={index} userData={user} /> : <></>))}
       </div>
     </>
   );
 };
 
-export default UserPage;
+export default UsersPage;
