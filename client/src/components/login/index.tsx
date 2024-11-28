@@ -1,5 +1,5 @@
 import './index.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import starImage from '../../images/image.png';
 import googleIcon from '../../images/google.png';
 import githubIcon from '../../images/github.png';
@@ -20,8 +20,6 @@ const Login = ({
 }) => {
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const [isPopping, setIsPopping] = useState(true);
-  const [showAlienShip, setShowAlienShip] = useState(false);
-  const [showSpeechBubble, setShowSpeechBubble] = useState(false);
 
   const {
     email,
@@ -29,12 +27,12 @@ const Login = ({
     handleSubmit,
     handleInputChange,
     error,
-    setError,
     handleGoogleLogin,
     handleGithubLogin,
     handlePlanetClick,
     handleAnimationEnd,
     handleForgotPassword,
+    showAlienShip,
     wobble,
   } = useLogin();
 
@@ -46,17 +44,6 @@ const Login = ({
       setShowLogIn(!showLogIn);
     }, 1000);
   };
-
-  useEffect(() => {
-    if (error) {
-      setShowAlienShip(true);
-      const timer = setTimeout(() => {
-        setShowAlienShip(false);
-        setError('');
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
 
   return (
     <div className='container'>
@@ -121,7 +108,6 @@ const Login = ({
             <img src={googleIcon} alt='Google' />
           </button>
         </div>
-        {/* {error && <p className='error-text'>{error}</p>} */}
         <span className='inline-span'>
           <p>Don&apos;t already have an account?</p>
           <button type='button' onClick={handleToggle} className='login-button'>

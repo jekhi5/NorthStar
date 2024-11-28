@@ -26,11 +26,24 @@ const useLogin = () => {
   const [password, setPassword] = useState<string>(''); // Same for password
   const [error, setError] = useState<string | null>(null); // Error state can remain string | null
   const [wobble, setWobble] = useState<number>(0);
+  const [showAlienShip, setShowAlienShip] = useState(false);
   const { setUser } = useLoginContext();
   const navigate = useNavigate();
 
   const googleProvider = new GoogleAuthProvider();
   const githubProvider = new GithubAuthProvider();
+
+  useEffect(() => {
+    if (error) {
+      setShowAlienShip(true);
+      const timer = setTimeout(() => {
+        setShowAlienShip(false);
+        setError('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+    return () => {};
+  }, [error]);
 
   /**
    * Function to handle the forgot password event.
@@ -202,6 +215,7 @@ const useLogin = () => {
     error,
     setError,
     autoLogin,
+    showAlienShip,
     wobble,
     handlePlanetClick,
     handleAnimationEnd,

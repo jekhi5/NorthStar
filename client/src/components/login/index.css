@@ -216,15 +216,18 @@ form {
 
 .inline-span {
   display: flex;
+  flex-direction: row !important;
   align-items: center;
   justify-content: center;
   margin-top: 2rem;
   margin-bottom: 1rem;
+
+  min-width: fit-content;
 }
 
 .inline-span > p {
   margin: 0;
-  padding-right: 1.5rem;
+  padding-right: 1.15rem;
   white-space: nowrap;
 }
 
@@ -263,8 +266,7 @@ form {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  /* width: 3.5rem !important; */
-  height: 3.5rem !important;
+  height: 4.5rem !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -281,14 +283,12 @@ form {
 }
 
 .icon-button img {
-  width: 1.5rem;
-  height: 1.5rem;
+  height: 2.5rem;
   object-fit: contain;
   filter: brightness(0) invert(1);
   -webkit-filter: brightness(0) invert(1);
 }
 
-/* Update and add these styles in your CSS file */
 
 @keyframes flyIn {
   0% {
@@ -323,15 +323,14 @@ form {
 
 @keyframes peekaboo {
   0%, 100% {
-    transform: translate(-100%, -50%);
-    opacity: 0;
+    transform: translate(-170%, -50%);
+    opacity: 1;
   }
   20%, 80% {
     transform: translate(-50%, -50%);
     opacity: 1;
   }
 }
-
 
 @keyframes speechBubble {
   0%, 100% { 
@@ -370,7 +369,7 @@ form {
   border-radius: 10px;
   padding: 15px 20px;
   max-width: 200px;
-  top: 120px;
+  top: 130px;
   left: 50%;
   transform: translateX(-50%);
   color: #333;
@@ -387,10 +386,17 @@ form {
 .speech-bubble:after {
   content: '';
   position: absolute;
-  bottom: -20px;
-  left: 20px;
-  border-width: 20px 0 0 20px;
+  top: -15px; 
+  left: 50%;   
+  transform: translateX(-50%);  
+  border-width: 0 20px 20px 20px;  
   border-style: solid;
-  border-color: white transparent transparent transparent;
+  border-color: transparent transparent white transparent;  
 }
 
+/* Styling to fix when screen-size changes*/
+@media only screen and (max-width: 875px) {
+  .inline-span {
+    flex-wrap: wrap !important;
+  }
+}
