@@ -10,6 +10,7 @@ import { getUsers } from '../services/userService';
  */
 const useUserPage = () => {
   const [userList, setUserList] = useState<UserData[]>([]);
+  const [leaderboardList, setLeaderBoardList] = useState<UserData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +33,29 @@ const useUserPage = () => {
     fetchData();
   }, []);
 
-  return { userList };
+  useEffect(() => {
+    // Fetch leaderboard data
+    const fetchLeaderboardData = async () => {
+      try {
+        const res = await getUsers();
+        res.sort((user1, user2) => user2.reputation - user1.reputation);
+        const topContributors = res.slice(0, 10);
+        setLeaderBoardList(topContributors || []);
+      } catch (error) {
+        if (error instanceof Error) {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching leaderboard:', error.message);
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Error fetching leaderboard');
+        }
+      }
+    };
+
+    fetchLeaderboardData();
+  }, []);
+
+  return { userList, leaderboardList };
 };
 
 export default useUserPage;
