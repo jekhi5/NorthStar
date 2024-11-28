@@ -33,7 +33,7 @@ const checkValidUser = async (
   _id?: string,
 ): Promise<{ available: boolean; message: string }> => {
   const queryParams = new URLSearchParams();
-  // If an id was passed in, at it to query parameters
+  // If an id was passed in, add it to query parameters
   if (_id) {
     queryParams.append('userId', _id);
   }
