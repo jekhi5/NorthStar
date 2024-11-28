@@ -22,15 +22,23 @@ const addUser = async (user: User): Promise<User> => {
  *
  * @param username - The username to check for availability.
  * @param email - The email to check for availability.
- * @returns An object containing a boolean indicating whether the username and email are both available (true) or taken (false) and the associated message to display to the user.
+ * @param _id - (Optional) The id of the current user to exclude from the check.
+ * @returns An object containing a boolean indicating whether the username and email are both
+ * available (true) or taken (false) and the associated message to display to the user.
  * @throws Error if there's an issue checking username or email availability.
  */
 const checkValidUser = async (
   username: string,
   email: string,
+  _id?: string,
 ): Promise<{ available: boolean; message: string }> => {
+  const queryParams = new URLSearchParams();
+  // If an id was passed in, at it to query parameters
+  if (_id) {
+    queryParams.append('userId', _id);
+  }
   const res = await api.get(
-    `${USER_API_URL}/checkValidUser/${encodeURIComponent(username)}/${encodeURIComponent(email)}`,
+    `${USER_API_URL}/checkValidUser/${encodeURIComponent(username)}/${encodeURIComponent(email)}?${queryParams.toString()}`,
   );
   if (res.status === 500) {
     throw new Error('Error while checking username and email availability');

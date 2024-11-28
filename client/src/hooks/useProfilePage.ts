@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { Question, User } from '../types';
-import { getUserByUsername, updateUser } from '../services/userService';
+import { checkValidUser, getUserByUsername, updateUser } from '../services/userService';
 import {
   getQuestionsByAnsweredByUserId,
   getQuestionsByAskedByUserId,
@@ -82,6 +82,17 @@ const useProfilePage = (username?: string) => {
   const saveProfile = async () => {
     if (editedProfile) {
       try {
+        // Check if username and email are available
+        // Pass id since we can exclude user's current info from the check
+        const isUserValid = await checkValidUser(
+          editedProfile.username,
+          editedProfile.email,
+          editedProfile._id,
+        );
+        if (!isUserValid.available) {
+          setUpdateError(isUserValid.message);
+          return;
+        }
         const updatedProfile = await updateUser(editedProfile);
         setUser(updatedProfile);
         setProfile(updatedProfile);
