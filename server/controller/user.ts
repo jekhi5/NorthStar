@@ -45,6 +45,35 @@ const userController = () => {
   };
 
   /**
+   * Retrieves a user by their username.
+   *
+   * @param req The request object containing the username as a parameter.
+   * @param res The response object to send the result.
+   */
+  const getUserByUsername = async (req: Request, res: Response): Promise<void> => {
+    const { username } = req.params;
+
+    try {
+      const user = await UserModel.findOne({ username }).populate([
+        {
+          path: 'postNotifications.postNotification',
+          model: PostNotificationModel,
+          populate: { path: 'fromUser', model: UserModel },
+        },
+      ]);
+
+      if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching user' });
+    }
+  };
+
+  /**
    * Checks if a username and email is available (not already taken).
    *
    * @param req The request object containing the username and email as a parameter.
@@ -174,6 +203,7 @@ const userController = () => {
   };
 
   router.get('/getUserByUid/:uid', getUserByUid);
+  router.get('/getUserByUsername/:username', getUserByUsername);
   router.get('/checkValidUser/:username/:email', checkValidUser);
   router.post('/addUser', addUser);
   router.put('/updateUser', updateUser);

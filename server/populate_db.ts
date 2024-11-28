@@ -221,6 +221,7 @@ async function postNotificationCreate(
     | 'commentAdded'
     | 'questionPostedWithTag'
     | 'welcomeNotification',
+  questionId?: ObjectId,
   postId?: ObjectId,
   fromUser?: User,
 ): Promise<PostNotification> {
@@ -232,6 +233,7 @@ async function postNotificationCreate(
     notificationType,
     ...(postId && { postId }),
     ...(fromUser && { fromUser }),
+    ...(questionId && { questionId }),
   };
   return await PostNotificationModel.create(postNotification);
 }
@@ -1341,6 +1343,32 @@ const populate = async () => {
       20,
       false,
       'Kenneth',
+      'Borrero',
+      '',
+    );
+
+    await userCreate(
+      '0vgcq4iw9Xc0x2GcB0Y7xYhgt6C2',
+      'BigKenDog',
+      'kenborrero2@gmail.com',
+      'Not endorsed',
+      [],
+      20,
+      false,
+      'Ken',
+      'Borrero',
+      '',
+    );
+
+    await userCreate(
+      'BQN4AeEXOsV6ocDfR0Z3KyJ7URo2',
+      'KenBobanna',
+      'kennethborrero2@gmail.com',
+      'Not endorsed',
+      [],
+      20,
+      false,
+      'Ken',
       'Borrero',
       '',
     );
