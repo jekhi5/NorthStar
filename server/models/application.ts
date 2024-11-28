@@ -745,6 +745,7 @@ export const postNotifications = async (
 
     if (type !== 'questionPostedWithTag') {
       notificationToPost.fromUser = user;
+      notificationToPost.questionId = question._id;
       postedNotification = await savePostNotification(notificationToPost as PostNotification);
 
       if (!postedNotification || 'error' in postedNotification) {
@@ -827,7 +828,8 @@ export const postNotifications = async (
 
           // If this wasn't an `ObjectId`, the function would have thrown an error
           // above when we checked to see if it was a valid question
-          notificationToPost.postId = question._id as ObjectId;
+          notificationToPost.postId = question._id;
+          notificationToPost.questionId = question._id;
 
           postedNotification = await savePostNotification(notificationToPost as PostNotification);
 

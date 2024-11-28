@@ -1,0 +1,60 @@
+name: Run Database Scripts on Server Changes
+
+# `on` the action of `push` (in our case, when a PR merges), when any files have
+# been changed in the /server/models dir, run the jobs in sequence listed below:
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'server/models/schema/**'
+
+  workflow_dispatch:
+
+# The jobs, just one, called 'run-database-scripts'
+jobs:
+  run-database-scripts:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Build backend service
+        if: ${{ always() }}
+        run: cd server; npm i
+
+      - name: Remove the database
+        env:
+          DATABASE_URI: ${{ secrets.DATABASE_URI }}
+        run: |
+          set -e
+          npx ts-node ./server/remove_db.ts $DATABASE_URI
+
+      - name: Populate the database
+        env:
+          DATABASE_URI: ${{ secrets.DATABASE_URI }}
+        run: |
+          set -e # Stop execution on errors
+          npx ts-node ./server/populate_db.ts $DATABASE_URI
+
+      - name: Send email on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: 'URGENT! Repopulating Database Failure'
+          body: |
+            IMPORTANT: Removing and repopulating the database had a failure on a merge to Main.
+            The remote website will not function without a fix.
+            Please check the logs and resolve the issue.
+          to: jacobk513@gmail.com, ashley921davis@gmail.com, kennethhenneth@gmail.com, gracelyntheobald@gmail.com
+          from: 'NorthStarDotCom@gmail.com'

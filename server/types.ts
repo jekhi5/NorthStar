@@ -25,6 +25,7 @@ export interface PostNotification {
     | 'welcomeNotification';
   postId?: ObjectId;
   fromUser?: User;
+  questionId?: ObjectId;
 }
 
 /**
