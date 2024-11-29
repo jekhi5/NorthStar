@@ -3,7 +3,6 @@
 
 - [North Star - Let us be your guiding light when it comes to coding struggles](#north-star---let-us-be-your-guiding-light-when-it-comes-to-coding-struggles)
   - [About](#about)
-  - [Challenges](#challenges)
   - [Future implementations](#future-implementations)
   - [How to start the development environment](#how-to-start-the-development-environment)
   - [Database Architecture](#database-architecture)
@@ -21,17 +20,6 @@
 [North star](https://cs4530-f24-202.onrender.com) is a question and answer forum designed by and for software developers. Here, you can get answers about niche errors, interact with other community members, earn status and show your flair, and so much more!
 
 This project is hosted in this monorepo and is created with love in Typescript and React using Express and sockets. Additionally, authentication functionality is integrated with Firebase and the data is stored securely in MongoDB. These services were chosen due to their ease in integration with web applications and emphasis on security. While we aim to help users understand their own bugs in security infrastructure, we'd like to lead by example in the way we host our platform.
-
-<a name="challenges"></a>
-
-## Challenges
-
-- Implementation of notification functionality for questions posted with tags
-  - Prior to this feature's implementation, all notifications were bulk sent to all users who were subscribed to a question
-  - This type of notification includes the specific name of the tag that the user is subscribed to, which is user specific
-  - This change required refactoring of the notification system
-
-- ## @ashleytdavis, @getheobald, @KennHenn, PLEASE INCLUDE YOUR CHALLENGES HERE
 
 <a name="future-implementations"></a>
 
