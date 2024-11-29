@@ -6,6 +6,8 @@ import githubIcon from '../../images/github.png';
 
 import useLogin from '../../hooks/useLogin';
 
+import alienShipImage from '../../images/alien-ship.png';
+
 /**
  * Login Component contains a form for Firebase email/password authentication.
  */
@@ -18,6 +20,7 @@ const Login = ({
 }) => {
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const [isPopping, setIsPopping] = useState(true);
+
   const {
     email,
     password,
@@ -28,6 +31,8 @@ const Login = ({
     handleGithubLogin,
     handlePlanetClick,
     handleAnimationEnd,
+    handleForgotPassword,
+    showAlienShip,
     wobble,
   } = useLogin();
 
@@ -43,6 +48,14 @@ const Login = ({
   return (
     <div className='container'>
       <div className='left-content'>
+        {showAlienShip && (
+          <div className='alien-ship-container'>
+            <img src={alienShipImage} alt='Alien Spaceship' className='alien-ship' />
+            <div className='speech-bubble'>
+              <p>{error}</p>
+            </div>
+          </div>
+        )}
         <img
           src={starImage}
           alt='Planet'
@@ -78,6 +91,9 @@ const Login = ({
           <button type='submit' className='login-button'>
             Log In
           </button>
+          <button className='forgot-button' onClick={handleForgotPassword}>
+            Forgot Password
+          </button>
         </form>
         <div className='or-section'>
           <hr className='line' />
@@ -92,7 +108,6 @@ const Login = ({
             <img src={googleIcon} alt='Google' />
           </button>
         </div>
-        {error && <p className='error-text'>{error}</p>}
         <span className='inline-span'>
           <p>Don&apos;t already have an account?</p>
           <button type='button' onClick={handleToggle} className='login-button'>
