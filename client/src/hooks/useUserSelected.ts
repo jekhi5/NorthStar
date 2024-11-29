@@ -11,33 +11,14 @@ import { User, UserData } from '../types';
  * @returns setUser - Setter to manually update the user state if needed.
  */
 const useUserSelected = (userData: UserData) => {
-  const [user, setUser] = useState<User>({
-    username: '',
-    profilePicture: '',
-    status: 'Not endorsed',
-    uid: '',
-    email: '',
-    postNotifications: [],
-    reputation: 0,
-    emailsEnabled: false,
-  });
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await getUserByUid(userData.uid);
-        setUser(
-          res || {
-            username: 'ERROR LOADING USER',
-            profilePicture: '',
-            status: 'Not endorsed',
-            uid: '',
-            email: '',
-            postNotifications: [],
-            reputation: 0,
-            emailsEnabled: false,
-          },
-        );
+        // Want to make sure `undefined` isn't passed through, only null
+        setUser(res || null);
       } catch (error) {
         // We log the errors here, but we do not throw an error as we do not want to block the
         // user from viewing the site just because the user failed to be found.
