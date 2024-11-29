@@ -67,3 +67,31 @@
   border-radius: 4px;
   font-size: 0.8rem;
 }
+
+.leaderboard-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.leaderboard .userNode:nth-child(2) {
+  background: linear-gradient(135deg, #ffd700 0%, #fff7cc 100%);
+  border: 1px solid #ffd700;
+}
+
+.leaderboard .userNode:nth-child(3) {
+  background: linear-gradient(135deg, #c0c0c0 0%, #f5f5f5 100%);
+  border: 1px solid #c0c0c0;
+}
+
+.leaderboard .userNode:nth-child(4) {
+  background: linear-gradient(135deg, #cd7f32 0%, #ffdbc3 100%);
+  border: 1px solid #cd7f32;
+}
+
+.leaderboard .userNode:nth-child(2):hover,
+.leaderboard .userNode:nth-child(3):hover,
+.leaderboard .userNode:nth-child(4):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}

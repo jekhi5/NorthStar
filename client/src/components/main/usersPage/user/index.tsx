@@ -13,7 +13,6 @@ import { UserData } from '../../../../types';
  */
 const UserView = ({ userData }: { userData: UserData }) => {
   const { user } = useUserSelected(userData);
-
   const profilePic = user.profilePicture === '' ? defaultProfilePic : user.profilePicture;
 
   return (
@@ -21,10 +20,11 @@ const UserView = ({ userData }: { userData: UserData }) => {
       <div className='userNode'>
         <img src={profilePic ?? defaultProfilePic} alt='Profile' className='profile-picture' />
         <div className='user-info'>
-          <div className='username'>{user.username}</div>
+          <span className='username'>{user.username}</span>
           <div
             className={`question_author_status status-${user.status.toLowerCase().replace(' ', '-')}`}>
             {user.status}
+            <span className='user-rep'>Points: {user.reputation}</span>
           </div>
         </div>
       </div>
