@@ -1,3 +1,4 @@
+![Logo](north-star-logo.png)
 # North Star - Let us be your guiding light when it comes to coding struggles
 
 
