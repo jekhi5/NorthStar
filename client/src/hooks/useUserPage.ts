@@ -38,6 +38,10 @@ const useUserPage = () => {
     const fetchLeaderboardData = async () => {
       try {
         const res = await getUsers();
+        console.log(
+          'User reputations:',
+          res.map(user => user.reputation),
+        );
         const topContributors = [...res].sort((a, b) => b.reputation - a.reputation).slice(0, 10);
         setLeaderBoardList(topContributors || []);
         console.log(topContributors);

@@ -230,6 +230,7 @@ const userController = () => {
             username: user.username,
             profilePicture: user.profilePicture,
             status: user.status,
+            reputation: user.reputation,
           })),
         );
       }
