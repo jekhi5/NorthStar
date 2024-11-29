@@ -4,6 +4,8 @@
 
 - [North Star - Let us be your guiding light when it comes to coding struggles](#north-star---let-us-be-your-guiding-light-when-it-comes-to-coding-struggles)
   - [About](#about)
+  - [Notable features](#notable-features)
+  - [Site navigation](#site-navigation)
   - [Future implementations](#future-implementations)
   - [How to start the development environment](#how-to-start-the-development-environment)
   - [Database Architecture](#database-architecture)
@@ -13,16 +15,15 @@
       - [Additional contributors](#additional-contributors)
     - [Thanks](#thanks)
 
-
-<a name="about"></a>
-
 ## About
 
 [North star](https://cs4530-f24-202.onrender.com) is a question and answer forum designed by and for software developers. Here, you can get answers about niche errors, interact with other community members, earn status and show your flair, and so much more!
 
 This project is hosted in this monorepo and is created with love in Typescript and React using Express and sockets. Additionally, authentication functionality is integrated with Firebase and the data is stored securely in MongoDB. These services were chosen due to their ease in integration with web applications and emphasis on security. While we aim to help users understand their own bugs in security infrastructure, we'd like to lead by example in the way we host our platform.
 
-<a name="future-implementations"></a>
+## Notable features
+
+## Site navigation
 
 ## Future implementations
 
@@ -30,8 +31,6 @@ This project is hosted in this monorepo and is created with love in Typescript a
 - Allow users to create their own global chat room on a topic of their choosing
 - User can choose designs/themes for the site
 - Users can edit their posts after the fact
-
-<a name="how-to-start-the-development-environment"></a>
 
 ## How to start the development environment
 
@@ -78,16 +77,12 @@ Some potentially useful resources are:
 - Mocking in Jest: <https://jestjs.io/docs/mock-functions>
 - Mocking Mongoose functions: <https://github.com/alonronin/mockingoose>
 
-<a name="database-architecture"></a>
-
 ## Database Architecture
 
 The schemas for the database are documented in the directory `server/models/schema`.
 A class diagram for the schema definition is shown below:
 
 ![Class Diagram](class-diagram.png)
-
-<a name="making-contributions"></a>
 
 ## Making Contributions
 
@@ -98,8 +93,6 @@ A class diagram for the schema definition is shown below:
   - Ensure your commit messages are [professional and clear](https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/#https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/#heading-5-steps-to-write-better-commit-messages:~:text=5%20Steps%20to%20Write%20Better%20Commit%20Messages)
   - When you're ready, open up a [pull request](https://github.com/neu-cs4530/fall24-project-fall24-team-project-group-202/pulls) (PR)
     - Please fill out the pre-populated form to ensure that your PR is read in a timely manner. When you
-
-<a name="credits"></a>
 
 ## Credits
 
