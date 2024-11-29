@@ -43,3 +43,7 @@
   border-top: 1px solid #ddd;
   margin: 8px 0;
 }
+
+.from-user {
+  text-decoration: none;
+}

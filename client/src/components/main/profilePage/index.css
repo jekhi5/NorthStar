@@ -245,6 +245,12 @@ question-item {
   transition: background-color 0.3s;
 }
 
+button {
+  width: auto;
+  min-width: 150px;
+  text-align: center;
+}
+
 .profile-edit-form {
   display: flex;
   flex-direction: column;

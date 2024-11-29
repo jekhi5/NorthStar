@@ -65,54 +65,54 @@ const SignUp = ({
                 type='text'
                 value={firstName}
                 onChange={handleInputChange}
-                placeholder='Enter your first name'
+                placeholder='First name'
                 required
                 className='input-text'
                 id='firstNameInput'
               />
               <input
                 type='text'
+                value={username}
+                onChange={handleInputChange}
+                placeholder='Username'
+                required
+                className='input-text'
+                id='usernameInput'
+              />
+              <input
+                type='password'
+                value={passwordOriginal}
+                onChange={handleInputChange}
+                placeholder='Password'
+                required
+                className='input-text'
+                id='passwordInputOriginal'
+              />
+            </div>
+            <div className='right-group'>
+              <input
+                type='text'
                 value={lastName}
                 onChange={handleInputChange}
-                placeholder='Enter your last name'
+                placeholder='Last name'
                 required
                 className='input-text'
                 id='lastNameInput'
               />
               <input
-                type='text'
-                value={username}
-                onChange={handleInputChange}
-                placeholder='Enter your desired username'
-                required
-                className='input-text'
-                id='usernameInput'
-              />
-            </div>
-            <div className='right-group'>
-              <input
                 type='email'
                 value={email}
                 onChange={handleInputChange}
-                placeholder='Enter your email'
+                placeholder='Email'
                 required
                 className='input-text'
                 id='emailInput'
               />
               <input
                 type='password'
-                value={passwordOriginal}
-                onChange={handleInputChange}
-                placeholder='Enter your password'
-                required
-                className='input-text'
-                id='passwordInputOriginal'
-              />
-              <input
-                type='password'
                 value={passwordConfirmation}
                 onChange={handleInputChange}
-                placeholder='Confirm your password'
+                placeholder='Confirm password'
                 required
                 className='input-text'
                 id='passwordInputConfirmation'
