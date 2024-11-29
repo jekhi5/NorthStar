@@ -44,7 +44,9 @@ export interface User {
 }
 
 /**
- * Interface represents the data for a user.
+ * Interface represents the data for a user that is necessary for displaying user on Users page.
+ * This is different from the User type because there is less information required when displaying
+ * Users on the Users page. This type is representative of that.
  *
  * uid - The unique identifier of the user.
  * username - The username of the user.
