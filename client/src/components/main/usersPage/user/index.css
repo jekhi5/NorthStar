@@ -1,51 +1,12 @@
-.question_author_status {
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  display: inline-block;
-  margin-left: 0.5rem;
-}
-
-.status-not-endorsed {
-  background-color: rgba(188, 188, 188, 0.5);
-  color: #585858;
-}
-
-.status-endorsed {
-  background-color: rgba(163, 255, 137, 0.5);
-  color: #000000;
-}
-
-.status-super-smarty-pants {
-  background-color: rgba(163, 89, 191, 0.5);
-  color: #a359bf;
-}
-
-.status-mentor {
-  background-color: rgba(255, 89, 89, 0.5);
-  color: #ff5959;
-}
-
-.status-grandmaster {
-  background-color: rgba(89, 169, 255, 0.5);
-  color: #59a9ff;
-}
-
-.user_list {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1rem;
-}
-
 .userNode {
-  background-color: #d5d5d5; 
-  min-width: 9.4375rem;
-  max-width: 14.15625rem;
-  height: 3rem;
+  background-color: #e6e6e6;
+  width: 100%;
+  min-height: 3.5rem;
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
-  padding: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
   transition: box-shadow 0.3s ease;
 }
 
@@ -57,25 +18,38 @@
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  margin: auto 0;
+  margin-right: 0.75rem;
 }
 
 .userNode .user-info {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  margin: auto 0;
+  flex: 1;
 }
 
 .userNode .username {
   font-weight: bold;
-  margin-bottom: 0.01rem;
+  color: #000;
   text-decoration: none;
-  color: inherit;
+  margin-right: 0.75rem;
 }
 
-.userNode .question_author_status {
-  padding: 0.2rem 0.6rem;
+.question_author_status {
+  padding: 0.25rem 0.75rem;
   border-radius: 0.25rem;
   font-size: 0.8rem;
+}
+
+.userLink {
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}
+
+.user_list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.5rem;
 }

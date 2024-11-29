@@ -56,6 +56,7 @@ export interface UserData {
   username: string;
   profilePicture: string;
   status: string;
+  reputation: number;
 }
 
 /**

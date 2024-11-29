@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
+import useUserContext from '../../hooks/useUserContext';
 
 /**
  * Header component that renders the main title, navigation links, and a search bar.
@@ -9,6 +10,7 @@ import './index.css';
  */
 const Header = () => {
   const { val, handleInputChange, handleKeyDown, unreadNotifs, handleLogOut } = useHeader();
+  const { user: currentUser } = useUserContext();
 
   return (
     <div id='header' className='header'>
@@ -56,7 +58,7 @@ const Header = () => {
           </NavLink>
         </div>
         <div className='profile-icon'>
-          <NavLink to='/profile'>
+          <NavLink to={`/profile/${currentUser.username}`}>
             <span className='material-symbols-outlined'>account_circle</span>
           </NavLink>
         </div>

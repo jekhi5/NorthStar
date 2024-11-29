@@ -69,14 +69,17 @@ const checkTagInQuestion = (q: Question, taglist: string[]): boolean => {
 /**
  * Checks if any keywords in the provided list exist in a given question's title or text.
  *
- * @param {Question} q - The question to check
- * @param {string[]} keywordlist - The list of keywords to check for
+ * @param {Question} question - The question to check
+ * @param {string[]} keywordList - The list of keywords to check for
  *
  * @returns {boolean} - `true` if any keyword is present, `false` otherwise.
  */
-const checkKeywordInQuestion = (q: Question, keywordlist: string[]): boolean => {
-  for (const w of keywordlist) {
-    if (q.title.includes(w) || q.text.includes(w)) {
+const checkKeywordInQuestion = (question: Question, keywordList: string[]): boolean => {
+  for (const word of keywordList) {
+    if (
+      question.title.toLowerCase().includes(word.toLowerCase()) ||
+      question.text.toLowerCase().includes(word.toLowerCase())
+    ) {
       return true;
     }
   }
