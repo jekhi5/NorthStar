@@ -1,3 +1,4 @@
+![Logo](north-star-logo.png)
 # Remote site: https://cs4530-f24-202.onrender.com
 
 
