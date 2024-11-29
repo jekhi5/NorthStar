@@ -102,7 +102,7 @@ const useSignUp = () => {
     if (!validateForm()) return;
 
     try {
-      // Check if username and email is available
+      // Check if username and email are available
       const isUserValid = await checkValidUser(formData.username, formData.email);
       if (!isUserValid.available) {
         setError(isUserValid.message);
