@@ -9,38 +9,33 @@ on:
     paths:
       - 'server/models/schema/**'
 
+  workflow_dispatch:
+
 # The jobs, just one, called 'run-database-scripts'
 jobs:
   run-database-scripts:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
-      # Step 1: Check out the repository
-      - name: Checkout code
+      - name: Git Checkout
         uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Set up Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          # The version of node we use
-          node-version: '22'
+          node-version: '20.x'
 
-      # Step 3: Install dependencies
-      - name: Install dependencies
-        run: npm install
+      - name: Build backend service
+        if: ${{ always() }}
+        run: cd server; npm i
 
-      # Step 4: Run the script to remove the database
       - name: Remove the database
-        # Pass the Database URI securely, set up in the repository secrets in settings
         env:
           DATABASE_URI: ${{ secrets.DATABASE_URI }}
-        # Stop on errors
         run: |
           set -e
           npx ts-node ./server/remove_db.ts $DATABASE_URI
 
-      # Step 5: Run the script to populate the database
       - name: Populate the database
         env:
           DATABASE_URI: ${{ secrets.DATABASE_URI }}
@@ -48,15 +43,12 @@ jobs:
           set -e # Stop execution on errors
           npx ts-node ./server/populate_db.ts $DATABASE_URI
 
-      # Step 6: Always send a success or failure notification
       - name: Send email on failure
-        # Only runs if any of the previous steps fail
         if: failure()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 587
-          # Stored in GitHub Secrets for the repositoryr
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: 'URGENT! Repopulating Database Failure'
