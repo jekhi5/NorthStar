@@ -69,6 +69,7 @@ const SignUp = ({
                 required
                 className='input-text'
                 id='firstNameInput'
+                tabIndex={1}
               />
               <input
                 type='text'
@@ -78,6 +79,7 @@ const SignUp = ({
                 required
                 className='input-text'
                 id='usernameInput'
+                tabIndex={3}
               />
               <input
                 type='password'
@@ -87,6 +89,7 @@ const SignUp = ({
                 required
                 className='input-text'
                 id='passwordInputOriginal'
+                tabIndex={5}
               />
             </div>
             <div className='right-group'>
@@ -98,6 +101,7 @@ const SignUp = ({
                 required
                 className='input-text'
                 id='lastNameInput'
+                tabIndex={2}
               />
               <input
                 type='email'
@@ -107,15 +111,17 @@ const SignUp = ({
                 required
                 className='input-text'
                 id='emailInput'
+                tabIndex={4}
               />
               <input
                 type='password'
                 value={passwordConfirmation}
                 onChange={handleInputChange}
-                placeholder='Confirm password'
+                placeholder='Verify password'
                 required
                 className='input-text'
                 id='passwordInputConfirmation'
+                tabIndex={6}
               />
             </div>
           </div>

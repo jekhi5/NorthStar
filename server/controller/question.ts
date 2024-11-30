@@ -282,10 +282,10 @@ const questionController = (socket: FakeSOSocket) => {
           // of a question just because the notification failed to post.
           if (error instanceof Error) {
             // eslint-disable-next-line no-console
-            console.log(`Error when posting notification: ${error.message}`);
+            console.error(`Error when posting notification: ${error.message}`);
           } else {
             // eslint-disable-next-line no-console
-            console.log('Error when posting notification');
+            console.error('Error when posting notification');
           }
         }
       }

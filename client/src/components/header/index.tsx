@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import useHeader from '../../hooks/useHeader';
 import './index.css';
 import useUserContext from '../../hooks/useUserContext';
+import logo from '../../images/north-star-logo.png';
 
 /**
  * Header component that renders the main title, navigation links, and a search bar.
@@ -14,8 +15,11 @@ const Header = () => {
 
   return (
     <div id='header' className='header'>
-      <div></div>
-      <div className='title'>North Star</div>
+      <NavLink to='/home'>
+        <div className='logo'>
+          <img src={logo} alt='North Star Logo' />
+        </div>
+      </NavLink>
       <div className='headerNav'>
         <NavLink
           to='/home'
@@ -46,6 +50,11 @@ const Header = () => {
       />
 
       <div className='notifications-and-profile-group'>
+        <div className='leaderboard-icon'>
+          <NavLink to='/users'>
+            <span className='icon'>trophy</span>
+          </NavLink>
+        </div>
         <div className='notifications-icon'>
           <NavLink to='/notifications'>
             <span className='icon'>circle_notifications</span>
