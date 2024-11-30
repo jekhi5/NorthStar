@@ -9,16 +9,16 @@ html {
 }
 
 :root {
-  --primary-purple: #322a88; /* Dark purple for main elements */
-  --accent-yellow: #efe8ca; /* Light yellow for accents */
+  --primary-purple: #322a88; /* Dark purple */
+  --accent-purple: #a359bf; /* Light purple for buttons */
+  --hover-purple: #c486d8; /* Lighter purple for hover */
   --background-light: #f7f9fc; /* Light background */
-  --background-white: #ffffff; /* White for containers */
+  --background-white: #ffffff; /* White */
   --text-dark: #333333; /* Dark text for readability */
   --text-gray: #666666; /* Gray text for lower emphasis */
-  --text-light-gray: #999999; /* Lighter gray for Even lower emphasis! */
+  --text-light-gray: #999999; /* Lighter gray for even lower emphasis! */
   --border-gray: #ddd; /* Border color */
-  --hover-purple: #5e4fa2; /* Hover effect for dark purple elements */
-  --hover-yellow: #efe8ca; /* Hover effect for accents */
+  --other-purple: #5e4fa2; /* Hover effect for dark purple elements */
 }
 
 

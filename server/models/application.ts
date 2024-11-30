@@ -552,10 +552,10 @@ export const saveAnswer = async (answer: Answer): Promise<AnswerResponse> => {
     } catch (error) {
       if (error instanceof Error) {
         // eslint-disable-next-line no-console
-        console.log('Error updating user reputation:', error.message);
+        console.error('Error updating user reputation:', error.message);
       } else {
         // eslint-disable-next-line no-console
-        console.log('Error updating user reputation');
+        console.error('Error updating user reputation');
       }
     }
     return result;
@@ -1097,7 +1097,7 @@ export const processTags = async (tags: Tag[]): Promise<Tag[]> => {
     // Log the error for debugging purposes
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     // eslint-disable-next-line no-console
-    console.log('An error occurred while adding tags:', errorMessage);
+    console.error('An error occurred while adding tags:', errorMessage);
     return [];
   }
 };

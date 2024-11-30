@@ -157,10 +157,10 @@ const userController = () => {
         // user from being added just because the welcome notification failed to load.
         if (error instanceof Error) {
           // eslint-disable-next-line no-console
-          console.log('Error fetching welcome notification:', error.message);
+          console.error('Error fetching welcome notification:', error.message);
         } else {
           // eslint-disable-next-line no-console
-          console.log('Error fetching welcome notification:');
+          console.error('Error fetching welcome notification:');
         }
       }
 

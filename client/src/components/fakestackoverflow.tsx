@@ -17,6 +17,7 @@ import NotificationPage from './main/notificationPage';
 import Chatroom from './main/chatroom';
 import { getUserByUid } from '../services/userService';
 import UsersPage from './main/usersPage';
+import PageNotFound from './pageNotFound';
 
 const ProtectedRoute = ({
   user,
@@ -67,9 +68,14 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
     <LoginContext.Provider value={{ user, setUser }}>
       <Routes>
         {/* Public Route */}
-        <Route path='/' element={user ? <Navigate to='/home' /> : componentToShowOnLogin} />
+        {!user && (
+          <>
+            {/* Every route should redirect to the sign-up page when a user isn't signed in */}
+            <Route path='*' element={componentToShowOnLogin} />
+          </>
+        )}
         {/* Protected Routes */}
-        {
+        {user && (
           <Route
             element={
               <ProtectedRoute user={user} socket={socket}>
@@ -85,8 +91,11 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             <Route path='/notifications' element={<NotificationPage />} />
             <Route path='/chatroom' element={<Chatroom />} />
             <Route path='/users' element={<UsersPage />} />
+
+            {/* Anything that isn't in the above list should route to the page not found */}
+            <Route path='*' element={<PageNotFound />} />
           </Route>
-        }
+        )}
       </Routes>
     </LoginContext.Provider>
   );
