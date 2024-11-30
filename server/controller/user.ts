@@ -45,24 +45,60 @@ const userController = () => {
   };
 
   /**
-   * Checks if a username and email is available (not already taken).
+   * Retrieves a user by their username.
    *
-   * @param req The request object containing the username and email as a parameter.
+   * @param req The request object containing the username as a parameter.
+   * @param res The response object to send the result.
+   */
+  const getUserByUsername = async (req: Request, res: Response): Promise<void> => {
+    const { username } = req.params;
+
+    try {
+      const user = await UserModel.findOne({ username }).populate([
+        {
+          path: 'postNotifications.postNotification',
+          model: PostNotificationModel,
+          populate: { path: 'fromUser', model: UserModel },
+        },
+      ]);
+
+      if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching user' });
+    }
+  };
+
+  /**
+   * Checks if a username and email are available (not already taken).
+   * If provided with a user's id, excludes that user's username and email (for profile updates).
+   *
+   * @param req The request object containing the username, email, and optionally id.
    * @param res The response object to send the result.
    */
   const checkValidUser = async (req: Request, res: Response): Promise<void> => {
-    const { username } = req.params;
-    const { email } = req.params;
+    const { username, email } = req.params;
+    const { userId } = req.query;
 
     try {
-      const usernameCheck = await UserModel.findOne({ username });
-      const emailCheck = await UserModel.findOne({ email });
+      const usernameCheck = await UserModel.findOne({
+        username,
+        ...(userId && { _id: { $ne: userId } }), // Don't check for this user's username
+      });
+      const emailCheck = await UserModel.findOne({
+        email,
+        ...(userId && { _id: { $ne: userId } }), // Don't check for this user's email
+      });
 
       if (usernameCheck && emailCheck) {
         // Username and email are both taken
         res.json({
           available: false,
-          message: 'Both username and email are already in use (perhaps try logging in instead)',
+          message: 'Both username and email are already in use',
         });
       } else if (usernameCheck) {
         // Just username is taken
@@ -71,7 +107,7 @@ const userController = () => {
         // Just email is taken
         res.json({
           available: false,
-          message: 'Email is already in use (perhaps try logging in instead)',
+          message: 'Email is already in use',
         });
       } else {
         // The username and email are both available, and therefore the user is valid
@@ -99,13 +135,22 @@ const userController = () => {
     try {
       try {
         const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
-          title: 'Welcome to Fake Stack Overflow!',
-          text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-          notificationType: 'questionPostedWithTag',
+          title: 'Welcome to NorthStar!',
+          text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
+          notificationType: 'welcomeNotification',
         });
 
         if (welcomeNotification) {
           user.postNotifications = [{ postNotification: welcomeNotification, read: false }];
+        } else {
+          const newWelcomeNotification = await PostNotificationModel.create({
+            title: 'Welcome to NorthStar!',
+            text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
+            notificationType: 'welcomeNotification',
+          });
+          if (newWelcomeNotification) {
+            user.postNotifications = [{ postNotification: newWelcomeNotification, read: false }];
+          }
         }
       } catch (error) {
         // We log the errors here, but we do not throw an error as we do not want to block the
@@ -165,6 +210,7 @@ const userController = () => {
   };
 
   router.get('/getUserByUid/:uid', getUserByUid);
+  router.get('/getUserByUsername/:username', getUserByUsername);
   router.get('/checkValidUser/:username/:email', checkValidUser);
   router.post('/addUser', addUser);
   router.put('/updateUser', updateUser);

@@ -25,7 +25,7 @@ const useQuestionPage = () => {
 
   useEffect(() => {
     if (!qidParam) {
-      navigate('/home');
+      navigate(`/home${window.location.search}`);
       return;
     }
 

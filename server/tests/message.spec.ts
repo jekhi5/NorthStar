@@ -9,6 +9,7 @@ const getMessagesSpy = jest.spyOn(util, 'getMessages');
 const saveMessageSpy = jest.spyOn(util, 'saveMessage');
 const updateMessageSpy = jest.spyOn(util, 'updateMessage');
 const deleteMessageSpy = jest.spyOn(util, 'deleteMessage');
+const populateDocumentSpy = jest.spyOn(util, 'populateDocument');
 
 const user1: User = {
   _id: new ObjectId('ab53191e810c19729de860ea'),
@@ -18,6 +19,7 @@ const user1: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user2: User = {
@@ -27,6 +29,7 @@ const user2: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 // There are 25 of them
@@ -282,6 +285,7 @@ describe('POST /sendMessage', () => {
     };
 
     saveMessageSpy.mockResolvedValueOnce(newMessage);
+    populateDocumentSpy.mockResolvedValueOnce(newMessage);
 
     const response = await supertest(app).post('/chat/sendMessage').send(newMessage);
 

@@ -204,21 +204,36 @@ async function tagCreate(name: string, description: string, subscribers: User[])
   return await TagModel.create(tag);
 }
 
+/**
+ * Creates a new PostNotification document in the database.
+ * @param title The title of the post notification
+ * @param text The text of the post notification
+ * @param notificationType The type of the post notification
+ * @param postId The id of the associated post
+ * @param fromUser The user who triggered the post notification
+ * @returns
+ */
 async function postNotificationCreate(
   title: string,
   text: string,
-  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag',
-  postId: ObjectId,
-  fromUser: User,
+  notificationType:
+    | 'questionAnswered'
+    | 'commentAdded'
+    | 'questionPostedWithTag'
+    | 'welcomeNotification',
+  questionId?: ObjectId,
+  postId?: ObjectId,
+  fromUser?: User,
 ): Promise<PostNotification> {
-  if (title === '' || text === '' || fromUser.uid === '')
+  if (title === '' || text === '' || fromUser?.uid === '')
     throw new Error('Invalid PostNotification Format');
   const postNotification: PostNotification = {
     title,
     text,
     notificationType,
-    postId,
-    fromUser,
+    ...(postId && { postId }),
+    ...(fromUser && { fromUser }),
+    ...(questionId && { questionId }),
   };
   return await PostNotificationModel.create(postNotification);
 }
@@ -230,6 +245,7 @@ async function userCreate(
   status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster',
   postNotifications: { postNotification: PostNotification; read: boolean }[],
   reputation: number,
+  emailsEnabled: boolean,
   firstName?: string,
   lastName?: string,
   profilePicture?: string,
@@ -247,13 +263,14 @@ async function userCreate(
     firstName,
     lastName,
     profilePicture,
+    emailsEnabled,
   };
 
   // Find the welcome notification in the database
   const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
-    title: 'Welcome to Fake Stack Overflow!',
-    text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-    notificationType: 'questionPostedWithTag',
+    title: 'Welcome to NorthStar!',
+    text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
+    notificationType: 'welcomeNotification',
   });
 
   // If the welcome notification exists, add it to the user's postNotifications prior to creation
@@ -347,6 +364,8 @@ async function questionCreate(
   views: string[],
   comments: Comment[],
   subscribers: User[],
+  upVotes: string[] = [],
+  downVotes: string[] = [],
 ): Promise<Question> {
   if (
     title === '' ||
@@ -370,16 +389,16 @@ async function questionCreate(
     ),
   ];
   const questionDetail: Question = {
-    title: title,
-    text: text,
-    tags: tags,
-    askedBy: askedBy,
-    answers: answers,
-    views: views,
-    askDateTime: askDateTime,
-    upVotes: [],
-    downVotes: [],
-    comments: comments,
+    title,
+    text,
+    tags,
+    askedBy,
+    answers,
+    views,
+    askDateTime,
+    upVotes,
+    downVotes,
+    comments,
     subscribers: subscribersFromTags.includes(askedBy)
       ? [...subscribers, ...subscribersFromTags]
       : [...subscribers, askedBy, ...subscribersFromTags],
@@ -393,45 +412,11 @@ async function questionCreate(
  */
 const populate = async () => {
   try {
-    // Put the code for the welcome notification at the top so that all
-    // subsequent user creations will be populated with the welcome notification
-
-    // Add fake stack overflow team user for welcome notification
-    const fakeStackOverflowTeamUser = await userCreate(
-      'QyOuDOnKEfMX4vlARweFSGrj9ft1', // From Firebase
-      'FakeStackOverflowTeam',
-      'FakeStackOverflowTeam@gmail.com',
-      'Endorsed',
-      [],
-      0,
-    );
-
-    // Add tag for bogus question that is pointed to by the welcome notification
-    const t1 = await tagCreate(T1_NAME, T1_DESC, []);
-
-    // Bogus question posted to the database that is pointed to by the welcome notification
-    const fakeStackOverflowWelcomeQuestion = await questionCreate(
-      'Welcome to Fake Stack Overflow!',
-      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      [t1],
-      [],
-      fakeStackOverflowTeamUser,
-      new Date('1776-04-07T03:30:00'),
-      [],
-      [],
-      [],
-    );
-
-    if (fakeStackOverflowWelcomeQuestion._id === undefined) {
-      throw new Error('Error creating welcome notification; question ID is undefined');
-    }
-
+    // Create the welcome notification so it can be added to users being created
     await postNotificationCreate(
-      'Welcome to Fake Stack Overflow!',
-      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      'questionPostedWithTag',
-      fakeStackOverflowWelcomeQuestion._id,
-      fakeStackOverflowTeamUser,
+      'Welcome to NorthStar!',
+      'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
+      'welcomeNotification',
     );
 
     const u1 = await userCreate(
@@ -441,6 +426,7 @@ const populate = async () => {
       'Super Smarty Pants',
       [],
       250,
+      false,
       'Sana',
       'Ali',
       'https://cdn.pixabay.com/photo/2020/09/27/03/38/woman-5605529_640.jpg',
@@ -452,6 +438,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       10,
+      false,
       'Ibrahim',
       'Ahmed',
       'https://cdn.pixabay.com/photo/2023/03/17/16/14/silhouette-7858977_640.jpg',
@@ -463,6 +450,7 @@ const populate = async () => {
       'Endorsed',
       [],
       35,
+      false,
       'Peter',
       'Salt',
       'https://cdn.pixabay.com/photo/2016/11/18/15/03/man-1835195_640.jpg',
@@ -474,6 +462,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       24,
+      false,
       'Alice',
       'Brown',
       'https://cdn.pixabay.com/photo/2016/08/01/20/15/girl-1562025_640.jpg',
@@ -485,6 +474,7 @@ const populate = async () => {
       'Endorsed',
       [],
       35,
+      false,
       'Hamid',
       'Kalo',
       'https://cdn.pixabay.com/photo/2016/11/18/19/07/happy-1836445_640.jpg',
@@ -496,6 +486,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       1,
+      false,
       'Azad',
       'Khan',
       'https://cdn.pixabay.com/photo/2015/06/01/00/20/man-792821_640.jpg',
@@ -507,6 +498,7 @@ const populate = async () => {
       'Mentor',
       [],
       560,
+      false,
       'Alia',
       'Bhatt',
       'https://cdn.pixabay.com/photo/2016/08/01/20/12/girl-1561979_640.jpg',
@@ -518,6 +510,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       0,
+      false,
       'Abhishek',
       'Kumar',
       'https://cdn.pixabay.com/photo/2023/08/23/03/33/boxer-8207572_640.jpg',
@@ -529,6 +522,7 @@ const populate = async () => {
       'Grandmaster',
       [],
       10000,
+      false,
       'Abaya',
       'Mohammed',
       'https://cdn.pixabay.com/photo/2016/11/29/02/20/astronomy-1866822_640.jpg',
@@ -540,6 +534,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       4,
+      false,
       'Chandra',
       'Elephant',
       'https://cdn.pixabay.com/photo/2023/09/14/19/46/elephant-8253639_640.jpg',
@@ -551,6 +546,7 @@ const populate = async () => {
       'Endorsed',
       [],
       500,
+      false,
       'Joji',
       'John',
       'https://cdn.pixabay.com/photo/2024/01/07/14/12/man-8493244_640.jpg',
@@ -562,6 +558,7 @@ const populate = async () => {
       'Mentor',
       [],
       780,
+      false,
       'Guru',
       'Tech',
       'https://cdn.pixabay.com/photo/2021/08/04/13/06/software-developer-6521720_640.jpg',
@@ -573,6 +570,7 @@ const populate = async () => {
       'Endorsed',
       [],
       320,
+      false,
       'Nina',
       'Coder',
       'https://cdn.pixabay.com/photo/2017/01/25/10/39/ninja-2007576_1280.jpg',
@@ -584,6 +582,7 @@ const populate = async () => {
       'Super Smarty Pants',
       [],
       1200,
+      false,
       'David',
       'Wizard',
       'https://cdn.pixabay.com/photo/2017/12/27/14/46/wizard-3042838_640.jpg',
@@ -595,6 +594,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       50,
+      false,
       'Hunter',
       'Bug',
       'https://cdn.pixabay.com/photo/2023/11/01/21/15/spider-8359315_640.jpg',
@@ -606,6 +606,7 @@ const populate = async () => {
       'Endorsed',
       [],
       420,
+      false,
       'Claudia',
       'Master',
       'https://cdn.pixabay.com/photo/2022/03/28/10/06/mountain-7097104_640.jpg',
@@ -617,6 +618,7 @@ const populate = async () => {
       'Grandmaster',
       [],
       8500,
+      false,
       'Alex',
       'Intelligence',
       'https://cdn.pixabay.com/photo/2022/11/30/20/37/animal-7627621_640.jpg',
@@ -628,6 +630,7 @@ const populate = async () => {
       'Mentor',
       [],
       950,
+      false,
       'Samantha',
       'Secure',
       'https://cdn.pixabay.com/photo/2015/03/03/18/58/woman-657753_640.jpg',
@@ -639,6 +642,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       80,
+      false,
       'Frank',
       'Developer',
       'https://cdn.pixabay.com/photo/2016/05/05/17/59/sports-car-1374425_640.jpg',
@@ -650,6 +654,7 @@ const populate = async () => {
       'Endorsed',
       [],
       550,
+      false,
       'Barbara',
       'Guru',
       'https://cdn.pixabay.com/photo/2024/11/02/15/31/cat-9169528_1280.jpg',
@@ -661,6 +666,7 @@ const populate = async () => {
       'Super Smarty Pants',
       [],
       1500,
+      false,
       'Ninja',
       'Fullstack',
       'https://cdn.pixabay.com/photo/2017/11/05/15/44/man-2920911_640.jpg',
@@ -672,6 +678,7 @@ const populate = async () => {
       'Mentor',
       [],
       720,
+      false,
       'Derek',
       'King',
     );
@@ -682,6 +689,7 @@ const populate = async () => {
       'Endorsed',
       [],
       480,
+      false,
       'Monica',
       'Queen',
     );
@@ -692,6 +700,7 @@ const populate = async () => {
       'Not endorsed',
       [],
       150,
+      false,
       'Hero',
       'DevOps',
     );
@@ -702,6 +711,7 @@ const populate = async () => {
       'Endorsed',
       [],
       380,
+      false,
       'Quincy',
       'Assurance',
     );
@@ -712,10 +722,12 @@ const populate = async () => {
       'Grandmaster',
       [],
       7200,
+      false,
       'Bella',
       'Chain',
     );
 
+    const t1 = await tagCreate(T1_NAME, T1_DESC, []);
     const t2 = await tagCreate(T2_NAME, T2_DESC, [u1, u2, u3]);
     const t3 = await tagCreate(T3_NAME, T3_DESC, []);
     const t4 = await tagCreate(T4_NAME, T4_DESC, []);
@@ -1205,26 +1217,118 @@ const populate = async () => {
       [u21, u22],
     );
 
-    // Adding us as a users
+    // Test user
     await userCreate(
+      '6kULi0D0G7ZDp1XRn7XnjQZ6Ckk2', // From Firebase
+      'test',
+      'test@gmail.com',
+      'Not endorsed',
+      [],
+      0,
+      false,
+      'test',
+      'test',
+      '',
+    );
+
+    // Adding us as a users
+    const jacob = await userCreate(
       'LSF2vgdlbyVFpDd6KmbBs7Fwa5O2', // From Firebase
       'jekhi5',
       'jacobk513@gmail.com',
       'Not endorsed',
       [],
       13,
+      false,
       'Jacob',
       'Kline',
       '',
     );
 
+    await questionCreate(
+      'Question with 0 upvotes',
+      'This question has 0 upvotes',
+      [t1],
+      [],
+      jacob,
+      new Date('2023-01-20T03:00:00'),
+      [],
+      [],
+      [],
+      [],
+      [],
+    );
+
+    await questionCreate(
+      'Question with 4 upvotes',
+      'This question has 4 upvotes',
+      [t1],
+      [],
+      jacob,
+      new Date('2023-01-20T03:00:00'),
+      [],
+      [],
+      [],
+      [u1.uid, u2.uid, u3.uid, u4.uid],
+      [],
+    );
+
+    await questionCreate(
+      'Question with 9 upvotes',
+      'This question has 9 upvotes',
+      [t1],
+      [],
+      jacob,
+      new Date('2023-01-20T03:00:00'),
+      [],
+      [],
+      [],
+      [u1.uid, u2.uid, u3.uid, u4.uid, u5.uid, u6.uid, u7.uid, u8.uid, u9.uid],
+      [],
+    );
+
+    await questionCreate(
+      'Question with 19 upvotes',
+      'This question has 19 upvotes',
+      [t1],
+      [],
+      jacob,
+      new Date('2023-01-20T03:00:00'),
+      [],
+      [],
+      [],
+      [
+        u1.uid,
+        u2.uid,
+        u3.uid,
+        u4.uid,
+        u5.uid,
+        u6.uid,
+        u7.uid,
+        u8.uid,
+        u9.uid,
+        u10.uid,
+        u11.uid,
+        u1.uid,
+        u2.uid,
+        u3.uid,
+        u4.uid,
+        u5.uid,
+        u6.uid,
+        u7.uid,
+        u8.uid,
+      ],
+      [],
+    );
+
     await userCreate(
-      'Fm5O8RAHjqcxmNrip3luw0JF6mz1',
+      'j1txJsCdYYXW5bDPVYkaqn71gev2',
       'ashleyydaviis',
       'ashley921davis@gmail.com',
       'Grandmaster',
       [],
       15000,
+      false,
       'Ashley',
       'Davis',
       'https://cdn.pixabay.com/photo/2024/02/23/23/58/dog-8593014_1280.jpg',
@@ -1237,7 +1341,34 @@ const populate = async () => {
       'Not endorsed',
       [],
       20,
+      false,
       'Kenneth',
+      'Borrero',
+      '',
+    );
+
+    await userCreate(
+      '0vgcq4iw9Xc0x2GcB0Y7xYhgt6C2',
+      'BigKenDog',
+      'kenborrero2@gmail.com',
+      'Not endorsed',
+      [],
+      20,
+      false,
+      'Ken',
+      'Borrero',
+      '',
+    );
+
+    await userCreate(
+      'BQN4AeEXOsV6ocDfR0Z3KyJ7URo2',
+      'KenBobanna',
+      'kennethborrero2@gmail.com',
+      'Not endorsed',
+      [],
+      20,
+      false,
+      'Ken',
       'Borrero',
       '',
     );
@@ -1249,6 +1380,7 @@ const populate = async () => {
       'Super Smarty Pants',
       [],
       100,
+      false,
       'Gracelyn',
       'Theobald',
       '',

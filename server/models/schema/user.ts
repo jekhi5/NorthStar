@@ -1,6 +1,4 @@
 import mongoose from 'mongoose';
-import { PostNotification } from '../../types';
-import PostNotificationModel from '../postNotifications';
 
 /**
  * Mongoose schema for the User collection.
@@ -23,10 +21,15 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    email: { type: String, required: true, unique: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     username: {
       type: String,
       required: true,
+      unique: true,
     },
     firstName: {
       type: String,
@@ -64,6 +67,11 @@ const userSchema = new mongoose.Schema(
       default: 0,
       required: true,
     },
+    emailsEnabled: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
   },
   { collection: 'User' },
 );
@@ -73,30 +81,18 @@ const userSchema = new mongoose.Schema(
  * Updates the status of a user to 'Endorsed' if their reputation is 30 or higher.
  * Adds the welcome notification to the user's postNotifications array.
  */
-userSchema
-  .post('findOneAndUpdate', async doc => {
-    // Update status based on points
-    if (doc.points >= 30 && doc.points < 100 && doc.status !== 'Endorsed') {
-      doc.status = 'Endorsed';
-    } else if (doc.points >= 100 && doc.points < 500 && doc.status !== 'Super Smarty Pants') {
-      doc.status = 'Super Smarty Pants';
-    } else if (doc.points >= 500 && doc.points < 1000 && doc.status !== 'Mentor') {
-      doc.status = 'Mentor';
-    } else if (doc.points >= 1000 && doc.status !== 'Grandmaster') {
-      doc.status = 'Grandmaster';
-    }
-    await doc.save();
-  })
-  .post('save', async doc => {
-    const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
-      title: 'Welcome to Fake Stack Overflow!',
-      text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter.',
-      notificationType: 'Question',
-    });
-
-    if (welcomeNotification && welcomeNotification._id) {
-      await doc.populate('postNotifications');
-    }
-  });
+userSchema.post('findOneAndUpdate', async doc => {
+  // Update status based on points
+  if (doc.points >= 30 && doc.points < 100 && doc.status !== 'Endorsed') {
+    doc.status = 'Endorsed';
+  } else if (doc.points >= 100 && doc.points < 500 && doc.status !== 'Super Smarty Pants') {
+    doc.status = 'Super Smarty Pants';
+  } else if (doc.points >= 500 && doc.points < 1000 && doc.status !== 'Mentor') {
+    doc.status = 'Mentor';
+  } else if (doc.points >= 1000 && doc.status !== 'Grandmaster') {
+    doc.status = 'Grandmaster';
+  }
+  await doc.save();
+});
 
 export default userSchema;

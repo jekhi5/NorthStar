@@ -9,7 +9,7 @@ export type FakeSOSocket = Server<ServerToClientEvents>;
  * - _id - The unique identifier for the PostNotification. Optional field.
  * - title - The title of the PostNotification.
  * - text - The content of the PostNotification.
- * - postType - The type of the post that the PostNotification is about.
+ * - notificationType - The type of the PostNotification.
  * - postId - The unique identifier of the post that the PostNotification is about.
  * - fromUser - The user who triggered the PostNotification.
  */
@@ -17,9 +17,15 @@ export interface PostNotification {
   _id?: ObjectId;
   title: string;
   text: string;
-  notificationType: 'questionAnswered' | 'commentAdded' | 'questionPostedWithTag';
-  postId: ObjectId;
-  fromUser: User;
+  notificationType:
+    | 'questionAnswered'
+    | 'commentAdded'
+    | 'questionPostedWithTag'
+    | 'questionUpvoted'
+    | 'welcomeNotification';
+  postId?: ObjectId;
+  fromUser?: User;
+  questionId?: ObjectId;
 }
 
 /**
@@ -38,6 +44,7 @@ export type OrderType = 'newest' | 'unanswered' | 'active' | 'mostViewed' | 'mos
  * - profilePicture - The URL of the user's profile picture.
  * - status - The status of the user, either 'Not endorsed' or 'Endorsed'.
  * - postNotifications - An array of post notifications associated with the user.
+ * - emailsEnabled - boolean checking if this user has email notfications enabled.
  **/
 export interface User {
   _id?: ObjectId;
@@ -50,6 +57,7 @@ export interface User {
   status: 'Not endorsed' | 'Endorsed' | 'Super Smarty Pants' | 'Mentor' | 'Grandmaster';
   postNotifications: { postNotification: PostNotification; read: boolean }[];
   reputation: number;
+  emailsEnabled: boolean;
 }
 
 /**
@@ -235,6 +243,20 @@ export interface Comment {
 }
 
 /**
+ * Interface representing a the components that go into an email, which contains:
+ * - from - email that the mail will be sent from.
+ * - to - email that will recieve the mail.
+ * - subject - The subject line of the mail
+ * - html - The content of the mail in html form.
+ */
+export interface MailOptions {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}
+
+/**
  * Interface representing a Message, which contains:
  * - _id - The unique identifier for the message. Optional field.
  * - content - The content of the message.
@@ -380,6 +402,7 @@ export interface AnswerUpdatePayload {
 export interface PostNotificationUpdatePayload {
   notification?: PostNotification;
   type: 'markRead' | 'newNotification';
+  forUserUid: string;
 }
 
 /**

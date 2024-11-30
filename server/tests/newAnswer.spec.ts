@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import { ObjectId } from 'mongodb';
 import { app } from '../app';
 import * as util from '../models/application';
-import { PostNotification, User } from '../types';
+import { User } from '../types';
 
 const saveAnswerSpy = jest.spyOn(util, 'saveAnswer');
 const addAnswerToQuestionSpy = jest.spyOn(util, 'addAnswerToQuestion');
@@ -18,6 +18,7 @@ const user1: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 interface MockResponse {
@@ -57,16 +58,7 @@ describe('POST /addAnswer', () => {
       comments: [],
     };
 
-    const mockNotification: PostNotification = {
-      _id: new ObjectId(),
-      title: 'Mock Notification',
-      text: 'This is a mock notification',
-      notificationType: 'questionAnswered',
-      postId: mockAnswer._id,
-      fromUser: user1,
-    };
-
-    postNotificationSpy.mockResolvedValueOnce(mockNotification);
+    postNotificationSpy.mockResolvedValueOnce([]);
 
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
 
@@ -259,16 +251,7 @@ describe('POST /addAnswer', () => {
       subscribers: [],
     };
 
-    const mockNotification: PostNotification = {
-      _id: new ObjectId(),
-      title: 'Mock Notification',
-      text: 'This is a mock notification',
-      notificationType: 'questionPostedWithTag',
-      postId: mockQuestion._id,
-      fromUser: user1,
-    };
-
-    postNotificationSpy.mockResolvedValueOnce(mockNotification);
+    postNotificationSpy.mockResolvedValueOnce([]);
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
     addAnswerToQuestionSpy.mockResolvedValueOnce(mockQuestion);
     popDocSpy.mockResolvedValueOnce({ error: 'Error when populating document' });
@@ -300,7 +283,7 @@ describe('POST /addAnswer', () => {
       comments: [],
     };
 
-    postNotificationSpy.mockResolvedValueOnce({ error: 'Error when posting notifications' });
+    postNotificationSpy.mockResolvedValueOnce([]);
 
     saveAnswerSpy.mockResolvedValueOnce(mockAnswer);
 

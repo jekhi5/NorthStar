@@ -7,6 +7,7 @@ import { Schema } from 'mongoose';
  * Each PostNotification includes the following fields:
  * - title - The title of the PostNotification.
  * - text - The content of the PostNotification.
+ * - notificationType - The type of the PostNotification.
  * - postType - The type of the post that the PostNotification is about.
  * - postId - The unique identifier of the post that the PostNotification is about.
  * - fromUser - The user who triggered the PostNotification.
@@ -24,19 +25,31 @@ const postNotificationSchema: Schema = new Schema(
     },
     notificationType: {
       type: String,
-      enum: ['questionAnswered', 'commentAdded', 'questionPostedWithTag'],
+      enum: [
+        'questionAnswered',
+        'commentAdded',
+        'questionPostedWithTag',
+        'questionUpvoted',
+        'welcomeNotification',
+      ],
       required: true,
     },
     // No ref is given here because the post could be a question, answer, or comment
     // When a query is made, the ref can be dynamically determined based on the postType
     postId: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: false,
     },
     fromUser: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
+    },
+    // Used to store the associated question ID, if present, to hyperlink
+    questionId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Question',
+      required: false,
     },
   },
   { collection: 'PostNotification' },

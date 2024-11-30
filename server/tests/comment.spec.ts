@@ -3,7 +3,7 @@ import supertest from 'supertest';
 import { ObjectId } from 'mongodb';
 import { app } from '../app';
 import * as util from '../models/application';
-import { PostNotification, Question, User } from '../types';
+import { Question, User } from '../types';
 
 const saveCommentSpy = jest.spyOn(util, 'saveComment');
 const addCommentSpy = jest.spyOn(util, 'addComment');
@@ -19,6 +19,7 @@ const user1: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user2: User = {
@@ -28,6 +29,7 @@ const user2: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 interface MockResponse {
@@ -67,15 +69,6 @@ describe('POST /addComment', () => {
       downVotes: [],
     };
 
-    const mockNotification: PostNotification = {
-      _id: new ObjectId('65e9b5a995b6c7045a30d823'),
-      title: 'Mock notification',
-      text: 'Mock notification text',
-      notificationType: 'commentAdded',
-      postId: validQid,
-      fromUser: user1,
-    };
-
     saveCommentSpy.mockResolvedValueOnce(mockComment);
 
     addCommentSpy.mockResolvedValueOnce({
@@ -108,7 +101,7 @@ describe('POST /addComment', () => {
       subscribers: [],
     });
 
-    postNotificationsSpy.mockResolvedValueOnce(mockNotification);
+    postNotificationsSpy.mockResolvedValueOnce([]);
 
     const response = await supertest(app).post('/comment/addComment').send(mockReqBody);
 
@@ -442,7 +435,9 @@ describe('POST /addComment', () => {
       downVotes: [],
     };
 
-    postNotificationsSpy.mockResolvedValueOnce({ error: 'Error when posting notifications' });
+    postNotificationsSpy.mockResolvedValueOnce([
+      { postNotification: { error: 'Error when posting notifications' }, forUserUid: null },
+    ]);
 
     saveCommentSpy.mockResolvedValueOnce(mockComment);
 
@@ -511,7 +506,9 @@ describe('POST /addComment', () => {
       downVotes: [],
     };
 
-    postNotificationsSpy.mockResolvedValueOnce({ error: 'Error when posting notifications' });
+    postNotificationsSpy.mockResolvedValueOnce([
+      { postNotification: { error: 'Error when posting notifications' }, forUserUid: null },
+    ]);
 
     saveCommentSpy.mockResolvedValueOnce(mockComment);
 

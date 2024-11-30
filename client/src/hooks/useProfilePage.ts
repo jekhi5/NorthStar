@@ -1,13 +1,13 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { Question, User } from '../types';
-import { getUserByUid, updateUser } from '../services/userService';
-import UserContext from '../contexts/UserContext';
+import { checkValidUser, getUserByUsername, updateUser } from '../services/userService';
 import {
   getQuestionsByAnsweredByUserId,
   getQuestionsByAskedByUserId,
 } from '../services/questionService';
+import useLoginContext from './useLoginContext';
 
 /**
  * Custom hook to manage the state and logic for the profile page and profile page updates.
@@ -22,7 +22,7 @@ import {
  * @returns saveProfile - Function to save edited profile.
  * @returns handleProfilePictureUpload - Function to upload profile picture.
  */
-const useProfilePage = () => {
+const useProfilePage = (username?: string) => {
   const [profile, setProfile] = useState<User | null>(null);
   const [editedProfile, setEditedProfile] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -31,25 +31,33 @@ const useProfilePage = () => {
   const [updateError, setUpdateError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Get user, and subsequently user id
-  const context = useContext(UserContext);
-  const uid = context?.user?.uid;
-  const userId = context?.user?._id;
+  const [emailOpted, setEmailOpted] = useState<boolean | null>(null);
+  const [optButtonText, setOptButtonText] = useState<string | null>(null);
+
+  const { setUser } = useLoginContext();
 
   useEffect(() => {
     const fetchProfile = async () => {
-      if (!uid) {
-        setError('Uid not available.');
+      if (!username) {
+        setError('Username not available.');
         return;
       }
-
       try {
-        const profileData = await getUserByUid(uid);
+        const profileData = await getUserByUsername(username);
         setProfile(profileData);
+        const userId = profileData?._id;
+        const userCanEmail = profileData?.emailsEnabled;
         const qlist = await getQuestionsByAskedByUserId(userId as string);
         setUserQuestions(qlist || []);
         const alist = await getQuestionsByAnsweredByUserId(userId as string);
         setUserAnswers(alist || []);
+
+        setEmailOpted(userCanEmail as boolean);
+        if (userCanEmail as boolean) {
+          setOptButtonText('Disable Email Notifications');
+        } else {
+          setOptButtonText('Enable Email Notifications');
+        }
         setEditedProfile(profileData); // Initialize editedProfile with fetched data
       } catch (err) {
         setError('Failed to load profile.');
@@ -57,7 +65,7 @@ const useProfilePage = () => {
     };
 
     fetchProfile();
-  }, [uid, userId]);
+  }, [username]);
 
   const toggleEditing = () => {
     setIsEditing(!isEditing);
@@ -74,7 +82,19 @@ const useProfilePage = () => {
   const saveProfile = async () => {
     if (editedProfile) {
       try {
+        // Check if username and email are available
+        // Pass id since we can exclude user's current info from the check
+        const isUserValid = await checkValidUser(
+          editedProfile.username,
+          editedProfile.email,
+          editedProfile._id,
+        );
+        if (!isUserValid.available) {
+          setUpdateError(isUserValid.message);
+          return;
+        }
         const updatedProfile = await updateUser(editedProfile);
+        setUser(updatedProfile);
         setProfile(updatedProfile);
         setIsEditing(false); // Exit edit mode
         setUpdateError(null);
@@ -82,6 +102,18 @@ const useProfilePage = () => {
         setUpdateError('Failed to update profile.');
       }
     }
+  };
+
+  const toggleEmailOptIn = async () => {
+    const newEmailOpted = !(emailOpted as boolean);
+    setEmailOpted(newEmailOpted);
+
+    const updatedProfile = { ...(profile as User), emailsEnabled: newEmailOpted };
+    setProfile(updatedProfile);
+
+    await updateUser(updatedProfile);
+
+    setOptButtonText(newEmailOpted ? 'Disable Email Notifications' : 'Enable Email Notifications');
   };
 
   // TODO THIS CURRENTLY DOES NOT WORK!!! NEED TO CHANGE THE WAY FILES ARE STORED IN FIREBASE
@@ -137,11 +169,14 @@ const useProfilePage = () => {
     userAnswers,
     updateError,
     isEditing,
+    emailOpted,
+    optButtonText,
     toggleEditing,
     handleChange,
     saveProfile,
     handleProfilePictureUpload,
     calculateReputationPercentage,
+    toggleEmailOptIn,
   };
 };
 

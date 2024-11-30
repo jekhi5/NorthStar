@@ -21,6 +21,7 @@ const user1: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 const user2: User = {
@@ -31,6 +32,7 @@ const user2: User = {
   status: 'Not endorsed',
   postNotifications: [],
   reputation: 0,
+  emailsEnabled: false,
 };
 
 describe('GET /getUserByUid/:uid', () => {
@@ -134,7 +136,7 @@ describe('GET /checkValidUser/:username/:email', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       available: false,
-      message: 'Email is already in use (perhaps try logging in instead)',
+      message: 'Email is already in use',
     });
     expect(UserModel.findOne).toHaveBeenCalledTimes(2);
   });
@@ -154,7 +156,7 @@ describe('GET /checkValidUser/:username/:email', () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({
       available: false,
-      message: 'Both username and email are already in use (perhaps try logging in instead)',
+      message: 'Both username and email are already in use',
     });
   });
 

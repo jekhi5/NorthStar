@@ -190,3 +190,33 @@ question-item {
   font-style: italic;
   margin-left: 1rem;
 }
+
+.emailopt-button-enable {
+  background-color: #322A88 !important;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+.emailopt-button-disable {
+  background-color: #e0c3fc !important;
+  color: black;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+button {
+  width: auto;
+  min-width: 150px;
+  text-align: center;
+}
