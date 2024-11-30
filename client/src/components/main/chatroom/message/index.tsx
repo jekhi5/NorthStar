@@ -21,17 +21,20 @@ const MessageComponent = ({ message, currentUser }: MessageProps) => {
 
   return (
     <div className={`message ${isCurrentUser ? 'current-user' : ''}`}>
-      {!isCurrentUser && (
+      {/* Profile container */}
+      <div className='profile-group'>
         <img
           src={message.sentBy?.profilePicture || defaultProfilePic}
           alt={`${message.sentBy?.username}'s profile`}
           className='profile-photo'
         />
-      )}
-      <div className='message-content'>
-        <NavLink to={`/profile/${message.sentBy?.username}`} className='user'>
-          <span>{isCurrentUser ? `${currentUser.username} (me)` : message.sentBy?.username}</span>
+        <NavLink to={`/profile/${message.sentBy?.username}`} className='username'>
+          {isCurrentUser ? currentUser.username : message.sentBy?.username}
         </NavLink>
+      </div>
+
+      {/* Message content */}
+      <div className='message-content'>
         <p>{message.content}</p>
         <div className='timestamp'>
           {new Date(message.sentDateTime).toLocaleString('en-US', {
@@ -45,13 +48,6 @@ const MessageComponent = ({ message, currentUser }: MessageProps) => {
           })}
         </div>
       </div>
-      {isCurrentUser && (
-        <img
-          src={currentUser.profilePicture || defaultProfilePic}
-          alt='Your profile'
-          className='profile-photo'
-        />
-      )}
     </div>
   );
 };

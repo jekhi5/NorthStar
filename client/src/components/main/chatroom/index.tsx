@@ -35,22 +35,24 @@ const Chatroom = () => {
   };
 
   return (
-    <div className='chatroom'>
-      <h2>Let&apos;s chat!</h2>
-      <div className='input-area'>
-        <input
-          type='text'
-          value={newMessageContent}
-          onChange={e => setNewMessageContent(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder='Type a message...'
-        />
-        <button onClick={sendMessage}>Send</button>
-      </div>
-      <div className='messages'>
-        {messages.map((msg, index) => (
-          <MessageComponent key={index} message={msg} currentUser={currentUser} />
-        ))}
+    <div className='chatroom-container'>
+      <div className='chatroom'>
+        <h2>Let&apos;s chat!</h2>
+        <div className='input-area'>
+          <input
+            type='text'
+            value={newMessageContent}
+            onChange={e => setNewMessageContent(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder='Type a message...'
+          />
+          <button onClick={sendMessage}>Send</button>
+        </div>
+        <div className='messages'>
+          {messages.map((msg, index) => (
+            <MessageComponent key={index} message={msg} currentUser={currentUser} />
+          ))}
+        </div>
       </div>
     </div>
   );

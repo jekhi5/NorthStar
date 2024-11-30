@@ -1,17 +1,40 @@
-.chatroom {
-  margin: 20px;
-  padding: 1.5rem;
-  max-width: 800px;
-  width: 100%;
-  background-color: var(--background-white);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.chatroom-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: rgba(60, 30, 90, 1);
+  color: #ddd;
+  overflow: hidden;
 }
 
+.chatroom-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../../../images/stars.gif');
+  background-size: 600px 600px;
+  background-repeat: repeat;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chatroom {
+  z-index: 1;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  margin: auto;
+}
 .chatroom h2 {
   font-size: 2rem;
   font-weight: bold;
-  color: var(--primary-purple);
+  color: var(--hover-purple);
   text-align: center;
   margin-bottom: 1rem;
 }
