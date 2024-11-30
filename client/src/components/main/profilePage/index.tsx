@@ -61,7 +61,7 @@ const ProfilePage = () => {
               <p className='profile-username'>Username: {profile.username}</p>
               <p className='profile-email'>Email: {profile.email}</p>
               <div className='profile-button-group'>
-              <button onClick={toggleEditing}>Edit Profile</button>
+                <button onClick={toggleEditing}>Edit Profile</button>
                 <button
                   className={`${emailOpted ? 'emailopt-button-disable' : 'emailopt-button-enable'}`}
                   onClick={toggleEmailOptIn}>
@@ -82,28 +82,28 @@ const ProfilePage = () => {
                   onChange={e => handleChange('firstName', e.target.value)}
                   placeholder='First Name'
                   className='profile-edit-input'
-              />
+                />
                 <input
                   type='text'
                   value={editedProfile?.lastName || ''}
                   onChange={e => handleChange('lastName', e.target.value)}
                   placeholder='Last Name'
                   className='profile-edit-input'
-              />
+                />
                 <input
                   type='text'
                   value={editedProfile?.username || ''}
                   onChange={e => handleChange('username', e.target.value)}
                   placeholder='Username'
                   className='profile-edit-input'
-              />
+                />
                 <input
                   type='email'
                   value={editedProfile?.email || ''}
                   onChange={e => handleChange('email', e.target.value)}
                   placeholder='Email'
                   className='profile-edit-input'
-              />
+                />
                 <input
                   type='file'
                   accept='image/*'
@@ -114,10 +114,10 @@ const ProfilePage = () => {
                   }}
                 />
                 <div className='edit-profile-buttons'>
-                <button onClick={saveProfile}>Save Changes</button>
+                  <button onClick={saveProfile}>Save Changes</button>
                   <button onClick={toggleEditing}>Cancel</button>
                 </div>
-              {updateError && <p>{updateError}</p>}
+                {updateError && <p>{updateError}</p>}
               </div>
             ) : (
               <div className='profile-info'>
