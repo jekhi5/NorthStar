@@ -16,9 +16,14 @@
   margin-bottom: 1rem;
 }
 
+.input-area input,
+.input-area button {
+  all: unset; /* Reset default */
+}
+
 .input-area {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   margin-bottom: 1rem;
 }
 
@@ -35,14 +40,13 @@
 }
 
 .input-area button {
-  height: 2.5rem;
+  height: auto;
   background-color: var(--primary-purple);
   color: #fff;
   border: none;
   border-radius: 4px;
   padding: 0rem 1rem;
   transition: background-color 0.3s;
-  box-sizing: border-box;
 }
 
 .input-area button:hover {
