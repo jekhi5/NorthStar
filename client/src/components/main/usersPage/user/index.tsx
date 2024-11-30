@@ -28,7 +28,7 @@ const UserView = ({ userData }: { userData: UserData }) => {
           <span className='username'>{user.username}</span>
           <div
             className={`question_author_status status-${user.status.toLowerCase().replace(' ', '-')}`}>
-            {user.status}
+            {user.status === 'Not endorsed' ? '' : user.status}
           </div>
           <span className='user-rep'>Points: {user.reputation}</span>
         </div>
