@@ -1,4 +1,4 @@
-import { User } from '../types';
+import { User, UserData } from '../types';
 import api from './config';
 
 const USER_API_URL = `${process.env.REACT_APP_SERVER_URL}/user`;
@@ -102,4 +102,17 @@ const updateUser = async (user: User): Promise<User> => {
   return res.data;
 };
 
-export { addUser, checkValidUser, getUserByUid, getUserByUsername, updateUser };
+/**
+ * Function to get all Users.
+ *
+ * @throws Error if there is an issue fetching users from server.
+ */
+const getUsers = async (): Promise<UserData[]> => {
+  const res = await api.get(`${USER_API_URL}/getUsers`);
+  if (res.status !== 200) {
+    throw new Error('Error when fetching users');
+  }
+  return res.data;
+};
+
+export { addUser, checkValidUser, getUserByUid, updateUser, getUserByUsername, getUsers };

@@ -209,11 +209,42 @@ const userController = () => {
     }
   };
 
+  /**
+   * Retrieves a list of users' data from the database.
+   * If there is an error, the HTTP response's status is updated.
+   *
+   * @param _ The HTTP request object (not used in this function).
+   * @param res The HTTP response object used to send back the user data.
+   *
+   * @returns A Promise that resolves to void.
+   */
+  const getUsers = async (_: Request, res: Response): Promise<void> => {
+    try {
+      const users = await UserModel.find();
+      if (!users) {
+        throw new Error('Error while fetching users');
+      } else {
+        res.json(
+          users.map(user => ({
+            uid: user.uid,
+            username: user.username,
+            profilePicture: user.profilePicture,
+            status: user.status,
+            reputation: user.reputation,
+          })),
+        );
+      }
+    } catch (err) {
+      res.status(500).send(`Error when fetching users: ${(err as Error).message}`);
+    }
+  };
+
   router.get('/getUserByUid/:uid', getUserByUid);
   router.get('/getUserByUsername/:username', getUserByUsername);
   router.get('/checkValidUser/:username/:email', checkValidUser);
   router.post('/addUser', addUser);
   router.put('/updateUser', updateUser);
+  router.get('/getUsers', getUsers);
 
   return router;
 };

@@ -44,6 +44,25 @@ export interface User {
 }
 
 /**
+ * Interface represents the data for a user that is necessary for displaying user on Users page.
+ * This is different from the User type because there is less information required when displaying
+ * Users on the Users page. This type is representative of that.
+ *
+ * uid - The unique identifier of the user.
+ * username - The username of the user.
+ * profilePicture - The profile picture of the user.
+ * status - The status of the user.
+ * reputation - The reputation number of the user.
+ */
+export interface UserData {
+  uid: string;
+  username: string;
+  profilePicture: string;
+  status: string;
+  reputation: number;
+}
+
+/**
  * Enum representing the possible ordering options for questions.
  * and their display names.
  */
