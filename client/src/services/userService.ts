@@ -105,7 +105,7 @@ const updateUser = async (user: User): Promise<User> => {
 /**
  * Function to get tags with the number of associated questions.
  *
- * @throws Error if there is an issue fetching tags with the question number.
+ * @throws Error if there is an issue fetching users from server.
  */
 const getUsers = async (): Promise<UserData[]> => {
   const res = await api.get(`${USER_API_URL}/getUsers`);
