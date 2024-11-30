@@ -33,3 +33,7 @@
   flex-direction: column;
   align-items: center;
 }
+
+.tag-count {
+  color: rgb(215, 210, 210);
+}
