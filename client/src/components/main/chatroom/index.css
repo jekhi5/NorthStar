@@ -1,24 +1,52 @@
-.chatroom {
-  margin: 20px;
-  padding: 1.5rem;
-  max-width: 800px;
-  width: 100%;
-  background-color: var(--background-white);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.chatroom-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: rgba(60, 30, 90, 1);
+  color: #ddd;
+  overflow: hidden;
 }
 
+.chatroom-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('../../../images/stars.gif');
+  background-size: 600px 600px;
+  background-repeat: repeat;
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chatroom {
+  z-index: 1;
+  padding: 2rem;
+  border-radius: 16px;
+  width: 90%;
+  margin: auto;
+}
 .chatroom h2 {
   font-size: 2rem;
   font-weight: bold;
-  color: var(--primary-purple);
+  color: var(--hover-purple);
   text-align: center;
   margin-bottom: 1rem;
 }
 
+.input-area input,
+.input-area button {
+  all: unset; /* Reset default */
+}
+
 .input-area {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   margin-bottom: 1rem;
 }
 
@@ -35,34 +63,15 @@
 }
 
 .input-area button {
+  height: auto;
   background-color: var(--primary-purple);
   color: #fff;
   border: none;
   border-radius: 4px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
+  padding: 0rem 1rem;
   transition: background-color 0.3s;
 }
 
 .input-area button:hover {
   background-color: var(--hover-purple);
-}
-
-.messages .message {
-  background-color: var(--background-light);
-  padding: 1rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.messages .message .user {
-  font-weight: bold;
-  color: var(--primary-purple);
-}
-
-.messages .message .timestamp {
-  font-size: 0.85rem;
-  color: var(--text-light-gray);
-  margin-top: 0.5rem;
 }
