@@ -29,7 +29,7 @@ interface QuestionHeaderProps {
 const QuestionHeader = ({ titleText, qcnt, setQuestionOrder }: QuestionHeaderProps) => (
   <div className='question-header'>
     <div className='header-top'>
-      <h1 className='title'>{titleText}</h1>
+      <h1 className='q-header-title'>{titleText}</h1>
       <AskQuestionButton />
     </div>
     <div className='header-bottom'>

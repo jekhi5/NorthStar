@@ -66,12 +66,12 @@ const VoteComponent = ({ post, postType }: VoteComponentProps) => {
       <button
         className={`vote-button ${voted === 1 ? 'vote-button-upvoted' : ''}`}
         onClick={() => handleVote('upvote')}>
-        <span className='material-symbols-outlined'>arrow_upward</span>
+        <span className='arrow'>arrow_upward</span>
       </button>
       <button
         className={`vote-button ${voted === -1 ? 'vote-button-downvoted' : ''}`}
         onClick={() => handleVote('downvote')}>
-        <span className='material-symbols-outlined'>arrow_downward</span>
+        <span className='arrow'>arrow_downward</span>
       </button>
       <span className='vote-count'>{count}</span>
     </div>
