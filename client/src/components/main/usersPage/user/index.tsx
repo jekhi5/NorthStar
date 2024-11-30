@@ -23,14 +23,14 @@ const UserView = ({ userData }: { userData: UserData }) => {
   return (
     <NavLink to={`/profile/${user.username}`} className='userLink'>
       <div className='userNode'>
-        <img src={profilePic ?? defaultProfilePic} alt='Profile' className='profile-picture' />
         <div className='user-info'>
+          <img src={profilePic ?? defaultProfilePic} alt='Profile' className='profile-picture' />
           <span className='username'>{user.username}</span>
           <div
             className={`question_author_status status-${user.status.toLowerCase().replace(' ', '-')}`}>
             {user.status}
-            <span className='user-rep'>Points: {user.reputation}</span>
           </div>
+          <span className='user-rep'>Points: {user.reputation}</span>
         </div>
       </div>
     </NavLink>

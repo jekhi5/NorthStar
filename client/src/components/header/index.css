@@ -122,7 +122,7 @@
   text-decoration: none;
   color: white;
   font-weight: bold;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   box-shadow: 0 0 10px rgba(163, 89, 191, 0.5);
   background-color: var(--accent-purple);
   border-radius: 4px;
