@@ -67,9 +67,14 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
     <LoginContext.Provider value={{ user, setUser }}>
       <Routes>
         {/* Public Route */}
-        <Route path='/' element={user ? <Navigate to='/home' /> : componentToShowOnLogin} />
+        {!user && (
+          <>
+            <Route path='/' element={componentToShowOnLogin} />
+            {/* You can add other public routes here if needed */}
+          </>
+        )}
         {/* Protected Routes */}
-        {
+        {user && (
           <Route
             element={
               <ProtectedRoute user={user} socket={socket}>
@@ -86,7 +91,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             <Route path='/chatroom' element={<Chatroom />} />
             <Route path='/users' element={<UsersPage />} />
           </Route>
-        }
+        )}
       </Routes>
     </LoginContext.Provider>
   );
