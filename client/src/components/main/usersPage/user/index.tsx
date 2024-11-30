@@ -13,6 +13,11 @@ import { UserData } from '../../../../types';
  */
 const UserView = ({ userData }: { userData: UserData }) => {
   const { user } = useUserSelected(userData);
+
+  if (!user) {
+    return <></>;
+  }
+
   const profilePic = user.profilePicture === '' ? defaultProfilePic : user.profilePicture;
 
   return (
