@@ -103,7 +103,7 @@ const updateUser = async (user: User): Promise<User> => {
 };
 
 /**
- * Function to get tags with the number of associated questions.
+ * Function to get all Users.
  *
  * @throws Error if there is an issue fetching users from server.
  */

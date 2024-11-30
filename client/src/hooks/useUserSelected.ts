@@ -5,7 +5,7 @@ import { User, UserData } from '../types';
 /**
  * Custom hook to handle fetching user details by uid.
  *
- * @param uid - The uid of the user to fetch.
+ * @param userData - The user data to display
  *
  * @returns user - The user object.
  * @returns setUser - Setter to manually update the user state if needed.

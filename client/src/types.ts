@@ -52,6 +52,7 @@ export interface User {
  * username - The username of the user.
  * profilePicture - The profile picture of the user.
  * status - The status of the user.
+ * reputation - The reputation number of the user.
  */
 export interface UserData {
   uid: string;
