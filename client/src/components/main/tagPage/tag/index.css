@@ -1,34 +1,29 @@
 .tagNode {
-  place-self: center;
-  border: 1px solid #ddd;
-  padding: 20px;
-  width: 90%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  margin: 15px;
+  justify-content: center;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
-
 .tagNode:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
   transform: translateY(-5px);
 }
 
 .tagName {
-  color: #007bff;
+  color: #b880e3;
   font-size: 1.4em;
   font-weight: 600;
   margin-bottom: 10px;
 }
 
 .tagDescription {
-  color: #666;
+  color: #a5a5a5;
   font-size: 1em;
   margin-bottom: 10px;
 }
