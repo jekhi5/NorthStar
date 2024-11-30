@@ -44,7 +44,10 @@ const tagController = () => {
   const getTagByName = async (req: Request, res: Response): Promise<void> => {
     try {
       const { name } = req.params; // Get the tag name from the request parameters
-      const tag = await TagModel.findOne({ name }); // Use the model's method to find the tag
+      let tag = await TagModel.findOne({ name });
+      if (tag) {
+        tag = await tag.populate('subscribers'); // Use the model's method to find the tag
+      }
 
       if (!tag) {
         res.status(404).send(`Tag with name "${name}" not found`);

@@ -18,13 +18,25 @@ describe('GET /getTagByName/:name', () => {
 
   it('should return the tag when found', async () => {
     // Mock a tag object to be returned by the findOne method
-    const mockTag = { name: 'exampleTag', description: 'This is a test tag' };
+    const mockTag = {
+      name: 'exampleTag',
+      description: 'This is a test tag',
+      populate: jest.fn().mockResolvedValueOnce({
+        name: 'exampleTag',
+        description: 'This is a test tag',
+        subscribers: [],
+      }),
+    };
     findOneSpy.mockResolvedValueOnce(mockTag);
 
     const response = await supertest(app).get('/tag/getTagByName/exampleTag');
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(mockTag);
+    expect(response.body).toEqual({
+      name: 'exampleTag',
+      description: 'This is a test tag',
+      subscribers: [],
+    });
   });
 
   it('should return 404 if the tag is not found', async () => {
