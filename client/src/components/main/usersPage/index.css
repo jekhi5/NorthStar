@@ -1,3 +1,25 @@
+.user-list-container::-webkit-scrollbar,
+.leaderboard::-webkit-scrollbar {
+  width: 8px;
+}
+
+.user-list-container::-webkit-scrollbar-track,
+.leaderboard::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.user-list-container::-webkit-scrollbar-thumb,
+.leaderboard::-webkit-scrollbar-thumb {
+  background: #8a499c69;
+  border-radius: 4px;
+}
+
+.user-list-container::-webkit-scrollbar-thumb:hover,
+.leaderboard::-webkit-scrollbar-thumb:hover {
+  background: #8a499c69;
+}
+
 .users-page {
   display: flex;
   flex-direction: column;
@@ -38,7 +60,6 @@
   flex: 1;
   overflow-y: auto;
   padding: 1rem;
-  border-right: 1px solid #e0e0e0;
 }
 
 .user-list {

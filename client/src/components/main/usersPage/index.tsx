@@ -13,7 +13,7 @@ const UsersPage = () => {
     <div className='users-page'>
       <div className='users-header'>
         <div className='left'>
-          <div className='bold_title'>{userList.length} Users</div>
+          <div className='bold_title'>{userList.length} Astronauts</div>
           <div className='bold_title'>All Users</div>
         </div>
         <div className='right'>
