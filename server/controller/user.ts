@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import UserModel from '../models/user';
-import { editUser, getTagCountMap, saveUser } from '../models/application';
+import { editUser, saveUser } from '../models/application';
 import { PostNotification, User } from '../types';
 import PostNotificationModel from '../models/postNotifications';
 
