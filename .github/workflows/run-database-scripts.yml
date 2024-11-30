@@ -8,6 +8,7 @@ on:
       - main
     paths:
       - 'server/models/schema/**'
+      - 'server/populate_db.ts'
 
   workflow_dispatch:
 
