@@ -13,10 +13,10 @@
     margin-bottom: 1.5rem;
   }
   
-  .title {
-    font-size: 2rem;
+  .q-header-title {
+    font-size: 1.8rem;
     font-weight: bold;
-    color: black;
+    color: var(--primary-purple);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
   

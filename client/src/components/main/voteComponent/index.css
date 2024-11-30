@@ -7,36 +7,42 @@
 }
 
 .vote-button {
-  background: none;
-  padding: 0;
+  all: unset;
   display: flex;
   align-items: center;
+  background: none;
   justify-content: center;
   transition: color 0.3s, outline 0.3s;
   border-radius: 50%;
   margin-right: 5px;
 }
 
-.material-symbols-outlined {
+.arrow {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
   font-size: 32px;
+  display: inline-block;
+  line-height: 1;
   color: var(--primary-purple);
   border-radius: 50%;
 }
 
-.vote-button:hover .material-symbols-outlined {
-  color: var(--accent-yellow);
+.vote-button:hover .arrow {
+  color: var(--accent-purple);
+  outline: 4px solid var(--accent-purple);
   border-radius: 50%;
 }
 
-.vote-button-upvoted .material-symbols-outlined {
+.vote-button-upvoted .arrow {
   color: var(--primary-purple);
-  outline: 4px solid var(--accent-yellow);
+  outline: 4px solid var(--accent-purple);
   border-radius: 50%;
 }
 
-.vote-button-downvoted .material-symbols-outlined {
+.vote-button-downvoted .arrow {
   color: var(--primary-purple);
-  outline: 4px solid var(--accent-yellow);
+  outline: 4px solid var(--accent-purple);
   border-radius: 50%;
 }
 
