@@ -1,3 +1,29 @@
+#answersHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: var(--background-light);
+  border-bottom: 2px solid var(--border-gray);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bold_title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--text-dark);
+  margin-right: 1rem;
+}
+
 .answer_question_title {
-  max-width: 60%;
+  font-size: 1.4rem;
+  color: var(--primary-purple);
+}
+
+.space_between {
+  gap: 1rem;
+}
+
+.right_padding {
+  padding-right: 1rem;
 }

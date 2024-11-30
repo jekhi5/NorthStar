@@ -68,7 +68,6 @@ const useLogin = () => {
         const dbUser = await getUserByUid(uid);
         if (dbUser) {
           setUser(dbUser);
-          navigate('/home');
         } else {
           // If user not found, clear the cookie
           Cookies.remove('auth');
@@ -79,7 +78,7 @@ const useLogin = () => {
         Cookies.remove('auth');
       }
     },
-    [navigate, setUser],
+    [setUser],
   );
 
   useEffect(() => {
