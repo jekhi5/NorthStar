@@ -14,7 +14,8 @@ const Header = () => {
 
   return (
     <div id='header' className='header'>
-      <div className='title'>Read It</div>
+      <div></div>
+      <div className='title'>North Star</div>
       <div className='headerNav'>
         <NavLink
           to='/home'
@@ -37,7 +38,7 @@ const Header = () => {
       </div>
       <input
         id='searchBar'
-        placeholder='Search ...'
+        placeholder='Search...'
         type='text'
         value={val}
         onChange={handleInputChange}
@@ -47,13 +48,13 @@ const Header = () => {
       <div className='notifications-and-profile-group'>
         <div className='notifications-icon'>
           <NavLink to='/notifications'>
-            <span className='material-symbols-outlined'>circle_notifications</span>
+            <span className='icon'>circle_notifications</span>
             {unreadNotifs > 0 && <span className='notification-bubble'>{unreadNotifs}</span>}
           </NavLink>
         </div>
         <div className='profile-icon'>
           <NavLink to={`/profile/${currentUser.username}`}>
-            <span className='material-symbols-outlined'>account_circle</span>
+            <span className='icon'>account_circle</span>
           </NavLink>
         </div>
         <div className='logout'>

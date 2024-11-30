@@ -1,3 +1,77 @@
-.user {
+/* General message container */
+.message {
+    display: flex;
+    align-items: center; /* Align profile photo and message content in the center */
+    margin-bottom: 1rem;
+  }
+  
+  /* Reverse layout for the current user's message */
+  .message.current-user {
+    justify-content: flex-end;
+  }
+  
+  /* Message content styling */
+  .message-content {
+    background-color: var(--background-light);
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 60%;
+    word-wrap: break-word;
+  }
+  
+  /* Styling for current user's messages */
+  .message.current-user .message-content {
+    background-color: var(--primary-purple);
+    color: white; /* Text color for better contrast */
+    text-align: right; /* Align message text to the right */
+  }
+  
+  /* Profile photo styling */
+  .profile-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Make it circular */
+    margin: 0 10px; /* Space between photo and message */
+    flex-shrink: 0; /* Prevent image from shrinking */
+  }
+  
+  .message.current-user .profile-photo {
+    margin: 0 0 0 10px; /* Adjust margin for reversed layout */
+  }
+  
+  /* Username styling */
+  .user {
+    font-weight: bold;
     text-decoration: none;
-}
+    color: var(--primary-purple);
+  }
+  
+  /* Timestamp styling */
+  .timestamp {
+    font-size: 0.85rem;
+    color: var(--text-light-gray);
+    margin-top: 0.5rem;
+  }
+  
+  
+  .messages .message {
+    background-color: var(--background-light);
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .messages .message .user {
+    font-weight: bold;
+    color: var(--primary-purple);
+  }
+  
+  .messages .message .timestamp {
+    font-size: 0.85rem;
+    color: var(--text-light-gray);
+    margin-top: 0.5rem;
+  }
+  
+  
