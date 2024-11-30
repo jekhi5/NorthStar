@@ -33,12 +33,6 @@ const Header = () => {
           className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
           Tags
         </NavLink>
-        <NavLink
-          to='/chatroom'
-          id='menu_chatroom'
-          className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-          Chatroom
-        </NavLink>
       </div>
       <input
         id='searchBar'
@@ -50,6 +44,11 @@ const Header = () => {
       />
 
       <div className='notifications-and-profile-group'>
+        <div className='chatroom-icon'>
+          <NavLink to='/chatroom'>
+            <span className='icon'>groups</span>
+          </NavLink>
+        </div>
         <div className='leaderboard-icon'>
           <NavLink to='/users'>
             <span className='icon'>trophy</span>
