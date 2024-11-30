@@ -1335,9 +1335,9 @@ const populate = async () => {
     );
 
     await userCreate(
-      'tBcTjlTxn2MDmk3VghWq4GGXTdC2',
+      'XI9IC6xcPCfpi8BHLK3jlqhPsZj1',
       'kenhen',
-      'kennethhenneth@gmail.com',
+      'kennethborrero2@gmail.com',
       'Not endorsed',
       [],
       20,
