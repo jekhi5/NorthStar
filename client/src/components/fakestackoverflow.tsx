@@ -16,6 +16,7 @@ import ProfilePage from './main/profilePage';
 import NotificationPage from './main/notificationPage';
 import Chatroom from './main/chatroom';
 import { getUserByUid } from '../services/userService';
+import UsersPage from './main/usersPage';
 import PageNotFound from './pageNotFound';
 
 const ProtectedRoute = ({
@@ -89,6 +90,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             <Route path='/profile/:username' element={<ProfilePage />} />
             <Route path='/notifications' element={<NotificationPage />} />
             <Route path='/chatroom' element={<Chatroom />} />
+            <Route path='/users' element={<UsersPage />} />
 
             {/* Anything that isn't in the above list should route to the page not found */}
             <Route path='*' element={<PageNotFound />} />

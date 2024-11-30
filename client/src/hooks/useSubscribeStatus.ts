@@ -24,7 +24,7 @@ const useSubscribeStatus = ({ item }: { item: Question | Tag }) => {
      * @returns The current subscription value for the user in the question, true for subscribe, false for unsubscribed.
      */
     const getSubscriptionValue = () =>
-      user && item?.subscribers?.find(sub => sub.uid === user.uid) !== undefined;
+      user && item?.subscribers?.find(sub => sub._id === user._id) !== undefined;
 
     setSubscribed(() => getSubscriptionValue());
   }, [item, socket, user]);

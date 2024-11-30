@@ -1,41 +1,54 @@
+.tag-page-container {
+   background: #0C0E18;
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),
+    radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
+}
+
 .tag_list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  padding: 20px; 
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 50px;
+  padding: 40px;
+  background: #0C0E18;
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px),
+    radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 30px);
+  background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
+  animation: starsAnimation 75s linear infinite;
 }
 
-.tagNode {
-  border: 1px solid #ddd;
-  padding: 20px;
-  width: calc(33.333% - 40px);
+@keyframes starsAnimation {
+  from { background-position: 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 550px 550px, 350px 350px, 250px 250px, 150px 150px; }
+}
+
+
+.tags-header {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  margin: 10px;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  padding: 20px 40px;
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
 }
 
-.tagNode:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transform: translateY(-5px);
-}
-
-.tagName {
-  color: #333;
-  font-size: 1.4em;
+.bold_title {
+  font-size: 2em;
+  color: #E0E7FF;
+  text-shadow: 0 0 10px rgba(120, 149, 255, 0.8);
   font-weight: 600;
-  margin-bottom: 10px;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
 }
 
-.tagDescription {
-  font-size: 1em;
-  color: #666;
-  text-align: center;
-  margin-bottom: 10px;
+.bold_title:hover {
+  text-shadow: 0 0 15px rgb(203, 120, 255),
+               0 0 25px rgba(203, 120, 255, 0.8);
+  transform: scale(1.02);
 }
