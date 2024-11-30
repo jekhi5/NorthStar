@@ -6,7 +6,7 @@ import { getUsers } from '../services/userService';
  * Custom hook for managing the user page's state and navigation.
  *
  * @returns userList - An array of user's data retrieved from the server
- * @returns clickTag - Function to navigate to the home page with the selected tag as a URL parameter.
+ * @returns leaderboardList - An array of user's data retrieved from the server
  */
 const useUserPage = () => {
   const [userList, setUserList] = useState<UserData[]>([]);
