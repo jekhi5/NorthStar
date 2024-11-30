@@ -1219,7 +1219,7 @@ const populate = async () => {
 
     // Test user
     await userCreate(
-      '6kULi0D0G7ZDp1XRn7XnjQZ6Ckk2', // From Firebase
+      'xiGTJRhaILg1smlOmRODWwhhGbv2', // From Firebase
       'test',
       'test@gmail.com',
       'Not endorsed',
@@ -1233,7 +1233,7 @@ const populate = async () => {
 
     // Adding us as a users
     const jacob = await userCreate(
-      'LSF2vgdlbyVFpDd6KmbBs7Fwa5O2', // From Firebase
+      'pHS9CQHvPibFM9w0qkkZjjMnxIG3', // From Firebase
       'jekhi5',
       'jacobk513@gmail.com',
       'Not endorsed',
@@ -1322,7 +1322,7 @@ const populate = async () => {
     );
 
     await userCreate(
-      'j1txJsCdYYXW5bDPVYkaqn71gev2',
+      'HXK6mmGXyNQuiteejbCfHHKSjxE3',
       'ashleyydaviis',
       'ashley921davis@gmail.com',
       'Grandmaster',
@@ -1335,7 +1335,7 @@ const populate = async () => {
     );
 
     await userCreate(
-      'NZn2s5RwTvPn9VsmlgBRRswvy5J2',
+      'tBcTjlTxn2MDmk3VghWq4GGXTdC2',
       'kenhen',
       'kennethhenneth@gmail.com',
       'Not endorsed',
@@ -1348,33 +1348,7 @@ const populate = async () => {
     );
 
     await userCreate(
-      '0vgcq4iw9Xc0x2GcB0Y7xYhgt6C2',
-      'BigKenDog',
-      'kenborrero2@gmail.com',
-      'Not endorsed',
-      [],
-      20,
-      false,
-      'Ken',
-      'Borrero',
-      '',
-    );
-
-    await userCreate(
-      'BQN4AeEXOsV6ocDfR0Z3KyJ7URo2',
-      'KenBobanna',
-      'kennethborrero2@gmail.com',
-      'Not endorsed',
-      [],
-      20,
-      false,
-      'Ken',
-      'Borrero',
-      '',
-    );
-
-    await userCreate(
-      '1LHJdANB6bXmgh1aDks2o8pWCJ22',
+      'X71YPT2BPNZ6TCQzaqOf2kVbaDg1',
       'grace',
       'gracelyntheobald@gmail.com',
       'Super Smarty Pants',
