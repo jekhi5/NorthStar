@@ -35,7 +35,7 @@ const TagView = ({ t, clickTag }: TagProps) => {
         <SubscribeComponent item={tag} type={'tag'} />
         <div className='tagName'>{tag.name}</div>
         <div className='tagDescription'>{tag.description}</div>
-        <div>{t.qcnt} questions</div>
+        <div className='tag-count'>{t.qcnt} questions</div>
       </div>
     </div>
   );

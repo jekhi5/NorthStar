@@ -12,8 +12,14 @@ const UsersPage = () => {
   return (
     <div className='users-page'>
       <div className='users-header'>
-        <div className='bold_title'>{userList.length} Users</div>
-        <div className='bold_title'>All Users</div>
+        <div className='left'>
+          <div className='bold_title'>{userList.length} Astronauts</div>
+          <div className='bold_title'>All Users</div>
+        </div>
+        <div className='right'>
+          <div className='bold_title'>Leaderboard</div>
+          <div className='bold_title'>Top Users</div>
+        </div>
       </div>
       <div className='users-content'>
         <div className='user-list-container'>
@@ -25,7 +31,6 @@ const UsersPage = () => {
         </div>
         <div className='leaderboard'>
           <div className='leaderboard-group'>
-            <h4>Leaderboard</h4>
             {leaderboardList.map((user, index) =>
               user ? <UserView key={index} userData={user} /> : null,
             )}

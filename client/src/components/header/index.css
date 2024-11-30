@@ -111,6 +111,8 @@
 
 .notifications-icon,
 .profile-icon,
+.leaderboard-icon,
+.chatroom-icon,
 .logout {
   flex: 1;
   display: flex;
