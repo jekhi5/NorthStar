@@ -98,6 +98,11 @@ const useProfilePage = (username?: string) => {
         setProfile(updatedProfile);
         setIsEditing(false); // Exit edit mode
         setUpdateError(null);
+
+        // Force reload with new username to load full profile
+        if (username !== updatedProfile.username) {
+          window.location.assign(`/profile/${updatedProfile.username}`);
+        }
       } catch (err) {
         setUpdateError('Failed to update profile.');
       }
