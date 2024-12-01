@@ -75,6 +75,40 @@ const useAnswerPage = () => {
       try {
         const res = await getQuestionById(questionID, user.uid);
         setQuestion(res || null);
+        setQuestion(prevQuestion =>
+          prevQuestion
+            ? // Updates answer with a comment with the matching object ID, and creates a new Question object
+              {
+                ...prevQuestion,
+                answers: prevQuestion.answers
+                  .map(a =>
+                    a
+                      ? {
+                          ...a,
+                          comments: a.comments.sort(
+                            (commentA, commentB) =>
+                              commentB.upVotes.length -
+                              commentB.downVotes.length -
+                              (commentA.upVotes.length - commentA.downVotes.length),
+                          ),
+                        }
+                      : a,
+                  )
+                  .sort(
+                    (answerA, answerB) =>
+                      answerB.upVotes.length -
+                      answerB.downVotes.length -
+                      (answerA.upVotes.length - answerA.downVotes.length),
+                  ),
+                comments: prevQuestion.comments.sort(
+                  (commentA, commentB) =>
+                    commentB.upVotes.length -
+                    commentB.downVotes.length -
+                    (commentA.upVotes.length - commentA.downVotes.length),
+                ),
+              }
+            : prevQuestion,
+        );
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('Error fetching question:', error);
@@ -171,15 +205,22 @@ const useAnswerPage = () => {
             ? // Updates answers with a matching object ID, and creates a new Question object
               {
                 ...prevQuestion,
-                answers: prevQuestion.answers.map(a =>
-                  a._id === voteData.id
-                    ? {
-                        ...a,
-                        upVotes: [...voteData.upVotes],
-                        downVotes: [...voteData.downVotes],
-                      }
-                    : a,
-                ),
+                answers: prevQuestion.answers
+                  .map(a =>
+                    a._id === voteData.id
+                      ? {
+                          ...a,
+                          upVotes: [...voteData.upVotes],
+                          downVotes: [...voteData.downVotes],
+                        }
+                      : a,
+                  )
+                  .sort(
+                    (answerA, answerB) =>
+                      answerB.upVotes.length -
+                      answerB.downVotes.length -
+                      (answerA.upVotes.length - answerA.downVotes.length),
+                  ),
               }
             : prevQuestion,
         );
@@ -189,31 +230,52 @@ const useAnswerPage = () => {
             ? // Updates answer with a comment with the matching object ID, and creates a new Question object
               {
                 ...prevQuestion,
-                answers: prevQuestion.answers.map(a =>
-                  a
-                    ? {
-                        ...a,
-                        comments: a.comments.map(c =>
-                          c._id === voteData.id
-                            ? {
-                                ...c,
-                                upVotes: [...voteData.upVotes],
-                                downVotes: [...voteData.downVotes],
-                              }
-                            : c,
-                        ),
-                      }
-                    : a,
-                ),
-                comments: prevQuestion.comments.map(c =>
-                  c._id === voteData.id
-                    ? {
-                        ...c,
-                        upVotes: [...voteData.upVotes],
-                        downVotes: [...voteData.downVotes],
-                      }
-                    : c,
-                ),
+                answers: prevQuestion.answers
+                  .map(a =>
+                    a
+                      ? {
+                          ...a,
+                          comments: a.comments
+                            .map(c =>
+                              c._id === voteData.id
+                                ? {
+                                    ...c,
+                                    upVotes: [...voteData.upVotes],
+                                    downVotes: [...voteData.downVotes],
+                                  }
+                                : c,
+                            )
+                            .sort(
+                              (commentA, commentB) =>
+                                commentB.upVotes.length -
+                                commentB.downVotes.length -
+                                (commentA.upVotes.length - commentA.downVotes.length),
+                            ),
+                        }
+                      : a,
+                  )
+                  .sort(
+                    (answerA, answerB) =>
+                      answerB.upVotes.length -
+                      answerB.downVotes.length -
+                      (answerA.upVotes.length - answerA.downVotes.length),
+                  ),
+                comments: prevQuestion.comments
+                  .map(c =>
+                    c._id === voteData.id
+                      ? {
+                          ...c,
+                          upVotes: [...voteData.upVotes],
+                          downVotes: [...voteData.downVotes],
+                        }
+                      : c,
+                  )
+                  .sort(
+                    (commentA, commentB) =>
+                      commentB.upVotes.length -
+                      commentB.downVotes.length -
+                      (commentA.upVotes.length - commentA.downVotes.length),
+                  ),
               }
             : prevQuestion,
         );
