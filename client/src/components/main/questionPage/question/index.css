@@ -69,8 +69,8 @@
 }
 
 .question:hover .question_tag_button {
+  background-color: var(--hover-purple);
   color: #e0e0e0;
-  background: rgba(50, 42, 136, 0.3);
   border: 1px solid rgba(50, 42, 136, 0.5);
   border-radius: 4px;
   padding: 0.3rem 0.8rem;
