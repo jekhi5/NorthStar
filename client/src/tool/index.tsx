@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * List of all the months of the year.
  */

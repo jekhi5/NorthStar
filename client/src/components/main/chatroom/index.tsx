@@ -37,6 +37,7 @@ const Chatroom = () => {
   return (
     <div className='chatroom-container'>
       <div className='chatroom'>
+        <h2>Radio Chatter</h2>
         <div className='input-area'>
           <input
             type='text'
