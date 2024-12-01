@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PostNotification, PostNotificationUpdatePayload } from '../types';
 import { getUserByUid } from '../services/userService';
 import useUserContext from './useUserContext';
@@ -19,6 +19,21 @@ const useNotificationPage = () => {
   // Get user, and subsequently user id
   const { user, socket } = useUserContext();
   const uid = user?.uid;
+
+  const markNotifAsRead = useCallback(
+    async (postNotification: PostNotification, read: boolean) => {
+      if (!read && postNotification._id) {
+        try {
+          await markAsRead(uid, postNotification._id);
+        } catch (e) {
+          // We don't want to set an error here because we don't want to block the user from
+          // viewing their other notifications just because we couldn't mark their notifications as read
+        }
+      }
+    },
+    [uid],
+  );
+
   useEffect(() => {
     /**
      * Function to fetch the question data based on the question ID.
@@ -32,18 +47,14 @@ const useNotificationPage = () => {
         const res = await getUserByUid(uid);
         setNotifications(!res ? [] : res.postNotifications);
 
-        // When we load the page, we want to set the notifications with the read status as is.
-        // Once we set the notifications, we assume that the user will read every notification
-        // on the page, so then we mark all notifications as read.
+        // When we load the page, we want to mark the notifications that aren't associated
+        // with a question (like the welcome notification) as read, because the user isn't
+        // going to click on them. All other notifications will be marked as read when the
+        // user clicks on it
         if (res) {
           res.postNotifications.forEach(async ({ postNotification, read }) => {
-            if (!read && postNotification._id) {
-              try {
-                await markAsRead(uid, postNotification._id);
-              } catch (e) {
-                // We don't want to set an error here because we don't want to block the user from
-                // viewing their other notifications just because we couldn't mark their notifications as read
-              }
+            if (!postNotification.questionId && !read && postNotification._id) {
+              await markNotifAsRead(postNotification, read);
             }
           });
         }
@@ -57,9 +68,6 @@ const useNotificationPage = () => {
       type,
       forUserUid,
     }: PostNotificationUpdatePayload) => {
-      // We mark notifications as read immediately after loading the page, but we don't want to
-      // visually mark them as read until the user reloads the page, that way the user can see
-      // which ones are unread.
       if (type === 'newNotification') {
         if (notification && forUserUid === uid) {
           setNotifications(prevNotifications =>
@@ -76,9 +84,9 @@ const useNotificationPage = () => {
     return () => {
       socket.off('postNotificationUpdate', handleNotificationUpdate);
     };
-  }, [socket, uid]);
+  }, [markNotifAsRead, socket, uid]);
 
-  return { notificationsWithStatus, error };
+  return { notificationsWithStatus, error, markNotifAsRead };
 };
 
 export default useNotificationPage;
