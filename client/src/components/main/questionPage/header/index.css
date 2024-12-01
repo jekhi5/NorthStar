@@ -1,6 +1,6 @@
 .question-header {
     padding: 2rem;
-    background: rgba(50, 42, 136, 0.2);
+    background: var(--light-purple);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     margin-bottom: 2rem;
   }

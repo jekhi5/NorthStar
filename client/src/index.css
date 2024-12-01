@@ -12,6 +12,9 @@ html {
   --primary-purple: #403776; /* Dark purple */
   --accent-purple: #a359bf; /* Light purple for buttons */
   --hover-purple: #c486d8; /* Lighter purple for hover */
+  --light-purple: rgba(50, 42, 136, 0.2);
+  --medium-purple: rgba(50, 42, 136, 0.3);
+  --dark-purple: rgba(50, 42, 136, 0.7);
   --background-light: #f7f9fc; /* Light background */
   --background-white: #ffffff; /* White */
   --text-dark: #333333; /* Dark text for readability */

@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  background: linear-gradient(to right, var(--primary-purple), var(--hover-purple));
+  background: linear-gradient(to right, var(--dark-purple), var(--light-purple));
   color: white;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -29,6 +29,6 @@
 
 .answer-count {
   font-size: 1rem;
-  font-weight: normal;
-  color: var(--hover-purple);
+  font-weight: bold;
+  color: var(--primary-purple);
 }

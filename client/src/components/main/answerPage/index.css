@@ -1,8 +1,6 @@
-/* All the CSS related to answers Page */
 .answer {
   display: flex;
   flex-direction: row;
-  border-bottom: 1px dashed #000000;
   padding: 1em 0;
   background-color: #f9f9f9;
   margin-bottom: 1em;
