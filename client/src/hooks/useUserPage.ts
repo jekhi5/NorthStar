@@ -38,7 +38,7 @@ const useUserPage = () => {
     const fetchLeaderboardData = async () => {
       try {
         const res = await getUsers();
-        const topContributors = [...res].sort((a, b) => b.reputation - a.reputation).slice(0, 10);
+        const topContributors = [...res].sort((a, b) => b.reputation - a.reputation).slice(0, 5);
         setLeaderBoardList(topContributors || []);
       } catch (error) {
         if (error instanceof Error) {

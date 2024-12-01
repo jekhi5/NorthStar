@@ -14,5 +14,6 @@
 }
 
 .answer_author {
-  color: green;
+  text-decoration: none;
+  color: var(--accent-purple);
 }

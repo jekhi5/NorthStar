@@ -28,7 +28,7 @@
   }
   
   .username {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--hover-purple);
     text-decoration: none;
     font-weight: bold;
@@ -37,7 +37,7 @@
   
   .message-content {
     background-color: var(--background-light);
-    padding: 1rem;
+    padding: 0.3rem 1rem;
     border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     max-width: 60%;
@@ -54,5 +54,5 @@
   .timestamp {
     font-size: 0.8rem;
     color: var(--text-light-gray);
-    margin-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }

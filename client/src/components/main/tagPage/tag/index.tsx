@@ -1,4 +1,3 @@
-import React from 'react';
 import './index.css';
 import { TagData } from '../../../../types';
 import useTagSelected from '../../../../hooks/useTagSelected';

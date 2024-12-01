@@ -38,7 +38,7 @@
   backdrop-filter: blur(8px);
 }
 
-.bold_title {
+.tag-title {
   font-size: 2em;
   color: #E0E7FF;
   text-shadow: 0 0 10px rgba(120, 149, 255, 0.8);
@@ -47,7 +47,7 @@
   transition: all 0.3s ease;
 }
 
-.bold_title:hover {
+.tag-title:hover {
   text-shadow: 0 0 15px rgb(203, 120, 255),
                0 0 25px rgba(203, 120, 255, 0.8);
   transform: scale(1.02);
