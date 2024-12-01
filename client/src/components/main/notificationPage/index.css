@@ -1,37 +1,90 @@
+body {
+  background: radial-gradient(circle, rgba(60,30,90,1) 0%, rgba(20,10,30,1) 100%) !important;
+  color: #ffffff;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .notifications-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(circle, rgba(60,30,90,1) 0%, rgba(20,10,30,1) 100%) !important;
+  width: 100%;
+  min-height: 90vh;
+  margin: auto !important;
+  overflow: hidden;
+  height: 90vh;
+}
+
+.page-title {
+  font-size: 2.3rem;
+  color: #e0c3fc;
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 0;
+}
+
+.notifications-content {
+  width: 70%;
   padding: 20px;
-  background-color: #f4f4f4;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-  margin: 20px auto;
+  overflow-y: auto;
 }
 
-.notifications-page h2 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
+.error-message,
+.loading-message,
+.empty-message {
+  font-size: 16px;
+  color: #d16aff;
+  text-align: center;
+  padding: 20px 0;
 }
 
-.notifications-page h4 {
-  font-size: 18px;
-  color: #666;
-  margin-bottom: 10px;
-}
-
-.notifications-page ul {
+.notifications-list {
+  list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.notification {
-  margin-bottom: 10px;
+.notification-item {
+  border-bottom: 1px solid rgba(209, 106, 255, 0.3);
+  padding: 15px 0;
 }
 
-.notifications-list {
-  list-style-type: ''
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.unread {
+  background-color: rgba(209, 106, 255, 0.1);
 }
 
 .linked-notif {
   text-decoration: none;
+  color: #ffffff;
+}
+
+/* Customize scrollbar */
+.notifications-content {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.notifications-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notifications-content::-webkit-scrollbar-track {
+  background: #310047;
+  border-radius: 4px;
+}
+
+.notifications-content::-webkit-scrollbar-thumb {
+  background: #9514d04e;
+  border-radius: 4px;
+}
+
+.notifications-content::-webkit-scrollbar-thumb:hover {
+  background: #d16aff;
 }
