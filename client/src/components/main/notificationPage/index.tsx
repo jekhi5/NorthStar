@@ -10,9 +10,11 @@ const NotificationPage = () => {
   const {
     notificationsWithStatus,
     error,
+    markNotifAsRead,
   }: {
     notificationsWithStatus: { postNotification: PostNotification; read: boolean }[] | null;
     error: string | null;
+    markNotifAsRead: (postNotification: PostNotification, read: boolean) => Promise<void>;
   } = useNotificationPage();
 
   return (
@@ -36,6 +38,7 @@ const NotificationPage = () => {
                     text={postNotification.text}
                     fromUser={postNotification.fromUser}
                     questionId={postNotification.questionId}
+                    markNotifAsRead={() => markNotifAsRead(postNotification, read)}
                   />
                 </li>
               ))}

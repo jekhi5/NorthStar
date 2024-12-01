@@ -7,11 +7,13 @@ export default function PostNotificationComponent({
   text,
   fromUser,
   questionId,
+  markNotifAsRead,
 }: {
   title: string;
   text: string;
   fromUser?: User;
   questionId?: string;
+  markNotifAsRead: () => Promise<void>;
 }) {
   // If the notification is for a post, it will be clickable and redirect to the
   // question that this post belongs to (or the question itself if it is one)
@@ -28,7 +30,7 @@ export default function PostNotificationComponent({
   );
 
   return questionId ? (
-    <NavLink to={`/question/${questionId}`} className='linked-notif'>
+    <NavLink to={`/question/${questionId}`} className='linked-notif' onClick={markNotifAsRead}>
       {notificationInfo}
     </NavLink>
   ) : (
