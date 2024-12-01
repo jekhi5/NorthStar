@@ -7,6 +7,7 @@
   background: rgba(60, 30, 90, 1);
   color: #ddd;
   overflow: hidden;
+  min-height: 100%;
 }
 
 .chatroom-container::before {
@@ -25,12 +26,14 @@
 }
 
 .chatroom {
+
   z-index: 1;
   padding: 2rem;
   border-radius: 16px;
-  width: 90%;
+  width: 95%;
   margin: auto;
 }
+
 .chatroom h2 {
   font-size: 2rem;
   font-weight: bold;

@@ -5,11 +5,11 @@
 }
 
 html {
-  height: 99%;
+  height: 100%;
 }
 
 :root {
-  --primary-purple: #322a88; /* Dark purple */
+  --primary-purple: #403776; /* Dark purple */
   --accent-purple: #a359bf; /* Light purple for buttons */
   --hover-purple: #c486d8; /* Lighter purple for hover */
   --background-light: #f7f9fc; /* Light background */

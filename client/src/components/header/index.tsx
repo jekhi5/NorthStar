@@ -25,13 +25,13 @@ const Header = () => {
           to='/home'
           id='menu_questions'
           className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-          Questions
+          Probes
         </NavLink>
         <NavLink
           to='/tags'
           id='menu_tag'
           className={({ isActive }) => `menu_button ${isActive ? 'menu_selected' : ''}`}>
-          Tags
+          Constellations
         </NavLink>
       </div>
       <input
@@ -46,7 +46,7 @@ const Header = () => {
       <div className='notifications-and-profile-group'>
         <div className='chatroom-icon'>
           <NavLink to='/chatroom'>
-            <span className='icon'>groups</span>
+            <span className='icon'>group</span>
           </NavLink>
         </div>
         <div className='leaderboard-icon'>
