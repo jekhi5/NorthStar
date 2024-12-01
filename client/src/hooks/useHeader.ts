@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, KeyboardEvent, useEffect } from 'react';
+import { ChangeEvent, useState, KeyboardEvent, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { PostNotification, PostNotificationUpdatePayload } from '../types';
@@ -24,6 +24,7 @@ const useHeader = () => {
     { postNotification: PostNotification; read: boolean }[] | null
   >(null);
   const { setUser } = useLoginContext();
+  const notifSound = useMemo(() => new Audio('/bell-audio.wav'), []); // Sound to play whenver user gets a notification, with useMemo to avoid linter error
 
   // Get user, and subsequently user id
   const { user, socket } = useUserContext();
@@ -67,6 +68,7 @@ const useHeader = () => {
       // which ones are unread.
       if (type === 'newNotification') {
         if (notification && forUserUid === uid) {
+          notifSound.play();
           setNotifications(prevNotifications =>
             prevNotifications
               ? [...prevNotifications, { postNotification: notification, read: false }]
@@ -88,7 +90,7 @@ const useHeader = () => {
     return () => {
       socket.off('postNotificationUpdate', handleNotificationUpdate);
     };
-  }, [uid, socket]);
+  }, [uid, socket, notifSound]);
 
   /**
    * Function to handle changes in the input field.

@@ -1,49 +1,68 @@
 .post-notification {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+  background-color: rgba(150, 20, 208, 0.1);
+  border: 1px solid rgba(209, 106, 255, 0.3);
   border-radius: 8px;
   padding: 16px;
   margin: 8px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(209, 106, 255, 0.2);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .post-notification:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 15px rgba(209, 106, 255, 0.4);
 }
 
 .post-notification h3 {
   margin: 0 0 8px;
   font-size: 20px;
-  color: #333;
+  color: #e0c3fc;
   font-weight: 600;
 }
 
 .post-notification p {
   margin: 4px 0;
   font-size: 16px;
-  color: #666;
+  color: #ffffff;
 }
 
 .post-notification .notification-type {
   font-weight: bold;
-  color: #007bff;
+  color: #d16aff;
   margin-top: 8px;
 }
 
 .post-notification .from-user {
   font-style: italic;
-  color: #555;
+  color: #e0c3fc;
   margin-top: 8px;
 }
 
 .post-notification hr {
   border: none;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid rgba(209, 106, 255, 0.3);
   margin: 8px 0;
 }
 
-.from-user {
+.from-user a {
+  color: #d16aff;
   text-decoration: none;
+}
+
+.from-user a:hover {
+  text-decoration: underline;
+}
+
+.linked-notif {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+li.unread .post-notification {
+  background-color: rgb(180, 77, 182, 25%);
+}
+
+.notification-item.unread {
+   background-color: transparent;
 }
