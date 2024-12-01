@@ -268,7 +268,7 @@ async function userCreate(
 
   // Find the welcome notification in the database
   const welcomeNotification: PostNotification | null = await PostNotificationModel.findOne({
-    title: 'Welcome to NorthStar!',
+    title: 'Welcome to North Star!',
     text: 'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
     notificationType: 'welcomeNotification',
   });
@@ -414,7 +414,7 @@ const populate = async () => {
   try {
     // Create the welcome notification so it can be added to users being created
     await postNotificationCreate(
-      'Welcome to NorthStar!',
+      'Welcome to North Star!',
       'Our app is still in development, so please be patient with us. Feel free to ask questions, provide answers, and reach out with any issues you encounter. We hope to be your guiding light!',
       'welcomeNotification',
     );
