@@ -25,9 +25,16 @@ const useNotificationPage = () => {
       if (!read && postNotification._id) {
         try {
           await markAsRead(uid, postNotification._id);
-        } catch (e) {
+        } catch (err) {
           // We don't want to set an error here because we don't want to block the user from
           // viewing their other notifications just because we couldn't mark their notifications as read
+          if (err instanceof Error) {
+            // eslint-disable-next-line no-console
+            console.error(`Error marking notification as read: ${err.message}`);
+          } else {
+            // eslint-disable-next-line no-console
+            console.error(`Error marking notification as read`);
+          }
         }
       }
     },
