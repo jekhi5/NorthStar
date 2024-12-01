@@ -1,37 +1,94 @@
+body {
+  background-color: #310047;
+  color: #ffffff;
+}
+
 .notifications-page {
-  padding: 20px;
-  background-color: #f4f4f4;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   max-width: 800px;
-  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: radial-gradient(circle, rgba(60,30,90,1) 0%, rgba(20,10,30,1) 100%) !important;
+  width: 100%;
+  height: auto;
 }
 
-.notifications-page h2 {
-  font-size: 24px;
-  color: #333;
+.page-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #d16aff;
   margin-bottom: 20px;
+  text-shadow: 0 0 10px #9614d0;
 }
 
-.notifications-page h4 {
-  font-size: 18px;
-  color: #666;
-  margin-bottom: 10px;
+.notifications-content {
+  background-color: rgba(150, 20, 208, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(209, 106, 255, 0.3);
+  padding: 20px;
 }
 
-.notifications-page ul {
+.error-message,
+.loading-message,
+.empty-message {
+  font-size: 16px;
+  color: #d16aff;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.notifications-list {
+  list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.notification {
-  margin-bottom: 10px;
+.notification-item {
+  border-bottom: 1px solid rgba(209, 106, 255, 0.3);
+  padding: 15px 0;
 }
 
-.notifications-list {
-  list-style-type: ''
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.unread {
+  background-color: rgba(209, 106, 255, 0.1);
 }
 
 .linked-notif {
   text-decoration: none;
+  color: #ffffff;
+}
+
+/* Customize scrollbar */
+.notifications-content {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.notifications-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notifications-content::-webkit-scrollbar-track {
+  background: #310047;
+  border-radius: 4px;
+}
+
+.notifications-content::-webkit-scrollbar-thumb {
+  background: #9614d0;
+  border-radius: 4px;
+}
+
+.notifications-content::-webkit-scrollbar-thumb:hover {
+  background: #d16aff;
+}
+
+/* For Firefox */
+.notifications-content {
+  scrollbar-width: thin;
+  scrollbar-color: #9614d0 #310047;
 }
