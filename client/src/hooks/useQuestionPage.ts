@@ -33,7 +33,7 @@ const useQuestionPage = () => {
   }, [qidParam, navigate]);
 
   useEffect(() => {
-    let pageTitle = 'All Questions';
+    let pageTitle = 'All Probes';
     let searchString = '';
 
     const searchQuery = searchParams.get('search');
