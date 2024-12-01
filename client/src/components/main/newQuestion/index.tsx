@@ -25,7 +25,7 @@ const NewQuestionPage = () => {
   return (
     <Form>
       <Input
-        title={'Question Title'}
+        title={'Probe Title'}
         hint={'Limit title to 100 characters or less'}
         id={'formTitleInput'}
         val={title}
@@ -33,7 +33,7 @@ const NewQuestionPage = () => {
         err={titleErr}
       />
       <TextArea
-        title={'Question Text'}
+        title={'Probe Text'}
         hint={'Add details'}
         id={'formTextInput'}
         val={text}
@@ -54,7 +54,7 @@ const NewQuestionPage = () => {
           onClick={() => {
             postQuestion();
           }}>
-          Post Question
+          Send Probe
         </button>
         <div className='mandatory_indicator'>* indicates mandatory fields</div>
       </div>
