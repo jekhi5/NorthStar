@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { getAuth, updateProfile } from 'firebase/auth';
 import { Question, User } from '../types';
 import { checkValidUser, getUserByUsername, updateUser } from '../services/userService';
 import {
@@ -121,26 +120,24 @@ const useProfilePage = (username?: string) => {
     setOptButtonText(newEmailOpted ? 'Disable Email Notifications' : 'Enable Email Notifications');
   };
 
-  // TODO THIS CURRENTLY DOES NOT WORK!!! NEED TO CHANGE THE WAY FILES ARE STORED IN FIREBASE
-  // BUT I PROMISE IT WON'T MESS ANYTHING ELSE UP
-  // Could also just change it back to using URLs for pictures which is what I had before
+  /**
+   * Handle uploading a profile picture for a user
+   * @param file - The profile photo to upload
+   */
   const handleProfilePictureUpload = async (file: File) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const storage = getStorage();
+    if (!isEditing || !editedProfile || !file) return;
 
-    if (!user || !file) return;
+    const storage = getStorage();
 
     try {
       // Upload the file to Firebase Storage
-      const storageRef = ref(storage, `profilePictures/${user.uid}/${file.name}`);
+      const storageRef = ref(storage, `profilePictures/${editedProfile.uid}/${file.name}`);
       await uploadBytes(storageRef, file);
 
       // Get the download URL
       const photoURL = await getDownloadURL(storageRef);
 
-      // Update the user's profile with the new photo URL
-      await updateProfile(user, { photoURL });
+      setEditedProfile({ ...editedProfile, profilePicture: photoURL });
     } catch (err) {
       // We log the errors here, but we do not throw an error as we do not want to block the
       // user from viewing the site just because the profile pic failed to load.
