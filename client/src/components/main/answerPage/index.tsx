@@ -22,9 +22,17 @@ const AnswerPage = () => {
 
   return (
     <>
-      <AnswerHeader ansCount={question.answers.length} title={question.title} />
-      <SubscribeComponent item={question} type={'question'} />
-      <VoteComponent post={question} postType='Question' />
+      <AnswerHeader question={question} ansCount={question.answers.length} title={question.title} />
+      <div className='answer-button-container'>
+        <SubscribeComponent item={question} type={'question'} />
+        <button
+          className='ansButton'
+          onClick={() => {
+            handleNewAnswer();
+          }}>
+          Answer Probe
+        </button>
+      </div>
       <QuestionBody
         views={question.views.length}
         text={question.text}
@@ -48,13 +56,6 @@ const AnswerPage = () => {
           />
         </>
       ))}
-      <button
-        className='bluebtn ansButton'
-        onClick={() => {
-          handleNewAnswer();
-        }}>
-        Answer Probe
-      </button>
     </>
   );
 };

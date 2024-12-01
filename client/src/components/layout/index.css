@@ -24,19 +24,6 @@
   line-height: 40px;
 }
 
-.bluebtn {
-  background: #3090e2;
-  color: #ffffff;
-  border: #000000 1px solid;
-  font-size: 20px;
-  padding: 10px 10px 10px 10px;
-  margin-right: 5%;
-}
-
-.bluebtn:hover {
-  background: #0056b3;
-}
-
 .btn_indicator_container {
   display: flex;
   align-items: center;
