@@ -1,33 +1,35 @@
 body {
-  background-color: #310047;
+  background: radial-gradient(circle, rgba(60,30,90,1) 0%, rgba(20,10,30,1) 100%) !important;
   color: #ffffff;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .notifications-page {
-  max-width: 800px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
   background: radial-gradient(circle, rgba(60,30,90,1) 0%, rgba(20,10,30,1) 100%) !important;
   width: 100%;
-  height: auto;
+  min-height: 90vh;
+  margin: auto !important;
+  overflow: hidden;
+  height: 90vh;
 }
 
 .page-title {
-  font-size: 28px;
-  font-weight: bold;
-  color: #d16aff;
-  margin-bottom: 20px;
-  text-shadow: 0 0 10px #9614d0;
+  font-size: 2.3rem;
+  color: #e0c3fc;
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 0;
 }
 
 .notifications-content {
-  background-color: rgba(150, 20, 208, 0.1);
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(209, 106, 255, 0.3);
+  width: 70%;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .error-message,
@@ -79,16 +81,10 @@ body {
 }
 
 .notifications-content::-webkit-scrollbar-thumb {
-  background: #9614d0;
+  background: #9514d04e;
   border-radius: 4px;
 }
 
 .notifications-content::-webkit-scrollbar-thumb:hover {
   background: #d16aff;
-}
-
-/* For Firefox */
-.notifications-content {
-  scrollbar-width: thin;
-  scrollbar-color: #9614d0 #310047;
 }

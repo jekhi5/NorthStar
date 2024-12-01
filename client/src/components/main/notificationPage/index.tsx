@@ -17,7 +17,7 @@ const NotificationPage = () => {
 
   return (
     <div className='notifications-page'>
-      <h2 className='page-title'>Notifications</h2>
+      <h2 className='page-title bold_text'>Notifications</h2>
       <div className='notifications-content'>
         {error && <p className='error-message'>{error}</p>}
         {!notificationsWithStatus && !error && <p className='loading-message'>Loading...</p>}
