@@ -43,14 +43,15 @@ const getMetaData = (date: Date): string => {
   const diffs = Math.floor(Math.abs(now.getTime() - date.getTime()) / 1000);
 
   if (diffs < 60) {
-    return `${diffs} seconds ago`;
+    return `${diffs} second${diffs === 1 ? '' : 's'} ago`;
   }
   if (diffs < 60 * 60) {
-    return `${Math.floor(diffs / 60)} minutes ago`;
+    const m = Math.floor(diffs / 60);
+    return `${m} minute${m === 1 ? '' : 's'} ago`;
   }
   if (diffs < 60 * 60 * 24) {
     const h = Math.floor(diffs / 3600);
-    return `${h} hours ago`;
+    return `${h} hour${h === 1 ? '' : 's'} ago`;
   }
   if (diffs < 60 * 60 * 24 * 365) {
     return `${MONTHS[date.getMonth()]} ${getDateHelper(date)} at ${date

@@ -26,7 +26,7 @@ const AnswerHeader = ({ question, ansCount, title }: AnswerHeaderProps) => (
   <div id='answersHeader' className='space_between right_padding'>
     <div className='header-left'>
       <div className='answer-question-title'>{title}</div>
-      <div className='answer-count'>{ansCount} answers</div>
+      <div className='answer-count'>{ansCount === 1 ? '1 answer' : `${ansCount || 0} answers`}</div>
     </div>
     <div className='header-right'>
       <VoteComponent post={question} postType='Question' />
