@@ -1,8 +1,8 @@
 ![Logo](north-star-logo.png)
-# North Star - Let us be your guiding light when it comes to coding struggles
+# North Star - Your guiding light when it comes to coding struggles
 
 
-- [North Star - Let us be your guiding light when it comes to coding struggles](#north-star---let-us-be-your-guiding-light-when-it-comes-to-coding-struggles)
+- [North Star - Your guiding light when it comes to coding struggles](#north-star---let-us-be-your-guiding-light-when-it-comes-to-coding-struggles)
   - [About](#about)
   - [Notable features](#notable-features)
   - [Site navigation](#site-navigation)
