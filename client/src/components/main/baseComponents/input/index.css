@@ -1,14 +1,14 @@
 .input_title {
   margin-bottom: 8px;
   font-weight: bold;
+  color: white;
 }
 
 .input_hint {
   font-size: 14px;
-  color: black;
+  color: var(--hover-purple);
   margin-bottom: 5px;
   font-style: italic;
-  margin-left: 10px;
 }
 
 .input_input {
@@ -21,6 +21,7 @@
 }
 
 .input_error {
-  color: red;
+  color: #ff7675;
   margin-bottom: 20px;
+  
 }

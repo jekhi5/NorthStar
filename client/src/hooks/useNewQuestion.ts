@@ -46,7 +46,7 @@ const useNewQuestion = () => {
     }
 
     if (!text) {
-      setTextErr('Question text cannot be empty');
+      setTextErr('Probe text cannot be empty');
       isValid = false;
     } else if (!validateHyperlink(text)) {
       setTextErr('Invalid hyperlink format.');

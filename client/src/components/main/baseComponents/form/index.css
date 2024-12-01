@@ -1,6 +1,8 @@
 .form {
-  background-color: #f4f4f4;
+  background-color: var(--primary-purple);
+  border-radius: 14px;
   padding: 20px;
   width: 60%; /* Adjust as per requirement */
   margin: 20px auto; /* Centers the form on the page */
+  backdrop-filter: blur(10px);
 }

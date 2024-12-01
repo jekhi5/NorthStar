@@ -1,0 +1,59 @@
+  input,
+  textarea {
+    width: 100%;
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  input:focus,
+  textarea:focus {
+    border-color: var(--hover-purple);
+    box-shadow: 0 0 10px rgba(163, 89, 191, 0.8);
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  textarea {
+    height: 150px;
+    resize: vertical;
+  }
+  
+  .form_postBtn {
+    background-color: var(--accent-purple);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .form_postBtn:hover {
+    background-color: var(--hover-purple);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .mandatory_indicator {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+  
+  .btn_indicator_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+
+  
