@@ -2,7 +2,7 @@
 # North Star - Your guiding light when it comes to coding struggles
 
 
-- [North Star - Your guiding light when it comes to coding struggles](#north-star---let-us-be-your-guiding-light-when-it-comes-to-coding-struggles)
+- [North Star - Your guiding light when it comes to coding struggles](#north-star---your-guiding-light-when-it-comes-to-coding-struggles)
   - [About](#about)
   - [Notable features](#notable-features)
   - [Site navigation](#site-navigation)
@@ -39,6 +39,16 @@ We've done our best to make it really easy to run this project locally. The clie
 - Client
   - Navigate to the client directory: `cd client`
   - Install dependencies: `npm install`
+  - Make a `.env` file in the `/client` directory
+    - Add the variable: `REACT_APP_SERVER_URL=http://localhost:8000`
+    - Create your own Firebase project and input the following values (from Firebase) into the `.env` file
+      - `REACT_APP_FIREBASE_API_KEY=<value_from_firebase>`
+      - `REACT_APP_FIREBASE_AUTH_DOMAIN=<value_from_firebase>`
+      - `REACT_APP_FIREBASE_PROJECT_ID=<value_from_firebase>`
+      - `REACT_APP_FIREBASE_STORAGE_BUCKET=<value_from_firebase>`
+      - `REACT_APP_FIREBASE_MESSAGE_SENDER_ID=<value_from_firebase>`
+      - `REACT_APP_FIREBASE_APP_ID=<value_from_firebase>`
+      - `REACT_APP_FIREBASE_MEASUREMENT_ID=<value_from_firebase>`
   - Start: `npm start`
   - Run the linter with `npm run lint:fix`
 - Server
@@ -62,8 +72,19 @@ We've done our best to make it really easy to run this project locally. The clie
         - Download it [here](https://www.mongodb.com/try/download/shell_) using the msi package. You can also use mongosh to see if the MongoDB server is running. Try the MongoDB Community Edition and the command show dbs; you should see a list of existing databases in your local instance
       - **For Mac:**
         - Mongo shell is automatically installed with MongoDB through the Mac installation instructions. To use it, make sure MongoDB is running as a macOS service, then type mongosh into the terminal
+  - Create a `.env` file in the `/server` directory
+    - Add the following variables:
+      - `MONGODB_URI=mongodb://127.0.0.1:27017`
+      - `CLIENT_URL=http://localhost:3000`
+      - `PORT=8000`
+    - If you want to have your local environment send emails on notifications (not required for dev environment to function), set up a Google Project and add the following variables to the `.env` file (we followed the tutorial [here](https://dev.to/chandrapantachhetri/sending-emails-securely-using-node-js-nodemailer-smtp-gmail-and-oauth2-g3a)):
+      - `EMAIL=<email_to_send_from>`
+      - `REFRESH_TOKEN=<refresh_token>`
+      - `CLIENT_SECRET=<client_secret>`
+      - `CLIENT_ID=<client_id>`
   - When using our program locally, you may want to have some starter data populated. Feel free to use the `server/populate_db.ts` file to automatically populate your database with some dummy data:
     - `npx ts-node populate_db.ts mongodb://127.0.0.1:27017/fake_so`
+  - Run the server with `npm start`
   - Run tests with the command `npm run test` in the `/server` directory
   - Run the linter with `npm run lint:fix`
 
