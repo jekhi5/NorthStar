@@ -30,7 +30,9 @@ interface QuestionBodyProps {
  */
 const QuestionBody = ({ views, text, askby, meta }: QuestionBodyProps) => (
   <div id='questionBody' className='questionBody right_padding'>
-    <div className='bold_title answer_question_view'>{views} views</div>
+    <div className='bold_title answer_question_view'>
+      {views === 1 ? '1 view' : `${views || 0} views`}
+    </div>
     <div className='answer_question_text'>{handleHyperlink(text)}</div>
     <div className='answer_question_right'>
       <NavLink to={`/profile/${askby.username}`} className='question_author'>

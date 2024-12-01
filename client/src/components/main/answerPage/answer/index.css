@@ -1,19 +1,33 @@
-/* All the CSS related to answers Page*/
 .answer {
   display: flex;
-  flex-direction: row;
-  border-bottom: #000000 1px dashed;
+  flex-direction: column;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .answerText {
-  width: 75%;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  margin: 1rem;
 }
 
 .answerAuthor {
-  margin-left: 5%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .answer_author {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--primary-purple);
   text-decoration: none;
-  color: var(--accent-purple);
+}
+
+.answer_question_meta {
+  font-size: 0.85rem;
+  color: var(--text-light-gray);
 }

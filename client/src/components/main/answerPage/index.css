@@ -1,8 +1,6 @@
-/* All the CSS related to answers Page */
 .answer {
   display: flex;
   flex-direction: row;
-  border-bottom: 1px dashed #000000;
   padding: 1em 0;
   background-color: #f9f9f9;
   margin-bottom: 1em;
@@ -22,19 +20,19 @@
 }
 
 .ansButton {
-  background-color: var(--primary-purple);
+  text-decoration: none;
   color: white;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
+  font-weight: bold;
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  transition: background-color 0.3s, color 0.3s;
-  margin: 2% 0 2% 2%;
+  margin-right: 1rem;
+  transition: color 0.3s, background-color 0.3s;
+  box-shadow: 0 0 10px rgba(163, 89, 191, 0.5);
+  background-color: var(--accent-purple);
 }
 
 .ansButton:hover {
-  background-color: var(--accent-yellow);
+  background-color: var(--hover-purple);
   color: var(--primary-purple);
 }
 
@@ -60,7 +58,7 @@
 }
 
 .toggle-button:hover {
-  background-color: var(--accent-yellow);
+  background-color: var(--hover-purple);
   color: var(--primary-purple);
 }
 
@@ -72,4 +70,9 @@
   list-style-type: none;
   padding: 0;
   margin: 0;
+}
+
+.answer-button-container {
+  display: flex;
+  align-items: center;
 }

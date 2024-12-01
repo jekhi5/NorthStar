@@ -20,7 +20,7 @@
 }
 
 .toggle-button:hover {
-  background-color: var(--accent-yellow);
+  background-color: var(--accent-purple);
   color: var(--primary-purple);
 }
 
@@ -79,7 +79,7 @@
 }
 
 .comment-username:focus {
-  border-color: #007bff;
+  border-color: var(--hover-purple);
   outline: none;
 }
 
@@ -93,23 +93,24 @@
 }
 
 .comment-textarea:focus {
-  border-color: #007bff;
+  border-color: var(--hover-purple);
   outline: none;
 }
 
 .add-comment-button {
-  flex: 1;
-  background-color: #28a745;
-  color: white;
-  padding: 0.25em 0.5em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
+text-decoration: none;
+color: white;
+font-weight: bold;
+padding: 0.5em 1rem;
+border-radius: 4px;
+margin-right: 1rem;
+transition: color 0.3s, background-color 0.3s;
+box-shadow: 0 0 10px rgba(163, 89, 191, 0.5);
+background-color: var(--accent-purple);
 }
 
 .add-comment-button:hover {
-  background-color: #218838;
+  background-color: var(--hover-purple);
 }
 
 .error {

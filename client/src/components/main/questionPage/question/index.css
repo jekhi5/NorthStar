@@ -1,14 +1,14 @@
 .question {
   display: flex;
   flex-direction: row;
-  border-top: 1px solid #4b429b;
+  border-top: 1px solid var(--primary-purple);
   padding: 1.5rem 1rem;
   transition: background-color 0.3s ease;
   cursor: pointer;
 }
 
 .question:hover {
-  background-color: #403776;
+  background-color: var(--primary-purple);
   box-shadow: 0 0 10px rgba(50, 42, 136, 0.2);
 }
 
@@ -60,7 +60,7 @@
 
 .question_tag_button {
   color: #585858;
-  background: rgba(50, 42, 136, 0.3);
+  background: var(--medium-purple);
   border: 1px solid rgba(50, 42, 136, 0.5);
   border-radius: 4px;
   padding: 0.3rem 0.8rem;
@@ -69,8 +69,8 @@
 }
 
 .question:hover .question_tag_button {
+  background-color: var(--hover-purple);
   color: #e0e0e0;
-  background: rgba(50, 42, 136, 0.3);
   border: 1px solid rgba(50, 42, 136, 0.5);
   border-radius: 4px;
   padding: 0.3rem 0.8rem;

@@ -9,10 +9,11 @@
   color: white;
   font-weight: bold;
   padding: 0.5rem 1rem;
-  border: 2px solid white;
   border-radius: 4px;
-  background-color: var(--primary-purple);
+  margin-right: 1rem;
   transition: color 0.3s, background-color 0.3s;
+  box-shadow: 0 0 10px rgba(163, 89, 191, 0.5);
+  background-color: var(--accent-purple);
 }
 
 .subscribe-button:hover {

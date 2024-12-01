@@ -2,28 +2,33 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
-  background-color: var(--background-light);
-  border-bottom: 2px solid var(--border-gray);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  background: linear-gradient(to right, var(--dark-purple), var(--light-purple));
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.bold_title {
-  font-size: 1.2rem;
+.answer-question-title {
+  font-size: 1.8rem;
   font-weight: bold;
-  color: var(--text-dark);
-  margin-right: 1rem;
+  color: white;
 }
 
-.answer_question_title {
-  font-size: 1.4rem;
-  color: var(--primary-purple);
+.header-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
-.space_between {
+.header-right {
+  display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
-.right_padding {
-  padding-right: 1rem;
+.answer-count {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--primary-purple);
 }

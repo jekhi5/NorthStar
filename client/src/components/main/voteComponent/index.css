@@ -49,7 +49,8 @@
 .vote-count {
   display: flex;
   align-items: center;
-  font-size: 1rem;
-  color: var(--text-dark);
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-purple);
   margin-left: 0.5rem;
 }

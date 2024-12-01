@@ -32,7 +32,7 @@ const QuestionHeader = ({ titleText, qcnt, setQuestionOrder }: QuestionHeaderPro
       <AskQuestionButton />
     </div>
     <div className='header-bottom'>
-      <div className='question-count'>{qcnt} probes</div>
+      <div className='question-count'>{qcnt === 1 ? '1 probe' : `${qcnt || 0} probes`}</div>
       <div className='order-buttons'>
         {Object.keys(orderTypeDisplayName).map((order, idx) => (
           <OrderButton

@@ -56,8 +56,8 @@ const QuestionView = ({ q }: QuestionProps) => {
         }
       }}>
       <div className='postStats'>
-        <div>{q.answers.length || 0} answers</div>
-        <div>{q.views.length} views</div>
+        <div>{q.answers.length === 1 ? '1 answer' : `${q.answers.length || 0} answers`}</div>
+        <div>{q.views.length === 1 ? '1 view' : `${q.views.length} views`}</div>
       </div>
       <div className='question_mid'>
         <div className='postTitle'>{q.title}</div>
