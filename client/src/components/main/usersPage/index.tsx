@@ -13,10 +13,10 @@ const UsersPage = () => {
     <div className='users-page'>
       <div className='users-header'>
         <div className='left'>
-          <div className='bold_title'>{userList.length} Astronauts in the galaxy</div>
+          <div className='users-title'>{userList.length} Astronauts in the galaxy</div>
         </div>
         <div className='right'>
-          <div className='bold_title'>Top Astronauts</div>
+          <div className='users-title'>Top Astronauts</div>
         </div>
       </div>
       <div className='users-content'>
