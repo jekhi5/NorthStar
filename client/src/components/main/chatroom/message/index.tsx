@@ -21,7 +21,6 @@ const MessageComponent = ({ message, currentUser }: MessageProps) => {
 
   return (
     <div className={`message ${isCurrentUser ? 'current-user' : ''}`}>
-      {/* Profile container */}
       <div className='profile-group'>
         <img
           src={message.sentBy?.profilePicture || defaultProfilePic}
@@ -33,7 +32,6 @@ const MessageComponent = ({ message, currentUser }: MessageProps) => {
         </NavLink>
       </div>
 
-      {/* Message content */}
       <div className='message-content'>
         <p>{message.content}</p>
         <div className='timestamp'>
