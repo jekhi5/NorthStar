@@ -60,7 +60,7 @@
 }
 
 .toggle-button:hover {
-  background-color: var(--accent-yellow);
+  background-color: var(--hover-purple);
   color: var(--primary-purple);
 }
 

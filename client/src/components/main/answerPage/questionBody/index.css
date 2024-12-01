@@ -23,6 +23,7 @@
 
 .question_author {
   text-decoration: none;
+  font-weight: bold;
   color: var(--primary-purple);
 }
 

@@ -11,7 +11,7 @@
 .answerText {
   font-size: 1.1rem;
   color: var(--text-dark);
-  margin-bottom: 1rem;
+  margin: 1rem;
 }
 
 .answerAuthor {
@@ -24,6 +24,7 @@
   font-size: 1rem;
   font-weight: bold;
   color: var(--primary-purple);
+  text-decoration: none;
 }
 
 .answer_question_meta {

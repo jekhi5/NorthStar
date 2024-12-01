@@ -20,7 +20,7 @@
 }
 
 .toggle-button:hover {
-  background-color: var(--accent-yellow);
+  background-color: var(--accent-purple);
   color: var(--primary-purple);
 }
 
@@ -79,7 +79,7 @@
 }
 
 .comment-username:focus {
-  border-color: #007bff;
+  border-color: var(--hover-purple);
   outline: none;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .comment-textarea:focus {
-  border-color: #007bff;
+  border-color: var(--hover-purple);
   outline: none;
 }
 
