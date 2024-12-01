@@ -1,4 +1,3 @@
-import React from 'react';
 import './index.css';
 import TagView from './tag';
 import useTagPage from '../../../hooks/useTagPage';
@@ -9,7 +8,7 @@ const TagPage = () => {
   return (
     <div className='tag-page-container'>
       <div className='tags-header'>
-        <div className='bold_title'>{tlist.length} Constellations</div>
+        <div className='tag-title'>{tlist.length} Constellations</div>
       </div>
       <div className='tag_list'>
         {tlist.map((t, idx) => (

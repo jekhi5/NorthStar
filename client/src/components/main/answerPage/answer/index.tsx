@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import { handleHyperlink } from '../../../../tool';
 import CommentSection from '../../commentSection';
 import './index.css';
@@ -36,7 +37,9 @@ const AnswerView = ({ text, ansBy, meta, comments, handleAddComment }: AnswerPro
       {handleHyperlink(text)}
     </div>
     <div className='answerAuthor'>
-      <div className='answer_author'>{ansBy.username}</div>
+      <NavLink to={`/profile/${ansBy.username}`} className='answer_author'>
+        {ansBy.username}
+      </NavLink>
       <div className='question_author_status'>
         {ansBy.status !== 'Not endorsed' ? ansBy.status : ''}
       </div>

@@ -22,7 +22,7 @@ const AskQuestionButton = () => {
       onClick={() => {
         handleNewQuestion();
       }}>
-      Ask a Question
+      Send a Probe
     </button>
   );
 };

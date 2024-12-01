@@ -17,5 +17,9 @@
 
 .subscribe-button:hover {
   color: var(--primary-purple);
-  background-color: var(--accent-yellow);
+  background-color: var(--hover-purple);
+}
+
+.subscribe-button-subscribed {
+  background-color: var(--hover-purple);
 }

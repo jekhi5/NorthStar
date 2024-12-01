@@ -1,4 +1,4 @@
-import React from 'react';
+import { NavLink } from 'react-router-dom';
 import './index.css';
 import { handleHyperlink } from '../../../../tool';
 import { User } from '../../../../types';
@@ -33,7 +33,9 @@ const QuestionBody = ({ views, text, askby, meta }: QuestionBodyProps) => (
     <div className='bold_title answer_question_view'>{views} views</div>
     <div className='answer_question_text'>{handleHyperlink(text)}</div>
     <div className='answer_question_right'>
-      <div className='question_author'>{askby.username}</div>
+      <NavLink to={`/profile/${askby.username}`} className='question_author'>
+        {askby.username}
+      </NavLink>
       <div className='question_author_status'>
         {askby.status !== 'Not endorsed' ? askby.status : ''}
       </div>
