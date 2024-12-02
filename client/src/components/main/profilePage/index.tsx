@@ -98,13 +98,6 @@ const ProfilePage = () => {
                   className='profile-edit-input'
                 />
                 <input
-                  type='email'
-                  value={editedProfile?.email || ''}
-                  onChange={e => handleChange('email', e.target.value)}
-                  placeholder='Email'
-                  className='profile-edit-input'
-                />
-                <input
                   type='file'
                   accept='image/*'
                   onChange={e => {
