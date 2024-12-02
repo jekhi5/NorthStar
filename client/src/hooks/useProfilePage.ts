@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getStorage, ref, uploadBytes, getDownloadURL, StorageReference } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Question, User } from '../types';
 import { checkValidUser, getUserByUsername, updateUser } from '../services/userService';
 import {
