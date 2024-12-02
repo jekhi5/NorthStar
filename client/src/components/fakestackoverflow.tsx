@@ -91,6 +91,7 @@ const FakeStackOverflow = ({ socket }: { socket: FakeSOSocket | null }) => {
             <Route path='/notifications' element={<NotificationPage />} />
             <Route path='/chatroom' element={<Chatroom />} />
             <Route path='/users' element={<UsersPage />} />
+            <Route path='/' element={<QuestionPage />} />
 
             {/* Anything that isn't in the above list should route to the page not found */}
             <Route path='*' element={<PageNotFound />} />
