@@ -74,7 +74,7 @@ We've done our best to make it really easy to run this project locally. The clie
           - Make sure the URI field contains `mongodb://localhost:27017`
           - Click on “Connect” - MongoDB will need to be running as a macOS service
     - Install the Mongo shell (mongosh)
-      - **For Windows:**:
+      - **For Windows:**
         - Download it <a href="https://www.mongodb.com/try/download/shell_" style="color: #d177f7;">here</a> using the msi package. You can also use mongosh to see if the MongoDB server is running. Try the MongoDB Community Edition and the command show dbs; you should see a list of existing databases in your local instance
       - **For Mac:**
         - Mongo shell is automatically installed with MongoDB through the Mac installation instructions. To use it, make sure MongoDB is running as a macOS service, then type mongosh into the terminal
