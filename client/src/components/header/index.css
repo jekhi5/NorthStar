@@ -59,6 +59,21 @@
   font-size: 1rem;
 }
 
+#searchBar:focus {
+  border-color: #a359bf;
+  box-shadow: 0 0 10px rgba(163, 89, 191, 0.8);
+  background-color: #e397ff45;
+  outline: none;
+}
+
+#searchBar::placeholder {
+  color: white;
+}
+
+#searchBar:focus::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;}
+
 .icon {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;

@@ -7,6 +7,10 @@
   border-radius: 6px;
 }
 
+.answer-page {
+  background-color: var(--barely-purple);
+}
+
 .answerText {
   width: 75%;
 }

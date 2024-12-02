@@ -21,7 +21,7 @@ const AnswerPage = () => {
   }
 
   return (
-    <>
+    <div className='answer-page'>
       <AnswerHeader question={question} ansCount={question.answers.length} title={question.title} />
       <div className='answer-button-container'>
         <SubscribeComponent item={question} type={'question'} />
@@ -56,7 +56,7 @@ const AnswerPage = () => {
           />
         </>
       ))}
-    </>
+    </div>
   );
 };
 
