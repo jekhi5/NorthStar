@@ -64,8 +64,8 @@ We've done our best to make it really easy to run this project locally. The clie
     - Choose ‘Install on Linux’, ‘Install on macOS’, or ‘Install on Windows’, depending on your system
       - **For Windows:**
         - Scroll down to the section labeled ‘Install MongoDB Community Edition.’ and click on <a href="https://www.mongodb.com/try/download/compass" style="color: #d177f7;">here</a>
-        - For Windows, in the Package dropdown, select msi. Then download and run the installer
-        - On Windows, select the “Install MongoDB as a Service” checkbox and install. This will start MongoDB as a background service
+        - In the Package dropdown, select msi. Then download and run the installer
+        - Select the “Install MongoDB as a Service” checkbox and install. This will start MongoDB as a background service
         - Install “MongoDB Compass” if prompted
         - Verify if the MongoDB server is running using the Windows Services app
       - **For Mac:**
