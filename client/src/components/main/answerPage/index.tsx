@@ -4,7 +4,6 @@ import AnswerHeader from './header';
 import { Comment } from '../../../types';
 import './index.css';
 import QuestionBody from './questionBody';
-import VoteComponent from '../voteComponent';
 import CommentSection from '../commentSection';
 import useAnswerPage from '../../../hooks/useAnswerPage';
 import SubscribeComponent from '../../subscribeQuestion';
