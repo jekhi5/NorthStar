@@ -4,6 +4,7 @@ import CommentSection from '../../commentSection';
 import './index.css';
 import { Answer, Comment, User } from '../../../../types';
 import VoteComponent from '../../voteComponent';
+import defaultProfilePic from '../../../../images/default-profile-pic.png';
 
 /**
  * Interface representing the props for the AnswerView component.
@@ -44,6 +45,13 @@ const AnswerView = ({ answer, text, ansBy, meta, comments, handleAddComment }: A
     </div>
     <div className='answer-right-content'>
       <div className='answerAuthor'>
+        <div className='user-avatar'>
+          <img
+            src={ansBy.profilePicture ?? defaultProfilePic}
+            alt='User avatar'
+            className='avatar-image'
+          />
+        </div>
         <NavLink to={`/profile/${ansBy.username}`} className='answer_author'>
           {ansBy.username}
         </NavLink>

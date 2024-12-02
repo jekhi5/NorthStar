@@ -21,7 +21,12 @@ const AnswerPage = () => {
 
   return (
     <div className='answer-page'>
-      <AnswerHeader question={question} ansCount={question.answers.length} title={question.title} />
+      <AnswerHeader
+        question={question}
+        views={question.views.length}
+        ansCount={question.answers.length}
+        title={question.title}
+      />
       <div className='answer-button-container'>
         <SubscribeComponent item={question} type={'question'} />
         <button
@@ -33,7 +38,6 @@ const AnswerPage = () => {
         </button>
       </div>
       <QuestionBody
-        views={question.views.length}
         text={question.text}
         askby={question.askedBy}
         meta={getMetaData(new Date(question.askDateTime))}
