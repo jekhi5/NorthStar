@@ -82,14 +82,14 @@ const userSchema = new mongoose.Schema(
  * Adds the welcome notification to the user's postNotifications array.
  */
 userSchema.post('findOneAndUpdate', async doc => {
-  // Update status based on points
-  if (doc.points >= 30 && doc.points < 100 && doc.status !== 'Endorsed') {
+  // Update status based on reputation
+  if (doc.reputation >= 30 && doc.reputation < 100 && doc.status !== 'Endorsed') {
     doc.status = 'Endorsed';
-  } else if (doc.points >= 100 && doc.points < 500 && doc.status !== 'Super Smarty Pants') {
+  } else if (doc.reputation >= 100 && doc.reputation < 500 && doc.status !== 'Super Smarty Pants') {
     doc.status = 'Super Smarty Pants';
-  } else if (doc.points >= 500 && doc.points < 1000 && doc.status !== 'Mentor') {
+  } else if (doc.reputation >= 500 && doc.reputation < 1000 && doc.status !== 'Mentor') {
     doc.status = 'Mentor';
-  } else if (doc.points >= 1000 && doc.status !== 'Grandmaster') {
+  } else if (doc.reputation >= 1000 && doc.status !== 'Grandmaster') {
     doc.status = 'Grandmaster';
   }
   await doc.save();

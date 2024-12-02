@@ -84,6 +84,7 @@
 }
 
 .comment-textarea {
+  color: var(--primary-purple);
   flex: 5;
   padding: 0.25em;
   border: 1px solid #ccc;

@@ -2,7 +2,8 @@ import { NavLink } from 'react-router-dom';
 import { handleHyperlink } from '../../../../tool';
 import CommentSection from '../../commentSection';
 import './index.css';
-import { Comment, User } from '../../../../types';
+import { Answer, Comment, User } from '../../../../types';
+import VoteComponent from '../../voteComponent';
 
 /**
  * Interface representing the props for the AnswerView component.
@@ -14,6 +15,7 @@ import { Comment, User } from '../../../../types';
  * - handleAddComment Callback function to handle adding a new comment.
  */
 interface AnswerProps {
+  answer: Answer;
   text: string;
   ansBy: User;
   meta: string;
@@ -25,13 +27,14 @@ interface AnswerProps {
  * AnswerView component that displays the content of an answer with the author's name and metadata.
  * The answer text is processed to handle hyperlinks, and a comment section is included.
  *
+ * @param answer The answer.
  * @param text The content of the answer.
  * @param ansBy The user that authored the answer.
  * @param meta Additional metadata related to the answer.
  * @param comments An array of comments associated with the answer.
  * @param handleAddComment Function to handle adding a new comment.
  */
-const AnswerView = ({ text, ansBy, meta, comments, handleAddComment }: AnswerProps) => (
+const AnswerView = ({ answer, text, ansBy, meta, comments, handleAddComment }: AnswerProps) => (
   <div className='answer right_padding'>
     <div id='answerText' className='answerText'>
       {handleHyperlink(text)}
@@ -44,6 +47,7 @@ const AnswerView = ({ text, ansBy, meta, comments, handleAddComment }: AnswerPro
         {ansBy.status !== 'Not endorsed' ? ansBy.status : ''}
       </div>
       <div className='answer_question_meta'>{meta}</div>
+      <VoteComponent post={answer} postType='Answer' />
     </div>
     <CommentSection comments={comments} handleAddComment={handleAddComment} />
   </div>
