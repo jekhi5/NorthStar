@@ -32,9 +32,6 @@ const useProfilePage = (username?: string) => {
 
   const [emailOpted, setEmailOpted] = useState<boolean | null>(null);
   const [optButtonText, setOptButtonText] = useState<string | null>(null);
-  const [profilePicStorageRef, setProfilePicStorageRef] = useState<StorageReference | null>(null);
-  const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
-  const [profilePicAdded, setProfilePicAdded] = useState<boolean>(false);
 
   const { setUser } = useLoginContext();
 
@@ -96,18 +93,6 @@ const useProfilePage = (username?: string) => {
           return;
         }
 
-        if (profilePicAdded && profilePicStorageRef && profilePicFile) {
-          await uploadBytes(profilePicStorageRef, profilePicFile);
-
-          // Get the download URL
-          const photoURL = await getDownloadURL(profilePicStorageRef);
-
-          setEditedProfile({ ...editedProfile, profilePicture: photoURL });
-          setProfilePicAdded(false);
-          setProfilePicStorageRef(null);
-          setProfilePicFile(null);
-        }
-
         const updatedProfile = await updateUser(editedProfile);
         setUser(updatedProfile);
         setProfile(updatedProfile);
@@ -155,8 +140,6 @@ const useProfilePage = (username?: string) => {
       'image/tiff',
     ];
     try {
-      // Upload the file to Firebase Storage
-      const storageRef = ref(storage, `profilePictures/${editedProfile.uid}/profilePicture`);
       if (!acceptedFileTypes.find(acceptedType => acceptedType === file.type)) {
         throw new Error(
           `File type not accepted${
@@ -167,9 +150,16 @@ const useProfilePage = (username?: string) => {
           ${acceptedFileTypes.map(type => type.substring(6)).join(', ')}`,
         );
       }
-      setProfilePicStorageRef(storageRef);
-      setProfilePicFile(file);
-      setProfilePicAdded(true);
+
+      // Create reference to storage location on Firebase
+      const storageRef = ref(storage, `profilePictures/${editedProfile.uid}/profilePicture`);
+
+      await uploadBytes(storageRef, file);
+
+      // Get the download URL
+      const photoURL = await getDownloadURL(storageRef);
+
+      setEditedProfile({ ...editedProfile, profilePicture: photoURL });
     } catch (err) {
       // We log the errors here, but we do not throw an error as we do not want to block the
       // user from viewing the site just because the profile pic failed to load.
