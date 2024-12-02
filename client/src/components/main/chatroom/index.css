@@ -41,30 +41,47 @@
   margin-bottom: 1rem;
 }
 
-.input-area input,
-.input-area button {
+.chat-input-area input,
+.chat-input-area button {
   all: unset; /* Reset default */
 }
 
-.input-area {
+.chat-input-area {
   display: flex;
   align-items: stretch;
   margin-bottom: 1rem;
 }
 
-.input-area input {
+.chat-input-area input {
+  border-radius: 4px;
+  border: 2px solid var(--accent-purple);
   flex: 1;
-  height: 2.5rem;
+  height: 2rem;
   padding: 0.5rem;
   font-size: 1rem;
-  border: 1px solid var(--border-gray);
   border-radius: 4px;
   margin-right: 0.5rem;
-  background-color: var(--background-light);
-  color: var(--text-dark);
+  background-color: var(--primary-purple);
+  color: white;
 }
 
-.input-area button {
+.chat-input-area input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.3s ease;
+}
+
+.chat-input-area input:focus {
+  border-color: #a359bf;
+  box-shadow: 0 0 10px rgba(163, 89, 191, 0.8);
+  background-color: #e397ff45;
+  outline: none;
+}
+
+.chat-input-area input:focus::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.chat-input-area button {
   height: auto;
   background-color: var(--primary-purple);
   color: #fff;
@@ -74,6 +91,6 @@
   transition: background-color 0.3s;
 }
 
-.input-area button:hover {
+.chat-input-area button:hover {
   background-color: var(--hover-purple);
 }

@@ -72,7 +72,8 @@
 
 #searchBar:focus::placeholder {
   color: rgba(255, 255, 255, 0.7);
-  transition: color 0.3s ease;}
+  transition: color 0.3s ease;
+}
 
 .icon {
   font-family: 'Material Symbols Outlined';
