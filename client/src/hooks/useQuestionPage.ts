@@ -1,5 +1,5 @@
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import useUserContext from './useUserContext';
 import { Answer, OrderType, Question } from '../types';
 import { getQuestionsByFilter } from '../services/questionService';
@@ -16,6 +16,7 @@ const useQuestionPage = () => {
   const { qid: qidParam } = useParams();
   const navigate = useNavigate();
 
+  const [val, setVal] = useState<string>('');
   const [searchParams] = useSearchParams();
   const [titleText, setTitleText] = useState<string>('All Questions');
   const [search, setSearch] = useState<string>('');
@@ -117,7 +118,29 @@ const useQuestionPage = () => {
     };
   }, [questionID, questionOrder, search, socket]);
 
-  return { titleText, qlist, setQuestionOrder };
+  /**
+   * Function to handle changes in the input field.
+   *
+   * @param e - the event object.
+   */
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setVal(e.target.value);
+  };
+  /**
+   * Function to handle 'Enter' key press and trigger the search.
+   *
+   * @param e - the event object.
+   */
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const searchBarParams = new URLSearchParams();
+      searchBarParams.set('search', e.currentTarget.value);
+      navigate(`/home?${searchBarParams.toString()}`);
+    }
+  };
+
+  return { val, setVal, handleInputChange, handleKeyDown, titleText, qlist, setQuestionOrder };
 };
 
 export default useQuestionPage;

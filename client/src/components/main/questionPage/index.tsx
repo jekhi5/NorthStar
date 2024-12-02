@@ -1,4 +1,3 @@
-import React from 'react';
 import './index.css';
 import QuestionHeader from './header';
 import QuestionView from './question';
@@ -10,11 +9,15 @@ import useQuestionPage from '../../../hooks/useQuestionPage';
  * It includes a header with order buttons and a button to ask a new question.
  */
 const QuestionPage = () => {
-  const { titleText, qlist, setQuestionOrder } = useQuestionPage();
+  const { val, handleInputChange, handleKeyDown, titleText, qlist, setQuestionOrder } =
+    useQuestionPage();
 
   return (
     <>
       <QuestionHeader
+        val={val}
+        handleInputChange={handleInputChange}
+        handleKeyDown={handleKeyDown}
         titleText={titleText}
         qcnt={qlist.length}
         setQuestionOrder={setQuestionOrder}

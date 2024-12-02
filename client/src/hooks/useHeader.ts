@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, KeyboardEvent, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { PostNotification, PostNotificationUpdatePayload } from '../types';
@@ -18,7 +18,6 @@ import useLoginContext from './useLoginContext';
 const useHeader = () => {
   const navigate = useNavigate();
 
-  const [val, setVal] = useState<string>('');
   const [unreadNotifs, setUnreadNotifs] = useState<number>(0);
   const [notifications, setNotifications] = useState<
     { postNotification: PostNotification; read: boolean }[] | null
@@ -92,28 +91,6 @@ const useHeader = () => {
     };
   }, [uid, socket, notifSound]);
 
-  /**
-   * Function to handle changes in the input field.
-   *
-   * @param e - the event object.
-   */
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setVal(e.target.value);
-  };
-  /**
-   * Function to handle 'Enter' key press and trigger the search.
-   *
-   * @param e - the event object.
-   */
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const searchParams = new URLSearchParams();
-      searchParams.set('search', e.currentTarget.value);
-      navigate(`/home?${searchParams.toString()}`);
-    }
-  };
-
   const handleLogOut = () => {
     Cookies.remove('auth');
     setUser(null);
@@ -121,10 +98,6 @@ const useHeader = () => {
   };
 
   return {
-    val,
-    setVal,
-    handleInputChange,
-    handleKeyDown,
     unreadNotifs,
     handleLogOut,
   };
