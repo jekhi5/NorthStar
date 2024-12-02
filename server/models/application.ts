@@ -587,15 +587,6 @@ export const savePostNotification = async (
  * @param mailOptions a collection of details to go into the email (i.e. from, to, subject, text, etc.)
  */
 const sendEmail = async (mailOptions: MailOptions) => {
-  if (
-    !process.env.CLIENT_ID ||
-    !process.env.CLIENT_SECRET ||
-    !process.env.EMAIL ||
-    process.env.REFRESH_TOKEN
-  ) {
-    throw new Error('Error sending email. Environment variables not configured');
-  }
-
   // When attempting to convert these requires into imports and incorporating them into the project dependencies,
   // the github checks fail. All functionality worked perfectly fine on local, but the server would fail to start in the github check.
   // So, we reverted back to this to comply with the checks, even if it's an lint-disable solution.
@@ -607,6 +598,14 @@ const sendEmail = async (mailOptions: MailOptions) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { OAuth2 } = google.auth;
   try {
+    if (
+      !process.env.CLIENT_ID ||
+      !process.env.CLIENT_SECRET ||
+      !process.env.EMAIL ||
+      !process.env.REFRESH_TOKEN
+    ) {
+      throw new Error('Error sending email. Environment variables not configured');
+    }
     if (!mailOptions) {
       throw new Error('Mail Options provided were invalid.');
     }
@@ -646,7 +645,10 @@ const sendEmail = async (mailOptions: MailOptions) => {
     const sentmail = await emailTransporter.sendMail(mailOptions);
     return sentmail;
   } catch (error) {
-    return { error: `Error when sending email notification: ${(error as Error).message}` };
+    if (error instanceof Error) {
+      return { error: `Error when sending email notification: ${error.message}` };
+    }
+    return { error: `Error when sending email notification` };
   }
 };
 

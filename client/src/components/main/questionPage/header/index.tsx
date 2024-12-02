@@ -1,4 +1,5 @@
 import './index.css';
+import { ChangeEventHandler, KeyboardEventHandler } from 'react';
 import OrderButton from './orderButton';
 import { OrderType, orderTypeDisplayName } from '../../../../types';
 import AskQuestionButton from '../../askQuestionButton';
@@ -11,6 +12,9 @@ import AskQuestionButton from '../../askQuestionButton';
  * setQuestionOrder - A function that sets the order of questions based on the selected message.
  */
 interface QuestionHeaderProps {
+  val: string;
+  handleInputChange: ChangeEventHandler<HTMLInputElement>;
+  handleKeyDown: KeyboardEventHandler<HTMLInputElement>;
   titleText: string;
   qcnt: number;
   setQuestionOrder: (order: OrderType) => void;
@@ -25,11 +29,28 @@ interface QuestionHeaderProps {
  * @param qcnt - The number of questions displayed in the header.
  * @param setQuestionOrder - Function to set the order of questions based on input message.
  */
-const QuestionHeader = ({ titleText, qcnt, setQuestionOrder }: QuestionHeaderProps) => (
+const QuestionHeader = ({
+  val,
+  handleInputChange,
+  handleKeyDown,
+  titleText,
+  qcnt,
+  setQuestionOrder,
+}: QuestionHeaderProps) => (
   <div className='question-header'>
     <div className='header-top'>
       <h1 className='q-header-title'>{titleText}</h1>
-      <AskQuestionButton />
+      <div className='search-and-ask-q'>
+        <input
+          id='searchBar'
+          placeholder='Search...'
+          type='text'
+          value={val}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+        />
+        <AskQuestionButton />
+      </div>
     </div>
     <div className='header-bottom'>
       <div className='question-count'>{qcnt === 1 ? '1 probe' : `${qcnt || 0} probes`}</div>

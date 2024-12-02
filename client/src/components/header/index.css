@@ -46,19 +46,6 @@
   background-color: var(--hover-purple);
 }
 
-.search-and-profile {
-  display: flex;
-  align-items: center;
-}
-
-#searchBar {
-  width: 180px;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 2px solid var(--accent-purple);
-  font-size: 1rem;
-}
-
 .icon {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;

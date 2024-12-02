@@ -10,7 +10,7 @@ import logo from '../../images/north-star-logo.png';
  * when they press Enter.
  */
 const Header = () => {
-  const { val, handleInputChange, handleKeyDown, unreadNotifs, handleLogOut } = useHeader();
+  const { unreadNotifs, handleLogOut } = useHeader();
   const { user: currentUser } = useUserContext();
 
   return (
@@ -34,15 +34,6 @@ const Header = () => {
           Constellations
         </NavLink>
       </div>
-      <input
-        id='searchBar'
-        placeholder='Search...'
-        type='text'
-        value={val}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-      />
-
       <div className='notifications-and-profile-group'>
         <div className='chatroom-icon'>
           <NavLink to='/chatroom'>

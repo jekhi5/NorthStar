@@ -35,3 +35,38 @@
     display: flex;
     gap: 1rem;
   }
+
+  #searchBar {
+    width: 180px;
+    border-radius: 4px;
+    border: 2px solid var(--accent-purple);
+    background-color: var(--hover-purple);
+    font-size: 1rem;
+  }
+  
+  #searchBar:focus {
+    border-color: #a359bf;
+    box-shadow: 0 0 10px rgba(163, 89, 191, 0.8);
+    background-color: #e397ff45;
+    outline: none;
+    color: var(--primary-purple);
+  }
+  
+  #searchBar::placeholder {
+    color: white;
+  }
+  
+  #searchBar:focus::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease;
+  }
+
+  #searchBar, .ask-btn {
+    margin: 0; /* Reset margins because they were offset */
+}
+
+  .search-and-ask-q {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }

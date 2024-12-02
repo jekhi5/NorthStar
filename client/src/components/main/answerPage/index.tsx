@@ -4,7 +4,6 @@ import AnswerHeader from './header';
 import { Comment } from '../../../types';
 import './index.css';
 import QuestionBody from './questionBody';
-import VoteComponent from '../voteComponent';
 import CommentSection from '../commentSection';
 import useAnswerPage from '../../../hooks/useAnswerPage';
 import SubscribeComponent from '../../subscribeQuestion';
@@ -21,8 +20,13 @@ const AnswerPage = () => {
   }
 
   return (
-    <>
-      <AnswerHeader question={question} ansCount={question.answers.length} title={question.title} />
+    <div className='answer-page'>
+      <AnswerHeader
+        question={question}
+        views={question.views.length}
+        ansCount={question.answers.length}
+        title={question.title}
+      />
       <div className='answer-button-container'>
         <SubscribeComponent item={question} type={'question'} />
         <button
@@ -34,7 +38,6 @@ const AnswerPage = () => {
         </button>
       </div>
       <QuestionBody
-        views={question.views.length}
         text={question.text}
         askby={question.askedBy}
         meta={getMetaData(new Date(question.askDateTime))}
@@ -45,8 +48,8 @@ const AnswerPage = () => {
       />
       {question.answers.map((a, idx) => (
         <>
-          <VoteComponent post={a} postType='Answer' />
           <AnswerView
+            answer={a}
             key={idx}
             text={a.text}
             ansBy={a.ansBy}
@@ -56,7 +59,7 @@ const AnswerPage = () => {
           />
         </>
       ))}
-    </>
+    </div>
   );
 };
 

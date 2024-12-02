@@ -1,9 +1,9 @@
 .answer {
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
   padding: 1.5rem;
   margin: 1.5rem 0;
-  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -17,6 +17,8 @@
 .answerAuthor {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 0.5rem;
 }
 
@@ -30,4 +32,17 @@
 .answer_question_meta {
   font-size: 0.85rem;
   color: var(--text-light-gray);
+}
+
+.answerContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.answer-right-content {
+  display: flex;
+  align-items: flex-end;
+  text-align: right;
+  gap: 1rem;
 }

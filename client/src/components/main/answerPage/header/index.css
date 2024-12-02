@@ -27,8 +27,8 @@
   gap: 1rem;
 }
 
-.answer-count {
+.answer-stats {
   font-size: 1rem;
   font-weight: bold;
-  color: var(--primary-purple);
+  color: var(--hover-purple);
 }

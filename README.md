@@ -5,7 +5,6 @@
 Table of Contents:
 - <a href="#about" style="color: #d177f7;">About</a>
 - <a href="#notable-features" style="color: #d177f7;">Notable features</a>
-- <a href="#site-navigation" style="color: #d177f7;">Site navigation</a>
 - <a href="#future-implementations" style="color: #d177f7;">Future implementations</a>
 - <a href="#how-to-start-the-development-environment" style="color: #d177f7;">How to start the development environment</a>
 - <a href="#database-architecture" style="color: #d177f7;">Database Architecture</a>
@@ -23,7 +22,13 @@ This project is hosted in this monorepo and is created with love in Typescript a
 
 ## Notable features
 
-## Site navigation
+- Subscription and notification system
+  - Email notifications
+  - Live updates on the site
+- Reputation
+  - Tiered badge system
+  - Increasing reputation on site interactions
+- Global chatroom
 
 ## Future implementations
 
@@ -53,13 +58,14 @@ We've done our best to make it really easy to run this project locally. The clie
   - Run the linter with `npm run lint:fix`
 - Server
   - Navigate to the server directory: `cd server`
+  - Install dependencies: `npm install`
   - Initialize a local instance of MongoDb:
     - Follow the <a href="https://www.mongodb.com/docs/manual/administration/install-community/" style="color: #d177f7;">instructions in the official MongoDB documentation</a> to install the free community edition
     - Choose ‘Install on Linux’, ‘Install on macOS’, or ‘Install on Windows’, depending on your system
       - **For Windows:**
         - Scroll down to the section labeled ‘Install MongoDB Community Edition.’ and click on <a href="https://www.mongodb.com/try/download/compass" style="color: #d177f7;">here</a>
-        - For Windows, in the Package dropdown, select msi. Then download and run the installer
-        - On Windows, select the “Install MongoDB as a Service” checkbox and install. This will start MongoDB as a background service
+        - In the Package dropdown, select msi. Then download and run the installer
+        - Select the “Install MongoDB as a Service” checkbox and install. This will start MongoDB as a background service
         - Install “MongoDB Compass” if prompted
         - Verify if the MongoDB server is running using the Windows Services app
       - **For Mac:**
@@ -68,7 +74,7 @@ We've done our best to make it really easy to run this project locally. The clie
           - Make sure the URI field contains `mongodb://localhost:27017`
           - Click on “Connect” - MongoDB will need to be running as a macOS service
     - Install the Mongo shell (mongosh)
-      - **For Windows:**:
+      - **For Windows:**
         - Download it <a href="https://www.mongodb.com/try/download/shell_" style="color: #d177f7;">here</a> using the msi package. You can also use mongosh to see if the MongoDB server is running. Try the MongoDB Community Edition and the command show dbs; you should see a list of existing databases in your local instance
       - **For Mac:**
         - Mongo shell is automatically installed with MongoDB through the Mac installation instructions. To use it, make sure MongoDB is running as a macOS service, then type mongosh into the terminal
@@ -91,7 +97,7 @@ We've done our best to make it really easy to run this project locally. The clie
 Some potentially useful resources are:
 
 - <a href="https://expressjs.com/en/guide/routing.html" style="color: #d177f7;">Express Tutorial</a>
-- MongoDB tutorial: A mini tutorial.
+- <a href="https://neu-se.github.io/CS4530-Fall-2024/tutorials/week1-mongodb-mongoose" style="color: #d177f7;">MongoDB tutorial: A mini tutorial</a>
 - <a href="https://mongoosejs.com/docs/queries.html" style="color: #d177f7;">Mongoose Queries</a>
 - <a href="https://mongoosejs.com/docs/documents.html" style="color: #d177f7;">Mongoose Documents</a>
 - <a href="https://jestjs.io/docs/getting-started" style="color: #d177f7;">Jest Basics</a>

@@ -38,7 +38,7 @@ const Chatroom = () => {
     <div className='chatroom-container'>
       <div className='chatroom'>
         <h2>Radio Chatter</h2>
-        <div className='input-area'>
+        <div className='chat-input-area'>
           <input
             type='text'
             value={newMessageContent}
