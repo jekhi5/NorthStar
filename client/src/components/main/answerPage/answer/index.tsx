@@ -35,21 +35,25 @@ interface AnswerProps {
  * @param handleAddComment Function to handle adding a new comment.
  */
 const AnswerView = ({ answer, text, ansBy, meta, comments, handleAddComment }: AnswerProps) => (
-  <div className='answer right_padding'>
-    <div id='answerText' className='answerText'>
-      {handleHyperlink(text)}
-    </div>
-    <div className='answerAuthor'>
-      <NavLink to={`/profile/${ansBy.username}`} className='answer_author'>
-        {ansBy.username}
-      </NavLink>
-      <div className='question_author_status'>
-        {ansBy.status !== 'Not endorsed' ? ansBy.status : ''}
-      </div>
-      <div className='answer_question_meta'>{meta}</div>
+  <div className='answer'>
+    <div className='answerContent'>
       <VoteComponent post={answer} postType='Answer' />
+      <div id='answerText' className='answerText'>
+        {handleHyperlink(text)}
+      </div>
     </div>
-    <CommentSection comments={comments} handleAddComment={handleAddComment} />
+    <div className='answer-right-content'>
+      <div className='answerAuthor'>
+        <NavLink to={`/profile/${ansBy.username}`} className='answer_author'>
+          {ansBy.username}
+        </NavLink>
+        <div className='question_author_status'>
+          {ansBy.status !== 'Not endorsed' ? ansBy.status : ''}
+        </div>
+        <div className='answer_question_meta'>{meta}</div>
+      </div>
+      <CommentSection comments={comments} handleAddComment={handleAddComment} />
+    </div>
   </div>
 );
 

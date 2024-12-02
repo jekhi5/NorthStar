@@ -1,5 +1,6 @@
 .answer {
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
   padding: 1.5rem;
   margin: 1.5rem 0;
@@ -29,4 +30,17 @@
 .answer_question_meta {
   font-size: 0.85rem;
   color: var(--text-light-gray);
+}
+
+.answerContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.answer-right-content {
+  display: flex;
+  align-items: flex-end;
+  text-align: right;
+  gap: 1rem;
 }
