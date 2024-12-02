@@ -97,7 +97,7 @@ We've done our best to make it really easy to run this project locally. The clie
 Some potentially useful resources are:
 
 - <a href="https://expressjs.com/en/guide/routing.html" style="color: #d177f7;">Express Tutorial</a>
-- MongoDB tutorial: A mini tutorial.
+- <a href="https://neu-se.github.io/CS4530-Fall-2024/tutorials/week1-mongodb-mongoose" style="color: #d177f7;">MongoDB tutorial: A mini tutorial</a>
 - <a href="https://mongoosejs.com/docs/queries.html" style="color: #d177f7;">Mongoose Queries</a>
 - <a href="https://mongoosejs.com/docs/documents.html" style="color: #d177f7;">Mongoose Documents</a>
 - <a href="https://jestjs.io/docs/getting-started" style="color: #d177f7;">Jest Basics</a>
