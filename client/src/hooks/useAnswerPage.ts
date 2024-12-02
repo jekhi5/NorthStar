@@ -53,12 +53,11 @@ const useAnswerPage = () => {
       if (targetId === undefined) {
         throw new Error('No target ID provided.');
       }
-
-      const newComment = await addComment(targetId, targetType, comment);
+      await addComment(targetId, targetType, comment);
       if (targetType === 'question') {
         setQuestion({
           ...(question as Question),
-          comments: (question ? [...question.comments, newComment] : [newComment]).sort(
+          comments: (question ? [...question.comments, comment] : [comment]).sort(
             (commentA, commentB) =>
               commentB.upVotes.length -
               commentB.downVotes.length -
@@ -74,7 +73,7 @@ const useAnswerPage = () => {
                   a && a._id === targetId
                     ? {
                         ...a,
-                        comments: [...a.comments, newComment].sort(
+                        comments: [...a.comments, comment].sort(
                           (commentA, commentB) =>
                             commentB.upVotes.length -
                             commentB.downVotes.length -
