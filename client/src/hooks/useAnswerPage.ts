@@ -54,7 +54,44 @@ const useAnswerPage = () => {
         throw new Error('No target ID provided.');
       }
 
-      await addComment(targetId, targetType, comment);
+      const newComment = await addComment(targetId, targetType, comment);
+      if (targetType === 'question') {
+        setQuestion({
+          ...(question as Question),
+          comments: (question ? [...question.comments, newComment] : [newComment]).sort(
+            (commentA, commentB) =>
+              commentB.upVotes.length -
+              commentB.downVotes.length -
+              (commentA.upVotes.length - commentA.downVotes.length),
+          ),
+        });
+      } else if (targetType === 'answer') {
+        setQuestion({
+          ...(question as Question),
+          answers: question
+            ? question.answers
+                .map(a =>
+                  a && a._id === targetId
+                    ? {
+                        ...a,
+                        comments: [...a.comments, newComment].sort(
+                          (commentA, commentB) =>
+                            commentB.upVotes.length -
+                            commentB.downVotes.length -
+                            (commentA.upVotes.length - commentA.downVotes.length),
+                        ),
+                      }
+                    : a,
+                )
+                .sort(
+                  (answerA, answerB) =>
+                    answerB.upVotes.length -
+                    answerB.downVotes.length -
+                    (answerA.upVotes.length - answerA.downVotes.length),
+                )
+            : [],
+        });
+      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error adding comment:', error);
