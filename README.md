@@ -5,7 +5,6 @@
 Table of Contents:
 - <a href="#about" style="color: #d177f7;">About</a>
 - <a href="#notable-features" style="color: #d177f7;">Notable features</a>
-- <a href="#site-navigation" style="color: #d177f7;">Site navigation</a>
 - <a href="#future-implementations" style="color: #d177f7;">Future implementations</a>
 - <a href="#how-to-start-the-development-environment" style="color: #d177f7;">How to start the development environment</a>
 - <a href="#database-architecture" style="color: #d177f7;">Database Architecture</a>
@@ -23,7 +22,13 @@ This project is hosted in this monorepo and is created with love in Typescript a
 
 ## Notable features
 
-## Site navigation
+- Subscription and notification system
+  - Email notifications
+  - Live updates on the site
+- Reputation
+  - Tiered badge system
+  - Increasing reputation on site interactions
+- Global chatroom
 
 ## Future implementations
 
@@ -53,6 +58,7 @@ We've done our best to make it really easy to run this project locally. The clie
   - Run the linter with `npm run lint:fix`
 - Server
   - Navigate to the server directory: `cd server`
+  - Install dependencies: `npm install`
   - Initialize a local instance of MongoDb:
     - Follow the <a href="https://www.mongodb.com/docs/manual/administration/install-community/" style="color: #d177f7;">instructions in the official MongoDB documentation</a> to install the free community edition
     - Choose ‘Install on Linux’, ‘Install on macOS’, or ‘Install on Windows’, depending on your system
