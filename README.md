@@ -16,7 +16,7 @@ Table of Contents:
 
 ## About
 
-<a href="https://cs4530-f24-202.onrender.com" style="color: #d177f7;">North star</a> is a question and answer forum designed by and for software developers. Here, you can get answers about niche errors, interact with other community members, earn status and show your flair, and so much more!
+<a href="https://asknorthstar.onrender.com" style="color: #d177f7;">North star</a> is a question and answer forum designed by and for software developers. Here, you can get answers about niche errors, interact with other community members, earn status and show your flair, and so much more!
 
 This project is hosted in this monorepo and is created with love in Typescript and React using Express and sockets. Additionally, authentication functionality is integrated with Firebase and the data is stored securely in MongoDB. These services were chosen due to their ease in integration with web applications and emphasis on security. While we aim to help users understand their own bugs in security infrastructure, we'd like to lead by example in the way we host our platform.
 
@@ -137,6 +137,6 @@ Grace Theobald - <a href="https://github.com/getheobald" style="color: #d177f7;"
 
 ### Thanks
 
-Thank you to Anikesh Kamath, our TA, who was incredibly supportive and helpful as we move through this project!
+Thank you to <a href="https://www.linkedin.com/in/anikeshk/" style="color: #d177f7;">Anikesh Kamath</a>, our TA, who was incredibly supportive and helpful as we move through this project!
 
 Thank you to <a href="https://www.khoury.northeastern.edu/home/abhutta/" style="color: #d177f7;">Professor Adeel Bhutta</a> and <a href="https://www.khoury.northeastern.edu/home/wand/" style="color: #d177f7;">Professor Mitch Wand</a> for their work on the <a href="https://neu-se.github.io/CS4530-Fall-2024/" style="color: #d177f7;">CS4530 - Foundations of Software Engineering</a> course at Northeastern University that made this project possible
