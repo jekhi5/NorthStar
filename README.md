@@ -116,10 +116,10 @@ A class diagram for the schema definition is shown below:
 
 - We encourage users to add your own contributions to this project! Here is how we would appreciate you doing that:
   - Ensure you follow the <a href="/ContributorCovenant.md" style="color: #d177f7;">Contributor Covenant</a>
-  - Make an <a href="https://github.com/neu-cs4530/fall24-project-fall24-team-project-group-202/issues" style="color: #d177f7;">issue</a>
+  - Make an <a href="https://github.com/jekhi5/NorthStar/issues" style="color: #d177f7;">issue</a>
   - Make a branch off of the `main` branch named with a _clear_ and _succinct_ branch name (no more than 30 characters)
   - Ensure your commit messages are <a href="https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/#https://www.freecodecamp.org/news/how-to-write-better-git-commit-messages/#heading-5-steps-to-write-better-commit-messages:~:text=5%20Steps%20to%20Write%20Better%20Commit%20Messages" style="color: #d177f7;">professional and clear</a>
-  - When you're ready, open up a <a href="https://github.com/neu-cs4530/fall24-project-fall24-team-project-group-202/pulls" style="color: #d177f7;">pull request</a> (PR)
+  - When you're ready, open up a <a href="https://github.com/jekhi5/NorthStar/pull" style="color: #d177f7;">pull request</a> (PR)
     - Please fill out the pre-populated form to ensure that your PR is read in a timely manner. When you
 
 ## Credits
