@@ -1,5 +1,5 @@
 ![Logo](north-star-logo.png)
-# North Star - Your guiding light when it comes to coding struggles
+# North Star: Your guiding light for coding struggles
 
 
 Table of Contents:
